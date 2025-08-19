@@ -1,0 +1,17 @@
+#+STARTUP: content
+#+STARTUP: overview
+#+STARTUP: indent
+#+STARTUP: latexpreview
+#+TITLE: Comp. Sys. Perf. Analysis Final Work
+#+AUTHOR: Kenichi Brumati, Rayan Raddatz
+
+
+This repository contain the codes, reports and results of our final
+work for the Computer System Performance Analysis Course
+(INF01146/CMP223).
+
+
+* Members
+- Rayan Raddatz de Matos ([[https://github.com/rddtz][@rddtz]])
+- Kenichi Brumati ([[https://github.com/kenichi220][@kenichi220]])
+- Marcelo Cardoso Oliveira Gulart ([[https://github.com/MFGROOVE][@MFGROOVE]])
