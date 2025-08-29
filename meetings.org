@@ -1,0 +1,68 @@
+#+STARTUP: content
+#+STARTUP: overview
+#+STARTUP: indent
+#+STARTUP: latexpreview
+#+TITLE: For meetings about the final work
+#+AUTHOR: Rayan Raddatz, Kenichi Brumati and Marcelo Gulart
+#+DATE:  Comp. Sys. Perf. Analysis - 2025/2
+
+
+* Meetings
+** 2025-08-28: Specification
+
+PCAD partition: Tupi
+Neural Network: ResNet50
+Libraries: PyTorch and TensorFlow
+Training Benchmark: Cifar-100 and ImageNet
+Run Types: GPU-Only, CPU+GPU
+Nodes amount: 1, 2, 3 and 4
+Training Parameters:
+  - Epochs: ?
+  - Batch size: ?
+  - Learning rate: ?
+
+
+*** Our object [1]
+Neural Networks are important, ...;
+Imagem de uma rede neural.
+Modelo escolhida: ResNet...;
+
+
+*** Why chose NN training? [3]
+AI is important nowadays, we want it faster and better, HPC has a huge
+importance in this field, bla bla bla...
+
+We are doing AI course this semester.
+
+
+*** Analisys [2]
+
+Bibliotecas: PyTorch e TensorFlow.
+PCAD and Tupi [3,4,5,6], use GPUs.
+
+*** Metrics [4]
+Metrics are GPU usage, time to train, accuracy, (If possible, energy used to train), ...?
+
+
+*** Cronogram* [5]
+
+Planejamos "sprints" de 15 dias (2 semanas)
+Organização com .ORGs
+
+
+- Semana 1 (01/09 - 15/09): Fundamentação teórico-prática (Aprender como
+funcionam as redes neurais e verificar a literatura do assunto).
+
+- Semana 2 (15/09 - 29/09): Configuração do ambiente e experimentos
+  iniciais (tentativas).
+
+- Semana 3 (29/09 - 13/10): Verificação dos resultados iniciais e
+  escrita de um relatório.
+
+  Se possível, caso terminemos muito antes a data final, pensamos em
+  avaliar outros modelos, "talvez empregando model parallelism".
+
+
+
+\* Esse cronograma está completamente sujeito a mudanças e
+  difícilmente será seguido.
