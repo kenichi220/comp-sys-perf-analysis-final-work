@@ -26,6 +26,7 @@ Training Parameters:
 Neural Networks are important, ...;
 Imagem de uma rede neural.
 Modelo escolhida: ResNet...;
+Datasets escolhidos: Cifar-100 e ImageNet
 
 *** Why chose NN training? [3]
 AI is important nowadays, we want it faster and better, HPC has a huge
