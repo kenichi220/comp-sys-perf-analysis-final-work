@@ -27,22 +27,22 @@ Neural Networks are important, ...;
 Imagem de uma rede neural.
 Modelo escolhida: ResNet...;
 
-
 *** Why chose NN training? [3]
 AI is important nowadays, we want it faster and better, HPC has a huge
 importance in this field, bla bla bla...
 
 We are doing AI course this semester.
 
-
 *** Analisys [2]
 
 Bibliotecas: PyTorch e TensorFlow.
+Paralelismo: Métodos de paralelismo utilizados (explicar que iremos
+ver varios nós).
 PCAD and Tupi [3,4,5,6], use GPUs.
 
 *** Metrics [4]
-Metrics are GPU usage, time to train, accuracy, (If possible, energy used to train), ...?
-
+Metrics are GPU usage, time to train, accuracy (provavelmente não mudará),
+(If possible, energy used to train), ...?
 
 *** Cronogram* [5]
 
