@@ -1,0 +1,61 @@
+#+STARTUP: content
+#+STARTUP: overview
+#+STARTUP: indent
+#+STARTUP: latexpreview
+#+TITLE: Rayan notebook
+#+AUTHOR: Rayan Raddatz de Matos
+
+* Report
+** 2025-09-02 Starting the investigation about the chosen tool
+[10:45:30; 02.09.2025]: I will try to install and configure pytorch to
+run a minimal training or inference. I want to have a fell about how
+everything will work.
+
+[10:47:11; 02.09.2025]: Looks like i will need to install it first to
+test anything. https://pytorch.org/get-started/locally/
+
+[10:52:56; 02.09.2025]: Verifying if there is CUDA support for TUPIs,
+this is the output of =nvidia-smi= in tupi4:
+#+RESULTS:
+: Tue Sep  2 10:52:36 2025
+: +-----------------------------------------------------------------------------------------+
+: | NVIDIA-SMI 550.54.15              Driver Version: 550.54.15      CUDA Version: 12.4     |
+: |-----------------------------------------+------------------------+----------------------+
+: | GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+: | Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+: |                                         |                        |               MIG M. |
+: |=========================================+========================+======================|
+: |   0  NVIDIA GeForce RTX 4090        On  |   00000000:01:00.0 Off |                  Off |
+: |  0%   46C    P8             11W /  450W |       1MiB /  24564MiB |      0%      Default |
+: |                                         |                        |                  N/A |
+: +-----------------------------------------+------------------------+----------------------+
+: +-----------------------------------------------------------------------------------------+
+: | Processes:                                                                              |
+: |  GPU   GI   CI        PID   Type   Process name                              GPU Memory |
+: |        ID   ID                                                               Usage      |
+: |=========================================================================================|
+: |  No running processes found                                                             |
+: +-----------------------------------------------------------------------------------------+
+
+[10:56:28; 02.09.2025]: There is a way to install using PIP, but it
+requires using python virtual env. I will try installing from source
+or using other tool like Guix or Nix (even Spack maybe?)
+
+[11:03:40; 02.09.2025]: Looks like GUIX isn´t configured in the tupi
+machines, talk with Otho or Lucas about this. I will try installing
+PyTorch from source for now.
+
+[11:09:48; 02.09.2025]: I ended up setting a python virtual enviroment
+(venv) for now.
+
+[11:12:13; 02.09.2025]: Trying to install the default pytorch and
+torchvision without an index: =pip3 install torch torchvision=.
+
+[11:23:57; 02.09.2025]: Installed pytorch in the virtual env. Its
+looks like its working.
+
+[11:56:33; 02.09.2025]: I used gemini to create a concept of the
+ResNet with the CIFAR100 model. I will leave now but i think maybe
+this can be a little more complex then was expected at first, but not
+so much. We need to set and verify if our configuration will be really
+used during the execution.
