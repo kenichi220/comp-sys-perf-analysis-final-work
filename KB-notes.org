@@ -7,9 +7,14 @@
 
 * Report
 ** 2025-09-02 Base configuration on TensorFlow/Pytorch
-   [20:23:41; 02.09.2025] I use my machine, it has a Nvidia RTX pre
-   configurate
-   [21:14:08; 02.09.2025] First try to run the training, fail: "Failed
-   to initialize NVML:   Driver/library version mismatch
-   NVML library version: 580.76"
-   [21:35:19; 02.09.2025] I`ll go to PCAD infrastructure
+  [20:23:41; 02.09.2025] I use my machine, it has a Nvidia RTX pre
+  configurate
+  [21:14:08; 02.09.2025] First try to run the training, fail: "Failed
+  to initialize NVML:   Driver/library version mismatch
+  NVML library version: 580.76"
+  [21:35:19; 02.09.2025] I`ll go to PCAD infrastructure
+** 2025-09-03 Nvidia CUDA
+  [07:14:37; 03.09.2025] Nvidia CUDA and Toolkit are incompatible
+  version, Tensor requires 12.X or lower, my configuration is 13.0.
+  [07:22:19; 03.09.2025] At the moment I`m not using PCAD.
+ 
