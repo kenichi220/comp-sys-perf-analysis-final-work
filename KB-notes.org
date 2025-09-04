@@ -24,16 +24,18 @@
   [13:06:18; 03.09.2025] Runned first training test:
        Loss in test: 1.8767
        Accuracy in test: 0.3092
-
        
 ** 2025-09-04 Pcad
  [19:04:01; 04.09.2025] Now I using PCAD structure
 
  [19:04:27; 04.09.2025] I found the command, what was missing,
  this command has on: https://www.tensorflow.org/install/pip?hl=pt-br
- and I'm  using *pip install tensorflow[and-cuda]* after using
+ and I'm using *pip install tensorflow[and-cuda]* after using
  *pip install tensorflow* in venv to
  recognition the GPU
 
  [20:35:30; 04.09.2025] First train with a GPU and test recognition in
  Tupi4
+
+ [20:43:36; 04.09.2025] Use this to training in parallel:
+ https://www.tensorflow.org/tutorials/distribute/keras?hl=pt-br
