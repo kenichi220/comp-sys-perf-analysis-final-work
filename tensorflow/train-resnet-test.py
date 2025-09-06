@@ -3,8 +3,14 @@
         Activate: . venv/bin/activate
 
         In venv:
+           pip install --upgrade pip
            pip install tensorflow
            pip install tensorflow[and-gpu]
+       ---------------------------------------
+
+       Use this command for check GPU:
+python3 -c "import tensorflow as tf; print(tf.config.list_physical_devices('GPU'))"
+
        ---------------------------------------
            TEST, AI WAS USED TO HELP
 '''
