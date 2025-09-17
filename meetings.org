@@ -67,3 +67,38 @@ funcionam as redes neurais e verificar a literatura do assunto).
 
 \* Esse cronograma está completamente sujeito a mudanças e
   difícilmente será seguido.
+
+** 2025-09-17: Next steps
+Now we have the GUIX in the PCAD.
+
+*** Configurar IAs:
+Ver se o treinamento está correto em ambos (verificar contra os pesos padrões).
+
+Ver se existe configurado com os pesos da CIFAR-100.
+
+Veriricar o treinamento paralelo.
+
+Sobre as IAS: Definir os hiperparametros: BATCHSIZE, EPOCAS, LEARNING
+RATE.
+
+
+*** Configurar o guix e os scripts slurm.
+Scripts para os experimentos.
+Intervalo entre os treinos (alguns minutos).
+
+*** *ESTUDAR OS CALLBACKS DAS PLATAFORMAS*
+Ver o overehead dos callbacks, para ter uma boa metricas.
+
+Callbacks para o pytorch e o tensorflow:
+- Erro em cada epoca
+- Acuracia de cada epoca
+- Tempo de cada epoca
+- Acuraracia geral
+- Tempo geral
+
+Métricas Externas:
+- Uso da GPU
+- Uso da CPU
+- Energia
+
+Salvar saidas em CSV
