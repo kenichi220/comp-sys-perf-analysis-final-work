@@ -71,6 +71,14 @@ funcionam as redes neurais e verificar a literatura do assunto).
 ** 2025-09-17: Next steps
 Now we have the GUIX in the PCAD.
 
+Kenichi: Exportar treinamento para mais maquinas e verificar as
+métricas da GPU.
+
+Marcelo: Configurar o Guix PyEnv.
+
+Rayan: Verificar callbacks PyTorch e TensorFlow, verificar o overhead,
+exportar callback para csv.
+
 *** Configurar IAs:
 Ver se o treinamento está correto em ambos (verificar contra os pesos padrões).
 
