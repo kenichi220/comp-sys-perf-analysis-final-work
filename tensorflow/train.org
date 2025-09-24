@@ -137,9 +137,8 @@ pip freeze > reqs.txt
 
 The output of this command can be writen to a file (e.g. reqs.txt),
 and later be used to download all this software with:
-#+begin_src shell :results output :exports both
-pip install -r reqs.txt
-#+end_src
+=pip install -r reqs.txt=
+
 
 ** Checking for GPU for TensorFlow
 #+begin_src shell :session *shell* :results output :exports both

@@ -13,6 +13,4 @@ pip install tensorflow[and-gpu]
 
 pip freeze > reqs.txt
 
-pip install -r reqs.txt
-
 python3 -c "import tensorflow as tf; print(tf.config.list_physical_devices('GPU'))"
