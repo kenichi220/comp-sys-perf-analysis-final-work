@@ -11,7 +11,7 @@ pip install --upgrade pip
 pip install tensorflow
 pip install tensorflow[and-gpu]
 
-pip freeze
+pip freeze > reqs.txt
 
 pip install -r reqs.txt
 
