@@ -1,0 +1,292 @@
+#+STARTUP: content
+#+STARTUP: overview
+#+STARTUP: indent
+#+STARTUP: latexpreview
+#+TITLE: TensorFlow training explained
+#+AUTHOR: Rayan Raddatz de Matos
+
+* Enviroment Configuration
+:PROPERTIES:
+:header-args: :tangle create-env.sh :tangle-mode (identity #o755) :shebang "#!/usr/bin/bash"
+:END:
+
+** Creating a virtual enviroment
+#+begin_src shell :session *shell* :results output :exports both
+python3 -m venv venv
+#+end_src
+
+#+RESULTS:
+
+** Activating the enviroment
+#+begin_src shell :session *shell* :results output :exports both
+. venv/bin/activate
+which python3
+#+end_src
+
+#+RESULTS:
+:
+: /home/rayan/graduation/estudos/perf/final/tensorflow/venv/bin/python3
+
+** Checking Python and PIP versions
+#+begin_src shell :session *shell* :results output :exports both
+python3 --version
+pip --version
+#+end_src
+
+#+RESULTS:
+: Python 3.11.2
+: pip 25.2 from /home/rayan/graduation/estudos/perf/final/tensorflow/venv/lib/python3.11/site-packages/pip (python 3.11)
+
+** Installing TF
+#+begin_src shell :session *shell* :results output :exports both
+pip install --upgrade pip
+pip install tensorflow
+pip install tensorflow[and-gpu]
+#+end_src
+
+#+RESULTS:
+#+begin_example
+Requirement already satisfied: pip in ./venv/lib/python3.11/site-packages (25.2)
+Requirement already satisfied: tensorflow in ./venv/lib/python3.11/site-packages (2.20.0)
+=1.0.0 in ./venv/lib/python3.11/site-packages (from tensorflow) (2.3.1)
+=1.6.0 in ./venv/lib/python3.11/site-packages (from tensorflow) (1.6.3)
+=24.3.25 in ./venv/lib/python3.11/site-packages (from tensorflow) (25.9.23)
+=0.2.1 in ./venv/lib/python3.11/site-packages (from tensorflow) (0.6.0)
+=0.1.1 in ./venv/lib/python3.11/site-packages (from tensorflow) (0.2.0)
+=13.0.0 in ./venv/lib/python3.11/site-packages (from tensorflow) (18.1.1)
+=2.3.2 in ./venv/lib/python3.11/site-packages (from tensorflow) (3.4.0)
+Requirement already satisfied: packaging in ./venv/lib/python3.11/site-packages (from tensorflow) (25.0)
+=5.28.0 in ./venv/lib/python3.11/site-packages (from tensorflow) (6.32.1)
+=2.21.0 in ./venv/lib/python3.11/site-packages (from tensorflow) (2.32.5)
+Requirement already satisfied: setuptools in ./venv/lib/python3.11/site-packages (from tensorflow) (66.1.1)
+=1.12.0 in ./venv/lib/python3.11/site-packages (from tensorflow) (1.17.0)
+=1.1.0 in ./venv/lib/python3.11/site-packages (from tensorflow) (3.1.0)
+=3.6.6 in ./venv/lib/python3.11/site-packages (from tensorflow) (4.15.0)
+=1.11.0 in ./venv/lib/python3.11/site-packages (from tensorflow) (1.17.3)
+=1.24.3 in ./venv/lib/python3.11/site-packages (from tensorflow) (1.75.0)
+Requirement already satisfied: tensorboard~=2.20.0 in ./venv/lib/python3.11/site-packages (from tensorflow) (2.20.0)
+=3.10.0 in ./venv/lib/python3.11/site-packages (from tensorflow) (3.11.3)
+=1.26.0 in ./venv/lib/python3.11/site-packages (from tensorflow) (2.3.3)
+=3.11.0 in ./venv/lib/python3.11/site-packages (from tensorflow) (3.14.0)
+=0.5.1 in ./venv/lib/python3.11/site-packages (from tensorflow) (0.5.3)
+=2 in ./venv/lib/python3.11/site-packages (from requests<3,>=2.21.0->tensorflow) (3.4.3)
+=2.5 in ./venv/lib/python3.11/site-packages (from requests<3,>=2.21.0->tensorflow) (3.10)
+=1.21.1 in ./venv/lib/python3.11/site-packages (from requests<3,>=2.21.0->tensorflow) (2.5.0)
+=2017.4.17 in ./venv/lib/python3.11/site-packages (from requests<3,>=2.21.0->tensorflow) (2025.8.3)
+=2.6.8 in ./venv/lib/python3.11/site-packages (from tensorboard~=2.20.0->tensorflow) (3.9)
+tensorflow) (11.3.0)
+=0.7.0 in ./venv/lib/python3.11/site-packages (from tensorboard~=2.20.0->tensorflow) (0.7.2)
+=1.0.1 in ./venv/lib/python3.11/site-packages (from tensorboard~=2.20.0->tensorflow) (3.1.3)
+=0.23.0 in ./venv/lib/python3.11/site-packages (from astunparse>=1.6.0->tensorflow) (0.45.1)
+=3.10.0->tensorflow) (14.1.0)
+=3.10.0->tensorflow) (0.1.0)
+=3.10.0->tensorflow) (0.17.0)
+=2.1.1 in ./venv/lib/python3.11/site-packages (from werkzeug>=1.0.1->tensorboard~=2.20.0->tensorflow) (3.0.2)
+=2.2.0 in ./venv/lib/python3.11/site-packages (from rich->keras>=3.10.0->tensorflow) (4.0.0)
+=2.13.0 in ./venv/lib/python3.11/site-packages (from rich->keras>=3.10.0->tensorflow) (2.19.2)
+=2.2.0->rich->keras>=3.10.0->tensorflow) (0.1.2)
+Requirement already satisfied: tensorflow[and-gpu] in ./venv/lib/python3.11/site-packages (2.20.0)
+[33mWARNING: tensorflow 2.20.0 does not provide the extra 'and-gpu'[0m[33m
+=1.0.0 in ./venv/lib/python3.11/site-packages (from tensorflow[and-gpu]) (2.3.1)
+=1.6.0 in ./venv/lib/python3.11/site-packages (from tensorflow[and-gpu]) (1.6.3)
+=24.3.25 in ./venv/lib/python3.11/site-packages (from tensorflow[and-gpu]) (25.9.23)
+=0.2.1 in ./venv/lib/python3.11/site-packages (from tensorflow[and-gpu]) (0.6.0)
+=0.1.1 in ./venv/lib/python3.11/site-packages (from tensorflow[and-gpu]) (0.2.0)
+=13.0.0 in ./venv/lib/python3.11/site-packages (from tensorflow[and-gpu]) (18.1.1)
+=2.3.2 in ./venv/lib/python3.11/site-packages (from tensorflow[and-gpu]) (3.4.0)
+Requirement already satisfied: packaging in ./venv/lib/python3.11/site-packages (from tensorflow[and-gpu]) (25.0)
+=5.28.0 in ./venv/lib/python3.11/site-packages (from tensorflow[and-gpu]) (6.32.1)
+=2.21.0 in ./venv/lib/python3.11/site-packages (from tensorflow[and-gpu]) (2.32.5)
+Requirement already satisfied: setuptools in ./venv/lib/python3.11/site-packages (from tensorflow[and-gpu]) (66.1.1)
+=1.12.0 in ./venv/lib/python3.11/site-packages (from tensorflow[and-gpu]) (1.17.0)
+=1.1.0 in ./venv/lib/python3.11/site-packages (from tensorflow[and-gpu]) (3.1.0)
+=3.6.6 in ./venv/lib/python3.11/site-packages (from tensorflow[and-gpu]) (4.15.0)
+=1.11.0 in ./venv/lib/python3.11/site-packages (from tensorflow[and-gpu]) (1.17.3)
+=1.24.3 in ./venv/lib/python3.11/site-packages (from tensorflow[and-gpu]) (1.75.0)
+Requirement already satisfied: tensorboard~=2.20.0 in ./venv/lib/python3.11/site-packages (from tensorflow[and-gpu]) (2.20.0)
+=3.10.0 in ./venv/lib/python3.11/site-packages (from tensorflow[and-gpu]) (3.11.3)
+=1.26.0 in ./venv/lib/python3.11/site-packages (from tensorflow[and-gpu]) (2.3.3)
+=3.11.0 in ./venv/lib/python3.11/site-packages (from tensorflow[and-gpu]) (3.14.0)
+=0.5.1 in ./venv/lib/python3.11/site-packages (from tensorflow[and-gpu]) (0.5.3)
+=2 in ./venv/lib/python3.11/site-packages (from requests<3,>=2.21.0->tensorflow[and-gpu]) (3.4.3)
+=2.5 in ./venv/lib/python3.11/site-packages (from requests<3,>=2.21.0->tensorflow[and-gpu]) (3.10)
+=1.21.1 in ./venv/lib/python3.11/site-packages (from requests<3,>=2.21.0->tensorflow[and-gpu]) (2.5.0)
+=2017.4.17 in ./venv/lib/python3.11/site-packages (from requests<3,>=2.21.0->tensorflow[and-gpu]) (2025.8.3)
+=2.6.8 in ./venv/lib/python3.11/site-packages (from tensorboard~=2.20.0->tensorflow[and-gpu]) (3.9)
+tensorflow[and-gpu]) (11.3.0)
+=0.7.0 in ./venv/lib/python3.11/site-packages (from tensorboard~=2.20.0->tensorflow[and-gpu]) (0.7.2)
+=1.0.1 in ./venv/lib/python3.11/site-packages (from tensorboard~=2.20.0->tensorflow[and-gpu]) (3.1.3)
+=0.23.0 in ./venv/lib/python3.11/site-packages (from astunparse>=1.6.0->tensorflow[and-gpu]) (0.45.1)
+=3.10.0->tensorflow[and-gpu]) (14.1.0)
+=3.10.0->tensorflow[and-gpu]) (0.1.0)
+=3.10.0->tensorflow[and-gpu]) (0.17.0)
+=2.1.1 in ./venv/lib/python3.11/site-packages (from werkzeug>=1.0.1->tensorboard~=2.20.0->tensorflow[and-gpu]) (3.0.2)
+=2.2.0 in ./venv/lib/python3.11/site-packages (from rich->keras>=3.10.0->tensorflow[and-gpu]) (4.0.0)
+=2.13.0 in ./venv/lib/python3.11/site-packages (from rich->keras>=3.10.0->tensorflow[and-gpu]) (2.19.2)
+=2.2.0->rich->keras>=3.10.0->tensorflow[and-gpu]) (0.1.2)
+#+end_example
+
+** Seeing installed packages in the enviroment
+#+begin_src shell :session *shell* :results output :exports both
+pip freeze
+#+end_src
+
+#+RESULTS:
+#+begin_example
+absl-py==2.3.1
+astunparse==1.6.3
+certifi==2025.8.3
+charset-normalizer==3.4.3
+flatbuffers==25.9.23
+gast==0.6.0
+google-pasta==0.2.0
+grpcio==1.75.0
+h5py==3.14.0
+idna==3.10
+keras==3.11.3
+libclang==18.1.1
+Markdown==3.9
+markdown-it-py==4.0.0
+MarkupSafe==3.0.2
+mdurl==0.1.2
+ml_dtypes==0.5.3
+namex==0.1.0
+numpy==2.3.3
+opt_einsum==3.4.0
+optree==0.17.0
+packaging==25.0
+pillow==11.3.0
+protobuf==6.32.1
+Pygments==2.19.2
+requests==2.32.5
+rich==14.1.0
+six==1.17.0
+tensorboard==2.20.0
+tensorboard-data-server==0.7.2
+tensorflow==2.20.0
+termcolor==3.1.0
+typing_extensions==4.15.0
+urllib3==2.5.0
+Werkzeug==3.1.3
+wrapt==1.17.3
+#+end_example
+
+The output of this command can be writen to a file (e.g. reqs.txt),
+and later be used to download all this software with:
+#+begin_src shell :results output :exports both
+pip install -r reqs.txt
+#+end_src
+
+** Checking for GPU for TensorFlow
+#+begin_src shell :session *shell* :results output :exports both
+python3 -c "import tensorflow as tf; print(tf.config.list_physical_devices('GPU'))"
+#+end_src
+
+#+RESULTS:
+: 2025-09-24 16:31:35.485518: I external/local_xla/xla/tsl/cuda/cudart_stub.cc:31] Could not find cuda drivers on your machine, GPU will not be used.
+: 2025-09-24 16:31:35.859235: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+: To enable the following instructions: AVX2 FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+: 2025-09-24 16:31:37.521262: I external/local_xla/xla/tsl/cuda/cudart_stub.cc:31] Could not find cuda drivers on your machine, GPU will not be used.
+: 2025-09-24 16:31:37.751826: E external/local_xla/xla/stream_executor/cuda/cuda_platform.cc:51] failed call to cuInit: INTERNAL: CUDA error: Failed call to cuInit: UNKNOWN ERROR (303)
+: []
+
+* Resnet Training
+:PROPERTIES:
+:header-args: :tangle train.py :tangle-mode (identity #o755)
+:END:
+** Importing the libraries
+#+begin_src python :session *P* :results output :exports both
+import tensorflow as tf
+from tensorflow.keras.datasets import cifar10
+from tensorflow.keras.utils import to_categorical
+from tensorflow.keras.applications import ResNet50
+from tensorflow.keras.models import Model
+from tensorflow.keras.layers import Dense, GlobalAveragePooling2D
+
+#print("\nVersão do TensorFlow:", tf.__version__)
+#+end_src
+
+** Setting a seed for the train
+#+begin_src python :session *P* :results output :exports both
+SEED = 1
+tf.random.set_seed(SEED)
+print("SEED number :", SEED, "\n")
+#+end_src
+
+** Load Cifar10
+#+begin_src python :session *P* :results output :exports both
+print("Loading data... \n")
+(x_train, y_train), (x_test, y_test) = cifar10.load_data()
+#+end_src
+
+** Normalize the data for a unbiased training
+#+begin_src python :session *P* :results output :exports both
+x_train = x_train.astype("float32") / 255.0
+x_test = x_test.astype("float32") / 255.0
+#+end_src
+
+** Set the class numbers
+#+begin_src python :session *P* :results output :exports both
+num_classes = 10
+y_train = to_categorical(y_train, num_classes)
+y_test = to_categorical(y_test, num_classes)
+#+end_src
+
+** Resizing the images (default resnet is made for imagenet)
+#+begin_src python :session *P* :results output :exports both
+IMG_SIZE = (224, 224)
+def resize_image(image, label):
+    image = tf.image.resize(image, IMG_SIZE)
+    return image, label
+#+end_src
+
+** Create the dataset
+#+begin_src python :session *P* :results output :exports both
+train_dataset = tf.data.Dataset.from_tensor_slices((x_train, y_train))
+test_dataset = tf.data.Dataset.from_tensor_slices((x_test, y_test))
+#+end_src
+
+** Create batchs
+#+begin_src python :session *P* :results output :exports both
+BATCH_SIZE = 32
+train_dataset = (
+    train_dataset.map(resize_image, num_parallel_calls=tf.data.AUTOTUNE)
+    .batch(BATCH_SIZE)
+    .prefetch(tf.data.AUTOTUNE)
+)
+test_dataset = (
+    test_dataset.map(resize_image, num_parallel_calls=tf.data.AUTOTUNE)
+    .batch(BATCH_SIZE)
+    .prefetch(tf.data.AUTOTUNE)
+)
+#+end_src
+
+** Build the model (ResNet50)
+#+begin_src python :session *P* :results output :exports both
+input_shape = (224, 224, 3)
+base_model = ResNet50(None, include_top=False, input_shape=input_shape)
+base_model.trainable = True
+
+x = GlobalAveragePooling2D()(base_model.output)
+x = Dense(1024, activation="relu")(x)
+predictions = Dense(num_classes, activation="softmax")(x)
+
+model = Model(inputs=base_model.input, outputs=predictions)
+#+end_src
+
+** Compiling the model
+#+begin_src python :session *P* :results output :exports both
+model.compile(optimizer="adam", loss="categorical_crossentropy", metrics=["accuracy"])
+#+end_src
+
+** Training
+#+begin_src python :session *P* :results output :exports both
+history = model.fit(train_dataset, epochs=5, validation_data=test_dataset)
+#+end_src
+
+** Evaluating the model
+#+begin_src python :session *P* :results output :exports both
+score = model.evaluate(test_dataset, verbose=0)
+print(f"Loss (perda) no teste: {score[0]:.4f}")
+print(f"Accuracy (acurácia) no teste: {score[1]:.4f}")
+#+end_src
