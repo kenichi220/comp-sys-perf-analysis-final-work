@@ -42,7 +42,7 @@ test_dataset = (
 )
 
 input_shape = (224, 224, 3)
-base_model = ResNet50(None, include_top=False, input_shape=input_shape)
+base_model = ResNet50(weights=None, include_top=False, input_shape=input_shape)
 base_model.trainable = True
 
 x = GlobalAveragePooling2D()(base_model.output)
