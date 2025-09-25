@@ -10,6 +10,7 @@ pip --version
 pip install --upgrade pip
 pip install tensorflow
 pip install tensorflow[and-gpu]
+pip install tensorflow[and-cuda]
 
 pip freeze > reqs.txt
 
