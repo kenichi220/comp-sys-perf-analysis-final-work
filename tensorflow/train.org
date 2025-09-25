@@ -165,6 +165,7 @@ from tensorflow.keras.utils import to_categorical
 from tensorflow.keras.applications import ResNet50
 from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Dense, GlobalAveragePooling2D
+from tensorflow.keras.optimizers import SGD
 
 #print("\nVersão do TensorFlow:", tf.__version__)
 #+end_src
@@ -237,9 +238,13 @@ predictions = Dense(num_classes, activation="softmax")(x)
 model = Model(inputs=base_model.input, outputs=predictions)
 #+end_src
 
+** Defining the optimizer
+#+begin_src python :session *P* :results output :exports both
+opt = SGD(learning_rate=0.01, weight_decay=0.0001, momentum=0.9)
+#+end_src
 ** Compiling the model
 #+begin_src python :session *P* :results output :exports both
-model.compile(optimizer="adam", loss="categorical_crossentropy", metrics=["accuracy"])
+model.compile(optimizer=opt, loss="categorical_crossentropy", metrics=["accuracy"])
 #+end_src
 
 ** Training

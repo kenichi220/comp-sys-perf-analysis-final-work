@@ -4,6 +4,7 @@ from tensorflow.keras.utils import to_categorical
 from tensorflow.keras.applications import ResNet50
 from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Dense, GlobalAveragePooling2D
+from tensorflow.keras.optimizers import SGD
 
 #print("\nVersão do TensorFlow:", tf.__version__)
 
@@ -51,7 +52,9 @@ predictions = Dense(num_classes, activation="softmax")(x)
 
 model = Model(inputs=base_model.input, outputs=predictions)
 
-model.compile(optimizer="adam", loss="categorical_crossentropy", metrics=["accuracy"])
+opt = SGD(learning_rate=0.01, weight_decay=0.0001, momentum=0.9)
+
+model.compile(optimizer=opt, loss="categorical_crossentropy", metrics=["accuracy"])
 
 history = model.fit(train_dataset, epochs=5, validation_data=test_dataset)
 
