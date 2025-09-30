@@ -43,7 +43,7 @@ def take_gpu_snapshot(unique_id, log_dir):
 
     command = [
         "nvidia-smi",
-        "--query-gpu=timestamp,index,gpu_name,driver_version,power.draw,temperature.gpu",
+        "--query-gpu=timestamp,index,gpu_name,driver_version,power.draw,temperature.gpu,memory.usage",
         "--format=csv",
     ]
     with open(snapshot_filepath, "w") as f:
@@ -68,7 +68,7 @@ def start_continuous_monitoring(unique_id, log_dir, interval_ms=500):
         command = [
             "nvidia-smi",
             f"--id={i}",
-            "--query-gpu=timestamp,index,power.draw,temperature.gpu",
+            "--query-gpu=timestamp,index,power.draw,temperature.gpu,memory.usage",
             "--format=csv,noheader,nounits",
             f"-lms={interval_ms}",
         ]
