@@ -6,10 +6,11 @@ from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Dense, GlobalAveragePooling2D
 from tensorflow.keras.optimizers import SGD
 
-#print("\nVersão do TensorFlow:", tf.__version__)
+# print("\nVersão do TensorFlow:", tf.__version__)
 
 import subprocess
 import os
+
 
 # retorna o numero de gpus reconhecida pelo nvidia-smi
 def get_num_gpus():
@@ -26,15 +27,18 @@ def get_num_gpus():
         num_gpus = 0
     return num_gpus
 
+
 # gera um nome unico para cada analise
 def generate_unique_id():
     result = subprocess.run(["date", "+%s"], capture_output=True, text=True)
     return result.stdout.strip()
 
+
 # simplesmente cria um diretorio para colocar os logs das gpus durante o treinamento e retorna o caminho ate o diretorio
 def setup_log_directory(dir_name="logs"):
     os.makedirs(dir_name, exist_ok=True)
     return dir_name
+
 
 # salva as informações das gpus antes do treinamento
 def take_gpu_snapshot(unique_id, log_dir):
@@ -48,6 +52,7 @@ def take_gpu_snapshot(unique_id, log_dir):
     ]
     with open(snapshot_filepath, "w") as f:
         subprocess.run(command, stdout=f, text=True)
+
 
 # roda o monitoramento em cada gpu
 def start_continuous_monitoring(unique_id, log_dir, interval_ms=500):
@@ -92,6 +97,7 @@ def stop_continuous_monitoring(processes, file_handles):
     for f in file_handles:
         f.close()
 
+
 SEED = 1
 tf.random.set_seed(SEED)
 print("SEED number :", SEED, "\n")
@@ -107,9 +113,12 @@ y_train = to_categorical(y_train, num_classes)
 y_test = to_categorical(y_test, num_classes)
 
 IMG_SIZE = (224, 224)
+
+
 def resize_image(image, label):
     image = tf.image.resize(image, IMG_SIZE)
     return image, label
+
 
 train_dataset = tf.data.Dataset.from_tensor_slices((x_train, y_train))
 test_dataset = tf.data.Dataset.from_tensor_slices((x_test, y_test))
@@ -149,6 +158,7 @@ try:
     monitor_processes, log_files = start_continuous_monitoring(
         unique_id, log_directory, interval_ms=500
     )
+    print(train_dataset)
     history = model.fit(train_dataset, epochs=5, validation_data=test_dataset)
     score = model.evaluate(test_dataset, verbose=0)
     print(f"\nLoss (perda) no teste: {score[0]:.4f}")
