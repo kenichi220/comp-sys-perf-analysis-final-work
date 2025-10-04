@@ -9,7 +9,6 @@
 :PROPERTIES:
 :header-args: :tangle create-env.sh :tangle-mode (identity #o755) :shebang "#!/usr/bin/bash"
 :END:
-
 ** Creating a virtual enviroment
 #+begin_src shell :session *shell* :results output :exports both
 python3 -m venv venv
@@ -40,9 +39,9 @@ pip --version
 ** Installing TF
 #+begin_src shell :session *shell* :results output :exports both
 pip install --upgrade pip
-pip install tensorflow
-pip install tensorflow[and-gpu]
-pip install tensorflow[and-cuda]
+pip install tensorflow==2.15.1
+pip install tensorflow[and-gpu]==2.15.1
+pip install tensorflow[and-cuda]==2.15.1
 #+end_src
 
 #+RESULTS:
@@ -378,4 +377,482 @@ try:
 
 finally:
     stop_continuous_monitoring(monitor_processes, log_files)
+#+end_src
+
+* CANCELED Distributed training with the Keras Tutorial
+CLOSED: [2025-10-02 Thu 14:18]
+# :PROPERTIES:
+# :header-args: :tangle train-minimal.py :tangle-mode (identity #o755)
+# :END:
+
+This is the distributed training example from the [[https://www.tensorflow.org/tutorials/distribute/multi_worker_with_keras][TensorFlow Official
+Documentation on Distributed Training]].
+
+First we need to import some libraries so the workers can comunicate.
+#+name: json_imports
+#+begin_src python :session *P* :tangle train-minimal-keras.py :results output :exports both
+import json
+import os
+import sys
+#+end_src
+
+Tangling the same block above for the train-single file
+#+begin_src python :session *P* :tangle train-single-keras.py :results output :exports both :noweb yes
+<<json_imports>>
+#+end_src
+
+After, we create a file called mnist_setup who will set the data and
+model for our training.
+#+begin_src python :session *P* :tangle mnist_setup-keras.py :results output :exports both
+import os
+import tensorflow as tf
+import numpy as np
+
+def mnist_dataset(batch_size):
+  (x_train, y_train), _ = tf.keras.datasets.mnist.load_data()
+  # The `x` arrays are in uint8 and have values in the [0, 255] range.
+  # You need to convert them to float32 with values in the [0, 1] range.
+  x_train = x_train / np.float32(255)
+  y_train = y_train.astype(np.int64)
+  train_dataset = tf.data.Dataset.from_tensor_slices(
+      (x_train, y_train)).shuffle(60000).repeat().batch(batch_size)
+  return train_dataset
+
+def build_and_compile_cnn_model():
+  model = tf.keras.Sequential([
+      tf.keras.layers.InputLayer(input_shape=(28, 28)),
+      tf.keras.layers.Reshape(target_shape=(28, 28, 1)),
+      tf.keras.layers.Conv2D(32, 3, activation='relu'),
+      tf.keras.layers.Flatten(),
+      tf.keras.layers.Dense(128, activation='relu'),
+      tf.keras.layers.Dense(10)
+  ])
+  model.compile(
+      loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
+      optimizer=tf.keras.optimizers.SGD(learning_rate=0.001),
+      metrics=['accuracy'])
+  return model
+#+end_src
+
+
+This create a single worker example to see if the training is working.
+[10:05:01; 02.10.2025]: Trained and working!
+#+begin_src python :session *P* :tangle train-single-keras.py :results output :exports both
+import mnist_setup
+
+batch_size = 64
+single_worker_dataset = mnist_setup.mnist_dataset(batch_size)
+single_worker_model = mnist_setup.build_and_compile_cnn_model()
+single_worker_model.fit(single_worker_dataset, epochs=3, steps_per_epoch=70)
+#+end_src
+
+#+begin_src python :session *P* :tangle train-minimal-keras.py :results output :exports both
+import tensorflow as tf
+import mnist_setup
+
+per_worker_batch_size = 64
+tf_config = json.loads(os.environ['TF_CONFIG'])
+num_workers = len(tf_config['cluster']['worker'])
+
+strategy = tf.distribute.MultiWorkerMirroredStrategy()
+
+global_batch_size = per_worker_batch_size * num_workers
+multi_worker_dataset = mnist_setup.mnist_dataset(global_batch_size)
+
+with strategy.scope():
+  # Model building/compiling need to be within `strategy.scope()`.
+  multi_worker_model = mnist_setup.build_and_compile_cnn_model()
+
+
+multi_worker_model.fit(multi_worker_dataset, epochs=3, steps_per_epoch=70)
+#+end_src
+
+[14:16:59; 02.10.2025]: The above code gives the same error about
+PerReplica type not being converted to Tensor.
+
+* DONE Distributed training with the CTL Tutorial
+CLOSED: [2025-10-02 Thu 14:51]
+- State "DONE"       from              [2025-10-02 Thu 14:51]
+# :PROPERTIES:
+# :header-args: :tangle train-minimal.py :tangle-mode (identity #o755)
+# :END:
+
+
+As the previous tutorial didnt workout for us. I will try followingg
+the example from the [[https://www.tensorflow.org/tutorials/distribute/multi_worker_with_ctl][TensorFlow Official Documentation on Distributed
+Training - Custom training loop with Keras and
+MultiWorkerMirroredStrategy]]. This is similar to the previous approach.
+
+First we need to import some libraries so the workers can comunicate.
+#+name: json_imports
+#+begin_src python :session *P* :tangle train-minimal.py :results output :exports both
+import json
+import os
+import sys
+#+end_src
+
+After, we create a file called mnist_setup who will set the data and
+model for our training.
+#+begin_src python :session *P* :tangle mnist.py :results output :exports both
+import os
+import tensorflow as tf
+import numpy as np
+
+def mnist_dataset(batch_size):
+  (x_train, y_train), _ = tf.keras.datasets.mnist.load_data()
+  # The `x` arrays are in uint8 and have values in the range [0, 255].
+  # You need to convert them to float32 with values in the range [0, 1]
+  x_train = x_train / np.float32(255)
+  y_train = y_train.astype(np.int64)
+  train_dataset = tf.data.Dataset.from_tensor_slices(
+      (x_train, y_train)).shuffle(60000)
+  return train_dataset
+
+def dataset_fn(global_batch_size, input_context):
+  batch_size = input_context.get_per_replica_batch_size(global_batch_size)
+  dataset = mnist_dataset(batch_size)
+  dataset = dataset.shard(input_context.num_input_pipelines,
+                          input_context.input_pipeline_id)
+  dataset = dataset.batch(batch_size)
+  return dataset
+
+def build_cnn_model():
+  regularizer = tf.keras.regularizers.L2(1e-5)
+  return tf.keras.Sequential([
+      tf.keras.Input(shape=(28, 28)),
+      tf.keras.layers.Reshape(target_shape=(28, 28, 1)),
+      tf.keras.layers.Conv2D(32, 3,
+                             activation='relu',
+                             kernel_regularizer=regularizer),
+      tf.keras.layers.Flatten(),
+      tf.keras.layers.Dense(128,
+                            activation='relu',
+                            kernel_regularizer=regularizer),
+      tf.keras.layers.Dense(10, kernel_regularizer=regularizer)
+  ])
+#+end_src
+
+
+Differently from the last section, here we have our own training loop,
+insted of using =model.fit=. I commented everything related to the model
+checkpoint because i think it is unnecessary.
+
+#+begin_src python :session *P* :tangle train-minimal.py :results output :exports both
+import os
+import json
+import tensorflow as tf
+import mnist
+from multiprocessing import util
+
+per_worker_batch_size = 64
+tf_config = json.loads(os.environ['TF_CONFIG'])
+num_workers = len(tf_config['cluster']['worker'])
+global_batch_size = per_worker_batch_size * num_workers
+
+num_epochs = 3
+num_steps_per_epoch=70
+
+# # Checkpoint saving and restoring
+# def _is_chief(task_type, task_id, cluster_spec):
+#   return (task_type is None
+#           or task_type == 'chief'
+#           or (task_type == 'worker'
+#               and task_id == 0
+#               and 'chief' not in cluster_spec.as_dict()))
+
+# def _get_temp_dir(dirpath, task_id):
+#   base_dirpath = 'workertemp_' + str(task_id)
+#   temp_dir = os.path.join(dirpath, base_dirpath)
+#   tf.io.gfile.makedirs(temp_dir)
+#   return temp_dir
+
+# def write_filepath(filepath, task_type, task_id, cluster_spec):
+#   dirpath = os.path.dirname(filepath)
+#   base = os.path.basename(filepath)
+#   if not _is_chief(task_type, task_id, cluster_spec):
+#     dirpath = _get_temp_dir(dirpath, task_id)
+#   return os.path.join(dirpath, base)
+
+# checkpoint_dir = os.path.join(util.get_temp_dir(), 'ckpt')
+
+
+# Define Strategy
+strategy = tf.distribute.MultiWorkerMirroredStrategy()
+
+with strategy.scope():
+  # Model building/compiling need to be within `tf.distribute.Strategy.scope`.
+  multi_worker_model = mnist.build_cnn_model()
+
+  multi_worker_dataset = strategy.distribute_datasets_from_function(
+    lambda input_context: mnist.dataset_fn(global_batch_size, input_context))
+
+  optimizer = tf.keras.optimizers.RMSprop(learning_rate=0.001)
+
+  train_accuracy = tf.keras.metrics.SparseCategoricalAccuracy(
+    name='train_accuracy')
+
+@tf.function
+def train_step(iterator):
+  """Training step function."""
+
+  def step_fn(inputs):
+    """Per-Replica step function."""
+    x, y = inputs
+    with tf.GradientTape() as tape:
+      predictions = multi_worker_model(x, training=True)
+
+      per_example_loss = tf.keras.losses.SparseCategoricalCrossentropy(
+        from_logits=True,
+        reduction=tf.keras.losses.Reduction.NONE)(y, predictions)
+
+      loss = tf.nn.compute_average_loss(per_example_loss)
+
+      model_losses = multi_worker_model.losses
+
+      if model_losses:
+        loss += tf.nn.scale_regularization_loss(tf.add_n(model_losses))
+
+    grads = tape.gradient(loss, multi_worker_model.trainable_variables)
+
+    optimizer.apply_gradients(
+      zip(grads, multi_worker_model.trainable_variables))
+
+    train_accuracy.update_state(y, predictions)
+
+    return loss
+
+  per_replica_losses = strategy.run(step_fn, args=(next(iterator),))
+
+  return strategy.reduce(
+    tf.distribute.ReduceOp.SUM, per_replica_losses, axis=None)
+
+epoch = tf.Variable(
+  initial_value=tf.constant(0, dtype=tf.dtypes.int64), name='epoch')
+
+step_in_epoch = tf.Variable(
+  initial_value=tf.constant(0, dtype=tf.dtypes.int64),
+  name='step_in_epoch')
+
+task_type, task_id, cluster_spec = (strategy.cluster_resolver.task_type,
+                                    strategy.cluster_resolver.task_id,
+                                    strategy.cluster_resolver.cluster_spec())
+
+# checkpoint = tf.train.Checkpoint(
+#   model=multi_worker_model, epoch=epoch, step_in_epoch=step_in_epoch)
+
+# write_checkpoint_dir = write_filepath(checkpoint_dir, task_type, task_id,
+#                                       cluster_spec)
+# checkpoint_manager = tf.train.CheckpointManager(
+#   checkpoint, directory=write_checkpoint_dir, max_to_keep=1)
+
+# # Restoring the checkpoint
+# latest_checkpoint = tf.train.latest_checkpoint(checkpoint_dir)
+# if latest_checkpoint:
+#   checkpoint.restore(latest_checkpoint)
+
+# Resume our CTL training
+while epoch.numpy() < num_epochs:
+  iterator = iter(multi_worker_dataset)
+  total_loss = 0.0
+  num_batches = 0
+
+  while step_in_epoch.numpy() < num_steps_per_epoch:
+    total_loss += train_step(iterator)
+    num_batches += 1
+    step_in_epoch.assign_add(1)
+
+  train_loss = total_loss / num_batches
+  print('Epoch: %d, accuracy: %f, train_loss: %f.'
+        %(epoch.numpy(), train_accuracy.result(), train_loss))
+
+  train_accuracy.reset_state()
+
+  # checkpoint_manager.save()
+  # if not _is_chief(task_type, task_id, cluster_spec):
+  #   tf.io.gfile.rmtree(write_checkpoint_dir)
+
+  epoch.assign_add(1)
+  step_in_epoch.assign(0)
+
+          #+end_src
+
+[14:42:22; 02.10.2025]: The example from the site has some outdate
+functions (small name changes and things like that).
+
+[14:45:31; 02.10.2025]: I think its now running!
+
+[14:47:08; 02.10.2025]: Ok! It worked, i think this is what made the
+program works: =strategy.distribute_datasets_from_function(lambda input_context: mnist.dataset_fn(global_batch_size, input_context))=.
+
+Here is the output and error for the run that worked:
+#+begin_src shell :results output :exports both
+tail -n +1 `ls multi_node_726049.*`
+#+end_src
+
+#+RESULTS:
+#+begin_example
+==> multi_node_726049.err <==
+2025-10-02 14:42:21.711306: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2025-10-02 14:42:21.718760: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2025-10-02 14:42:21.742640: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX2 AVX_VNNI FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2025-10-02 14:42:21.735006: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX2 AVX_VNNI FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2025-10-02 14:42:23.475987: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1759426944.130295    7487 gpu_device.cc:2020] Created device /job:localhost/replica:0/task:0/device:GPU:0 with 22282 MB memory:  -> device: 0, name: NVIDIA GeForce RTX 4090, pci bus id: 0000:01:00.0, compute capability: 8.9
+I0000 00:00:1759426944.134330    7487 gpu_device.cc:2020] Created device /job:worker/replica:0/task:0/device:GPU:0 with 22282 MB memory:  -> device: 0, name: NVIDIA GeForce RTX 4090, pci bus id: 0000:01:00.0, compute capability: 8.9
+2025-10-02 14:42:24.147453: I external/local_xla/xla/tsl/distributed_runtime/coordination/coordination_service.cc:226] Initializing CoordinationService
+I0000 00:00:1759426944.148440    7487 grpc_server_lib.cc:466] Started server with target: grpc://tupi4:29500
+2025-10-02 14:42:24.151489: I external/local_xla/xla/tsl/distributed_runtime/coordination/coordination_service.h:526] /job:worker/replica:0/task:0 has connected to coordination service. Incarnation: 4384234176783323122
+2025-10-02 14:42:24.151508: I external/local_xla/xla/tsl/distributed_runtime/coordination/coordination_service.cc:506] Waiting for 1/2 tasks to connect.
+2025-10-02 14:42:24.151512: I external/local_xla/xla/tsl/distributed_runtime/coordination/coordination_service.cc:509] Example stragglers:
+/job:worker/replica:0/task:1
+2025-10-02 14:42:24.151643: I external/local_xla/xla/tsl/distributed_runtime/coordination/coordination_service_agent.cc:344] Coordination agent has successfully connected.
+2025-10-02 14:42:24.223144: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1759426945.103552   98337 gpu_device.cc:2020] Created device /job:localhost/replica:0/task:0/device:GPU:0 with 22282 MB memory:  -> device: 0, name: NVIDIA GeForce RTX 4090, pci bus id: 0000:01:00.0, compute capability: 8.9
+I0000 00:00:1759426945.107390   98337 gpu_device.cc:2020] Created device /job:worker/replica:0/task:1/device:GPU:0 with 22282 MB memory:  -> device: 0, name: NVIDIA GeForce RTX 4090, pci bus id: 0000:01:00.0, compute capability: 8.9
+I0000 00:00:1759426945.121694   98337 grpc_server_lib.cc:466] Started server with target: grpc://tupi5:29500
+2025-10-02 14:42:25.123928: I external/local_xla/xla/tsl/distributed_runtime/coordination/coordination_service.h:526] /job:worker/replica:0/task:1 has connected to coordination service. Incarnation: 10086738663052207094
+2025-10-02 14:42:25.123941: I external/local_xla/xla/tsl/distributed_runtime/coordination/coordination_service.cc:506] Waiting for 0/2 tasks to connect.
+2025-10-02 14:42:25.124256: I external/local_xla/xla/tsl/distributed_runtime/coordination/coordination_service_agent.cc:344] Coordination agent has successfully connected.
+2025-10-02 14:42:25.125009: I external/local_xla/xla/tsl/distributed_runtime/coordination/coordination_service.cc:1414] Barrier(WaitForAllTasks::496470713347872003::0) has passed with status: OK
+2025-10-02 14:42:28.666402: I external/local_xla/xla/stream_executor/cuda/cuda_dnn.cc:473] Loaded cuDNN version 91300
+2025-10-02 14:42:28.797746: I external/local_xla/xla/stream_executor/cuda/cuda_dnn.cc:473] Loaded cuDNN version 91300
+
+==> multi_node_726049.out <==
+=================================================================
+Date: Thu Oct  2 02:42:21 PM -03 2025
+Submission Host: tupi4
+Submission Directory: /home/users/rrdmatos/perf/tensorflow
+Allocated Nodes: tupi[4-5]
+Number of Nodes: 2
+=================================================================
+Activate venv ---- add create venv if not has been exist
+Create TF_CONFIG
+Starting distributed training with srun...
+Host: tupi5 | Rank (PROCID): 1 | TF_CONFIG: {
+    "cluster": {
+        "worker": ["tupi4:29500","tupi5:29500"]
+    },
+    "task": {
+        "type": "worker",
+        "index": 1
+    }
+}
+Host: tupi4 | Rank (PROCID): 0 | TF_CONFIG: {
+    "cluster": {
+        "worker": ["tupi4:29500","tupi5:29500"]
+    },
+    "task": {
+        "type": "worker",
+        "index": 0
+    }
+}
+Epoch: 0, accuracy: 0.819978, train_loss: 0.580099.
+Epoch: 1, accuracy: 0.929353, train_loss: 0.248108.
+Epoch: 2, accuracy: 0.949888, train_loss: 0.171732.
+Epoch: 0, accuracy: 0.819978, train_loss: 0.580099.
+Epoch: 1, accuracy: 0.929353, train_loss: 0.248108.
+Epoch: 2, accuracy: 0.949888, train_loss: 0.171732.
+Training completed.
+#+end_example
+
+* Going back to model fit
+
+As i think using model fit is way easier then creating a training loop
+by myself, i will try to, based on the success of the previous try,
+make the model.fit work.
+
+The example here is from [[https://www.tensorflow.org/api_docs/python/tf/distribute/MultiWorkerMirroredStrategy][TensorFlow Official Documentation for the MultiWorkerMirroredStrategy strategy]].
+
+First we need to import some libraries so the workers can comunicate.
+#+name: json_imports
+#+begin_src python :session *P* :tangle train-minimal-fit.py :results output :exports both
+import json
+import os
+import sys
+import tensorflow as tf
+import numpy as np
+
+per_worker_batch_size = 64
+tf_config = json.loads(os.environ['TF_CONFIG'])
+num_workers = len(tf_config['cluster']['worker'])
+#+end_src
+
+#+begin_src python :session *P* :results output :exports both
+strategy = tf.distribute.MultiWorkerMirroredStrategy()
+
+with strategy.scope():
+  model = tf.keras.Sequential([
+    tf.keras.layers.Dense(2, input_shape=(5,)),
+  ])
+  optimizer = tf.keras.optimizers.SGD(learning_rate=0.1)
+
+def dataset_fn(ctx):
+  x = np.random.random((2, 5)).astype(np.float32)
+  y = np.random.randint(2, size=(2, 1))
+  dataset = tf.data.Dataset.from_tensor_slices((x, y))
+
+  return dataset.repeat().batch(1, drop_remainder=True)
+
+dist_dataset = strategy.distribute_datasets_from_function(dataset_fn)
+
+model.compile()
+model.fit(dist_dataset)
+#+end_src
+
+[15:01:04; 02.10.2025]: The same error with convertion again.
+
+I will try using a experimental configuration from the strategy =
+=experimental_distribute_dataset=.
+
+#+begin_src python :session *P* :results output :exports both
+strategy = tf.distribute.MultiWorkerMirroredStrategy()
+
+with strategy.scope():
+  model = tf.keras.Sequential([
+    tf.keras.layers.Dense(2, input_shape=(5,)),
+  ])
+  optimizer = tf.keras.optimizers.SGD(learning_rate=0.1)
+
+x = np.random.random((2, 5)).astype(np.float32)
+y = np.random.randint(2, size=(2, 1))
+dataset = tf.data.Dataset.from_tensor_slices((x, y))
+dist_dataset = strategy.experimental_distribute_dataset(dataset)
+
+model.compile()
+model.fit(dist_dataset)
+#+end_src
+
+[15:16:37; 02.10.2025]: Trying using AI to help
+
+#+begin_src python :session *P* :results output :tangle train-minimal-fit.py :exports both
+strategy = tf.distribute.MultiWorkerMirroredStrategy()
+
+with strategy.scope():
+  model = tf.keras.Sequential([
+    tf.keras.layers.Dense(2, input_shape=(5,)),
+  ])
+
+  optimizer = tf.keras.optimizers.SGD(learning_rate=0.1)
+
+  loss_fn = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True)
+
+  model.compile(optimizer=optimizer, loss=loss_fn, metrics=['accuracy'])
+
+def dataset_fn(ctx):
+  x = np.random.random((2, 5)).astype(np.float32)
+  y = np.random.randint(2, size=(2, 1))
+  dataset = tf.data.Dataset.from_tensor_slices((x, y))
+
+  return dataset.repeat().batch(1, drop_remainder=True)
+
+
+dist_dataset = strategy.distribute_datasets_from_function(dataset_fn)
+
+print(dist_dataset)
+
+model.fit(dist_dataset, epochs=3, steps_per_epoch=10)
 #+end_src

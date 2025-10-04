@@ -8,9 +8,9 @@ python3 --version
 pip --version
 
 pip install --upgrade pip
-pip install tensorflow
-pip install tensorflow[and-gpu]
-pip install tensorflow[and-cuda]
+pip install tensorflow==2.15.1
+pip install tensorflow[and-gpu]==2.15.1
+pip install tensorflow[and-cuda]==2.15.1
 
 pip freeze > reqs.txt
 

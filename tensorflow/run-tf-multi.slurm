@@ -54,7 +54,7 @@ export TF_CONFIG
 
 echo \"Host: \$(hostname) | Rank (PROCID): \${SLURM_PROCID} | TF_CONFIG: \${TF_CONFIG}\"
 
-python /home/users/kbrumati/comp-sys-perf-analysis-final-work/tensorflow/train.py
+python /home/users/rrdmatos/perf/tensorflow/train-parallel.py
 "
 
 echo "Starting distributed training with srun..."
