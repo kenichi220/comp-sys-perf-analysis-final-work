@@ -19,12 +19,6 @@ echo "================================================================="
 ################################
 # Change to working directory
 ################################
-cd $SCRATCH
-
-cd comp-sys-perf-analysis-final-work/tensorflow || { git clone git@github.com:kenichi220/comp-sys-perf-analysis-final-work.git ; cd comp-sys-perf-analysis-final-work/tensorflow ; ./create-env.sh ; }
-
-echo "Activate venv ---- add create venv if not has been exist"
-source venv/bin/activate
 
 echo "Create TF_CONFIG"
 nodes=$(scontrol show hostnames $SLURM_JOB_NODELIST)
@@ -40,6 +34,12 @@ worker_list=${worker_list%,}
 
 
 CMD="
+cd $SCRATCH
+cd comp-sys-perf-analysis-final-work/tensorflow || { git clone git@github.com:kenichi220/comp-sys-perf-analysis-final-work.git ; cd comp-sys-perf-analysis-final-work/tensorflow ; ./create-env.sh ; }
+
+echo "Activate venv ---- add create venv if not has been exist"
+source venv/bin/activate
+
 TF_CONFIG=\$(cat <<EOF
 {
     \"cluster\": {
@@ -57,6 +57,8 @@ export TF_CONFIG
 echo \"Host: \$(hostname) | Rank (PROCID): \${SLURM_PROCID} | TF_CONFIG: \${TF_CONFIG}\"
 
 python train-parallel.py
+
+cp -r $SCRATCH/comp-sys-perf-analysis-final-work/tensorflow/logs/* ~/logs
 "
 
 echo "Starting distributed training with srun..."
@@ -64,5 +66,3 @@ echo "Starting distributed training with srun..."
 srun --export=ALL bash -c "$CMD"
 
 echo "Training completed."
-
-cp -r $SCRATCH/comp-sys-perf-analysis-final-work/tensorflow/logs/* ~/logs
