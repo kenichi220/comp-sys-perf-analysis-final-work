@@ -96,8 +96,9 @@ def stop_continuous_monitoring(processes, file_handles):
 unique_id = generate_unique_id()
 log_directory = setup_log_directory(dir_name = "logs")
 tf.debugging.set_log_device_placement(True)
-c_options=tf.distribute.experimental.CommunicationOptions(implementation=tf.distribute.experimental.CommunicationImplementation.NCCL)
-strategy = tf.distribute.MultiWorkerMirroredStrategy(communication_options=c_options)
+#c_options=tf.distribute.experimental.CommunicationOptions(implementation=tf.distribute.experimental.CommunicationImplementation.NCCL)
+#strategy = tf.distribute.MultiWorkerMirroredStrategy(communication_options=c_options)
+strategy = tf.distribute.MultiWorkerMirroredStrategy()
 
 tf_config_str = os.environ.get('TF_CONFIG', '{}')
 tf_config = json.loads(tf_config_str)
