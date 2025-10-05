@@ -7,7 +7,7 @@ from tensorflow.keras.layers import Dense, GlobalAveragePooling2D
 from tensorflow.keras.optimizers import SGD
 import os
 import json
-
+import time 
 import subprocess
 import os
 
@@ -179,8 +179,13 @@ with strategy.scope():
 try:
     monitor_processes,log_files = start_continuous_monitoring(unique_id,log_directory,50)
     print("Iniciando o treinamento distribuído...")
+    
+    start_train_time = time.perf_counter()
     history = model.fit(train_dataset, epochs=5, validation_data=test_dataset)
+    close_train_time = time.perf_counter()
 
+    duration_seconds = close_train_time - start_train_time
+    
     if worker_id == 0:
         print("\nIniciando avaliação final no worker 0...")
         score = model.evaluate(test_dataset, verbose=1)
@@ -189,4 +194,5 @@ try:
 finally:
     stop_continuous_monitoring(monitor_processes,log_files)
 
+print("TIME TRAINING:", duracao_segundos)
 print(f"\nWorker {worker_id} concluiu.")
