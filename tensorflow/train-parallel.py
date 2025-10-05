@@ -177,7 +177,7 @@ with strategy.scope():
     take_gpu_snapshot(unique_id,log_directory)
     monitor_processes,log_files = [],[]
 try:
-    monitor_processes,log_files = start_continuous_monitoring(unique_id,log_directory)
+    monitor_processes,log_files = start_continuous_monitoring(unique_id,log_directory,50)
     print("Iniciando o treinamento distribuído...")
     history = model.fit(train_dataset, epochs=5, validation_data=test_dataset)
 
