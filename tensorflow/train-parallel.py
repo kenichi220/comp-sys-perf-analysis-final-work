@@ -185,14 +185,14 @@ try:
     close_train_time = time.perf_counter()
 
     duration_seconds = close_train_time - start_train_time
-    
+
+    score = model.evaluate(test_dataset, verbose=(1 if worker_id == 0 else 0))
     if worker_id == 0:
         print("\nIniciando avaliação final no worker 0...")
-        score = model.evaluate(test_dataset, verbose=1)
         print(f"Loss (perda) no teste: {score[0]:.4f}")
         print(f"Accuracy (acurácia) no teste: {score[1]:.4f}")
 finally:
     stop_continuous_monitoring(monitor_processes,log_files)
 
-print("TIME TRAINING:", duracao_segundos)
+print("TIME TRAINING:", duration_seconds)
 print(f"\nWorker {worker_id} concluiu.")
