@@ -8,7 +8,6 @@ from tensorflow.keras.layers import Dense, GlobalAveragePooling2D
 from tensorflow.keras.optimizers import SGD
 import os
 import json
-import libs
 
 import subprocess
 import os
@@ -177,12 +176,11 @@ with tf.device('/GPU:0'):
         opt = SGD(learning_rate=SCALED_LEARNING_RATE, weight_decay=0.0001, momentum=0.9)
 
         model.compile(optimizer=opt, loss="categorical_crossentropy", metrics=["accuracy"])
-
+    
         take_gpu_snapshot(unique_id,log_directory)
         monitor_processes,log_files = [],[]
     try:
         print("Iniciando o treinamento distribuído...")
-
         history = model.fit(train_dataset, epochs=5, validation_data=test_dataset)
 
         if worker_id == 0:
