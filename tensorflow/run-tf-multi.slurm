@@ -19,7 +19,9 @@ echo "================================================================="
 ################################
 # Change to working directory
 ################################
-cd ~/comp-sys-perf-analysis-final-work/tensorflow || { echo "Failed to enter working directory"; exit 1; }
+cd $SCRATCH
+
+cd comp-sys-perf-analysis-final-work/tensorflow || { echo "Failed to enter working directory"; exit 1; }
 
 echo "Activate venv ---- add create venv if not has been exist"
 source venv/bin/activate
@@ -54,7 +56,7 @@ export TF_CONFIG
 
 echo \"Host: \$(hostname) | Rank (PROCID): \${SLURM_PROCID} | TF_CONFIG: \${TF_CONFIG}\"
 
-python /home/users/rrdmatos/perf/tensorflow/train-parallel.py
+python train-ctl.py
 "
 
 echo "Starting distributed training with srun..."
