@@ -33,13 +33,33 @@ done
 worker_list=${worker_list%,}
 
 
-CMD="
+srun --export=ALL bash -c '
+# This block of code is executed by each Slurm task on its respective node
+echo "--- Running setup on $(hostname) ---"
 cd $SCRATCH
-cd comp-sys-perf-analysis-final-work/tensorflow || { git clone git@github.com:kenichi220/comp-sys-perf-analysis-final-work.git ; cd comp-sys-perf-analysis-final-work/tensorflow ; ./create-env.sh ; }
 
-echo "Activate venv ---- add create venv if not has been exist"
-source venv/bin/activate
+REPO_DIR="comp-sys-perf-analysis-final-work"
+if [ ! -d "$REPO_DIR" ]; then
+    echo "Directory not found on $(hostname). Cloning repository..."
+    git clone https://github.com/kenichi220/comp-sys-perf-analysis-final-work.git
+else
+    echo "Repository directory already exists on $(hostname)."
+fi
 
+cd $REPO_DIR/tensorflow
+
+if [ ! -d "venv" ]; then
+    echo "Virtual environment not found on $(hostname). Creating..."
+    ./create-env.sh
+else
+    echo "Virtual environment already exists on $(hostname)."
+fi
+echo "--- Setup on $(hostname) complete ---"
+'
+
+scontrol show hostnames $SLURM_JOB_NODELIST > /dev/null && echo "All nodes finished setup."
+
+CMD="
 TF_CONFIG=\$(cat <<EOF
 {
     \"cluster\": {
