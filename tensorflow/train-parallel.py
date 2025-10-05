@@ -129,10 +129,11 @@ IMG_SIZE = (224, 224)
 def resize_image(image, label):
     image = tf.image.resize(image, IMG_SIZE)
     return image, label
-
-BATCH_SIZE_PER_REPLICA = 80
+GLOBAL_BATCH_SIZE = 128
+#BATCH_SIZE_PER_REPLICA = 128
 NUM_WORKERS = strategy.num_replicas_in_sync
-GLOBAL_BATCH_SIZE = BATCH_SIZE_PER_REPLICA * NUM_WORKERS
+BATCH_SIZE_PER_REPLICA = GLOBAL_BATCH_SIZE/NUM_WORKERS
+#GLOBAL_BATCH_SIZE = BATCH_SIZE_PER_REPLICA * NUM_WORKERS
 
 print(f"Número total de workers (réplicas): {NUM_WORKERS}")
 print(f"Batch size por worker: {BATCH_SIZE_PER_REPLICA}")
