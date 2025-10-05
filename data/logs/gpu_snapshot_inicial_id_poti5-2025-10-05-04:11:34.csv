@@ -1,0 +1,2 @@
+timestamp, index, name, driver_version, utilization.gpu [%], memory.total [MiB], memory.used [MiB], power.draw [W], temperature.gpu, clocks.current.graphics [MHz], clocks.current.sm [MHz], clocks.current.memory [MHz]
+2025/10/05 04:11:39.771, 0, NVIDIA GeForce RTX 4070, 550.54.15, 0 %, 12282 MiB, 10468 MiB, 27.02 W, 43, 2490 MHz, 2490 MHz, 10251 MHz
