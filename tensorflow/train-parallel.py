@@ -29,14 +29,9 @@ def get_num_gpus():
     return num_gpus
 
 
-def get_host_name():
-    hostname = subprocess.run("hostname", capture_output=True, text=True)
-    return hostname.stdout.strip()
-
-
 # gera um nome unico para cada analise
 def generate_unique_id():
-    command = 'echo "hostname-date +%x-date +%T.csv"'
+    command = 'echo "`hostname`-`date +%x`-`date +%T`.csv"'
     result = subprocess.run(command, capture_output=True, text=True)
     return result.stdout.strip()
 
@@ -48,29 +43,29 @@ def setup_log_directory(dir_name="logs"):
 
 
 # salva as informações das gpus antes do treinamento
-def take_gpu_snapshot(hostname, unique_id, log_dir):
-    filename = f"{hostname}-{unique_id}"
+def take_gpu_snapshot(unique_id, log_dir):
+    filename = f"{unique_id}"
     snapshot_filepath = os.path.join(log_dir, filename)
 
     command = [
         "nvidia-smi",
-        "--query-gpu=timestamp,index,gpu_name,driver_version,power.draw,temperature.gpu,memory.usage",
         "--format=csv",
+        "--query-gpu=timestamp,index,gpu_name,driver_version,utilization.gpu,memory.total,memory.used,power.draw,temperature.gpu"
     ]
     with open(snapshot_filepath, "w") as f:
         subprocess.run(command, stdout=f, text=True)
 
 
 # roda o monitoramento em cada gpu
-def start_continuous_monitoring(hostname, unique_id, log_dir, interval_ms=500):
+def start_continuous_monitoring(unique_id, log_dir, interval_ms=500):
     processes = []
     file_handles = []
 
-    csv_header = "timestamp,gpu_index,power.draw,temperature.gpu\n"
+    # csv_header = "timestamp,gpu_index,power.draw,temperature.gpu\n"
 
     num_gpus = get_num_gpus()
     for i in range(num_gpus):
-        filename = f"monitoramento-{hostname}-{unique_id}"
+        filename = f"monitoramento-{unique_id}"
         monitoring_filepath = os.path.join(log_dir, filename)
 
         log_file = open(monitoring_filepath, "w")
@@ -80,8 +75,8 @@ def start_continuous_monitoring(hostname, unique_id, log_dir, interval_ms=500):
         command = [
             "nvidia-smi",
             f"--id={i}",
-            "--query-gpu=timestamp,index,power.draw,temperature.gpu,memory.usage",
-            "--format=csv,noheader,nounits",
+            "--format=csv",
+            "--query-gpu=timestamp,index,gpu_name,driver_version,utilization.gpu,memory.total,memory.used,power.draw,temperature.gpu",
             f"-lms={interval_ms}",
         ]
 
@@ -105,7 +100,6 @@ def stop_continuous_monitoring(processes, file_handles):
         f.close()
 
 
-hostname = get_host_name()
 unique_id = generate_unique_id()
 log_directory = setup_log_directory(dir_name="logs")
 tf.debugging.set_log_device_placement(True)
@@ -204,11 +198,11 @@ with strategy.scope():
 
     model.compile(optimizer=opt, loss="categorical_crossentropy", metrics=["accuracy"])
 
-    take_gpu_snapshot(hostname, unique_id, log_directory)
+    take_gpu_snapshot(unique_id, log_directory)
     monitor_processes, log_files = [], []
 try:
     print("Iniciando o treinamento distribuído...")
-    monitor_processes, log_files = start_continuous_monitoring(hostname, unique_id, 500)
+    monitor_processes, log_files = start_continuous_monitoring(unique_id, 500)
     history = model.fit(train_dataset, epochs=5, validation_data=test_dataset)
 
     if worker_id == 0:
