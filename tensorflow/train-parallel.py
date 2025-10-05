@@ -29,7 +29,7 @@ def get_num_gpus():
 # gera um nome unico para cada analise
 
 def generate_unique_id():
-    command = 'echo "`hostname`-`date +%x`-`date +%T`"'
+    command = 'echo "`hostname`-`date +%F`-`date +%T`"'
     result = subprocess.run(command, capture_output=True, text=True, shell=True)
     return result.stdout.strip()
 
