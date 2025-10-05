@@ -1,10 +1,10 @@
 #!/bin/bash -l
 
 #SBATCH --job-name=multi_node
-#SBATCH --partition=poti
+#SBATCH --partition=tupi
 #SBATCH --output=%x_%j.out
 #SBATCH --error=%x_%j.err
-#SBATCH --nodes=2
+#SBATCH --nodes=3
 #SBATCH --ntasks-per-node=1
 #SBATCH --gpus-per-task=1
 #SBATCH --time=06:00:00
@@ -21,7 +21,7 @@ echo "================================================================="
 ################################
 cd $SCRATCH
 
-cd comp-sys-perf-analysis-final-work/tensorflow || { echo "Failed to enter working directory"; exit 1; }
+cd comp-sys-perf-analysis-final-work/tensorflow || { git clone git@github.com:kenichi220/comp-sys-perf-analysis-final-work.git ; cd comp-sys-perf-analysis-final-work/tensorflow ; ./create-env.sh ; }
 
 echo "Activate venv ---- add create venv if not has been exist"
 source venv/bin/activate
@@ -56,7 +56,7 @@ export TF_CONFIG
 
 echo \"Host: \$(hostname) | Rank (PROCID): \${SLURM_PROCID} | TF_CONFIG: \${TF_CONFIG}\"
 
-python train-ctl.py
+python train-parallel.py
 "
 
 echo "Starting distributed training with srun..."
@@ -64,3 +64,5 @@ echo "Starting distributed training with srun..."
 srun --export=ALL bash -c "$CMD"
 
 echo "Training completed."
+
+cp -r $SCRATCH/comp-sys-perf-analysis-final-work/tensorflow/logs/* ~/logs
