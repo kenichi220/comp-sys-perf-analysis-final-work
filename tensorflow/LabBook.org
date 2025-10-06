@@ -1,0 +1,393 @@
+#+STARTUP: content
+#+STARTUP: overview
+#+STARTUP: indent
+#+TITLE: TensorFlow Results
+#+AUTHOR: Rayan Raddatz de Matos, Marcelo Gulart, Kenichi Brumati
+
+* Load data
+
+Data is in the data directory:
+#+begin_src shell :session *shell* :results output :exports both
+ls --color=never ..
+pwd ..
+#+end_src
+
+#+RESULTS:
+: ai-env	KB-notes.org  meetings.org  presentations  README.org  RR-notes.org
+: data	manifest.scm  paper	    Pytorch	   references  tensorflow
+: /home/rayan/graduation/estudos/perf/final/tensorflow
+
+#+begin_src R :results output :session *R* :exports both
+options(crayon.enabled=FALSE)
+suppressMessages(library(fs))
+suppressMessages(library(tidyverse))
+suppressMessages(library(janitor))
+suppressMessages(library(dplyr))
+suppressMessages(library(lubridate))
+
+BASE="./data"
+tibble(CSV = dir_ls(BASE, regexp = "csv$", recurse=TRUE)) |>
+  filter(!str_detect(CSV, ":")) |>
+  filter(!str_detect(CSV, "ep")) |>
+  mutate(DATA = map(CSV, read_csv, progress=FALSE, show_col_types = FALSE)) |>
+  separate(CSV, into=paste0("XX", 1:5), sep="/")  |>
+  separate(XX5, into=paste0("YY", 1:2), sep="_") |>
+  mutate(type=XX4) |> #|>
+  mutate(machine = gsub("\\.csv", "", YY2)) |>
+  mutate(machine = gsub("\\-.*", "", machine)) |>
+  rowid_to_column("id") |>
+  select(id, type, machine, DATA) |>
+  unnest(DATA) |>  clean_names() |>
+  mutate(
+    timestamp_fixed = str_replace(timestamp, "(\\d{4}/\\d{2}/\\d{2})", "\\1 "),
+    timestamp = ymd_hms(timestamp_fixed)
+  ) |>
+  group_by(id, type, machine) |>
+  mutate(
+    elapsed_seconds = as.numeric(timestamp - min(timestamp))
+  ) |>
+  ungroup() |> select(elapsed_seconds, everything()) -> df
+
+## df
+names(df)
+df |> select(type) |> distinct()
+#+end_src
+
+#+RESULTS:
+#+begin_example
+ [1] "elapsed_seconds"         "id"                      "type"
+ [4] "machine"                 "timestamp"               "index"
+ [7] "name"                    "driver_version"          "utilization_gpu"
+[10] "memory_total"            "memory_used"             "power_draw"
+[13] "temperature_gpu"         "clocks_current_graphics" "clocks_current_sm"
+[16] "clocks_current_memory"   "timestamp_fixed"
+# A tibble: 3 × 1
+  type
+  <chr>
+1 node
+2 nodes2
+3 nodes3
+#+end_example
+
+#+begin_src R :results output :session *R* :exports both
+names(df)
+df |> select(power_draw)
+#+end_src
+
+#+RESULTS:
+#+begin_example
+ [1] "timestamp"               "index"                   "name"
+ [4] "driver_version"          "utilization_gpu"         "memory_total"
+ [7] "memory_used"             "power_draw"              "temperature_gpu"
+[10] "clocks_current_graphics" "clocks_current_sm"       "clocks_current_memory"
+[13] "timestamp_fixed"         "machine"
+# A tibble: 57,260 × 1
+   power_draw
+        <dbl>
+ 1       54.1
+ 2       54.1
+ 3       54.1
+ 4       54.2
+ 5       54.2
+ 6       54.2
+ 7       54.2
+ 8       54.2
+ 9       54.2
+10       54.2
+# ℹ 57,250 more rows
+# ℹ Use `print(n = ...)` to see more rows
+#+end_example
+
+* Graphs style
+#+begin_src R :results output :session *R* :exports both
+
+meu_estilo <- function() {
+  list(
+    theme_bw(base_size = 20),
+    theme(
+      legend.title = element_blank(),
+      plot.margin = unit(c(0, 0, 0, 0), "cm"),
+      legend.spacing = unit(1, "mm"),
+      legend.position = "right",
+      legend.justification = "left",
+      legend.box.spacing = unit(0, "pt"),
+      legend.box.margin = margin(0, 0, 0, 0),
+      axis.text.x = element_text(angle=45, vjust=1, hjust=1)
+    ))
+}
+#+end_src
+
+#+RESULTS:
+
+* GPU usage
+** ONE NODE: GPU usage
+
+#+begin_src R :results output graphics file :file (org-babel-temp-file "figure" ".png") :exports both :width 600 :height 400 :session *R*
+df |> filter(type=="node") |> group_split(id) |> first() |>
+  ggplot(aes(x = elapsed_seconds, y = utilization_gpu)) +
+  # Only include the geom_line() layer for a line chart
+  geom_line(color = "black", linewidth = 1) +
+  labs(
+    title = "GPU Utilization (1 Node)",
+    x = "TimeStamp",
+    y = "GPU Utilization (%)"
+  ) + meu_estilo() +
+  facet_wrap(~ machine)
+
+ggsave(
+  filename = "time-one-machine.png",
+  device = png,
+  width=20,
+  heigh=10
+)
+#+end_src
+
+#+RESULTS:
+[[file:/tmp/babel-P5m5UD/figureTAvIx5.png]]
+
+** TWO NODES: GPU usage
+
+#+begin_src R :results output graphics file :file (org-babel-temp-file "figure" ".png") :exports both :width 600 :height 400 :session *R*
+df |> filter(type=="nodes2") |>
+  ggplot(aes(x = elapsed_seconds, y = utilization_gpu)) +
+  # Only include the geom_line() layer for a line chart
+  geom_line(color = "black", linewidth = 0.1) +
+  labs(
+    title = "GPU Utilization (2 Nodes)",
+    x = "TimeStamp",
+    y = "GPU Utilization (%)"
+  ) + meu_estilo() +
+  facet_grid(. ~ machine)
+
+ggsave(
+  filename = "time-two-machine.png",
+  device = png,
+  width=20,
+  heigh=10
+)
+#+end_src
+
+#+RESULTS:
+[[file:/tmp/babel-P5m5UD/figurerUgDFK.png]]
+
+** THREE NODES: GPU usage
+
+#+begin_src R :results output graphics file :file (org-babel-temp-file "figure" ".png") :exports both :width 600 :height 400 :session *R*
+df |> filter(type=="nodes3") |>
+  ggplot(aes(x = elapsed_seconds, y = utilization_gpu)) +
+  # Only include the geom_line() layer for a line chart
+  geom_line(color = "black", linewidth = 0.1) +
+  labs(
+    title = "GPU Utilization (3 Nodes)",
+    x = "TimeStamp",
+    y = "GPU Utilization (%)"
+  ) + meu_estilo() +
+  facet_grid(. ~ machine)
+
+ggsave(
+  filename = "time-three-machine.png",
+  device = png,
+  width=20,
+  heigh=10
+)
+#+end_src
+
+#+RESULTS:
+[[file:/tmp/babel-P5m5UD/figure4CRaYi.png]]
+
+*** One machine of the train of 3 nodes
+
+#+begin_src R :results output graphics file :file (org-babel-temp-file "figure" ".png") :exports both :width 600 :height 400 :session *R*
+df |> filter(type=="nodes3")  |> group_split(id) |> first() |>
+  ggplot(aes(x = elapsed_seconds, y = utilization_gpu)) +
+  # Only include the geom_line() layer for a line chart
+  geom_line(color = "black", linewidth = 0.1) +
+  labs(
+    title = "GPU Utilization (3 Nodes)",
+    x = "TimeStamp",
+    y = "GPU Utilization (%)"
+  ) + meu_estilo() +
+  facet_grid(. ~ machine)
+
+ggsave(
+  filename = "time-three-machine-one-machine.pdf",
+  device = pdf,
+  width=20,
+  heigh=10
+)
+#+end_src
+
+#+RESULTS:
+[[file:/tmp/babel-P5m5UD/figureKDRUiz.png]]
+
+** GPU USAGE FOR RANGE
+#+begin_src R :results output graphics file :file  (org-babel-temp-file "figure" ".png") :exports both :width 600 :height 400 :session *R*
+
+start_time <- 6480
+end_time   <- 6540
+
+df |> filter(type=="nodes3") |> group_split(id) |> first() |>
+  ggplot(aes(x = elapsed_seconds, y = utilization_gpu)) +
+  geom_line(color = "black", linewidth = 1) +
+  labs(
+    title = "One minute around the penultimate epoch (3 Nodes)",
+    x = "Time",
+    y = "GPU Utilization (%)"
+  ) +
+  meu_estilo() +
+   coord_cartesian(
+    xlim = c(start_time, end_time)
+  ) + facet_wrap(~ machine)
+
+ggsave(
+  filename = "time-three-node.png",
+  device = png,
+  width=20,
+  heigh=10
+)
+#+end_src
+
+#+RESULTS:
+[[file:/tmp/babel-P5m5UD/figureCV30Im.png]]
+
+* Energy
+** Energy
+#+begin_src R :results output graphics file :file (org-babel-temp-file "figure" ".png") :exports both :width 1200 :height 800 :session *R*
+
+start_time <- 1130
+end_time   <- 1190
+
+df |> filter(type=="nodes3") |> group_split(id) |> first() |>
+  mutate(
+    # Calculate time difference in seconds since the last measurement
+    time_diff_secs = as.numeric(timestamp - lag(timestamp)),
+    # Calculate average power in the interval for better accuracy
+    avg_power_w = (power_draw + lag(power_draw)) / 2,
+    # Calculate energy for the interval (Joules = Watts * seconds)
+    energy = avg_power_w * time_diff_secs
+  ) |>
+  filter(!is.na(energy)) |>
+#  group_split(id) |> first() |>
+  ggplot(aes(x = elapsed_seconds, y = energy)) +
+    geom_line(color = "dodgerblue", linewidth = 0.5) +
+  labs(
+    title = "GPU energy usage on one minute around the penultimate epoch (2 Node)",
+    x = "Time",
+    y = "Energy"
+  ) +
+  meu_estilo() + facet_wrap(~ machine) +
+     coord_cartesian(
+    xlim = c(start_time, end_time)
+  ) +
+  scale_y_continuous(limits = c(0, NA)) # Ensure y-axis starts at 0
+
+ggsave(
+  filename = "energy-two-machine-range.png",
+  device = png
+)
+#+end_src
+
+#+RESULTS:
+[[file:/tmp/babel-P5m5UD/figureh5YWtk.png]]
+* Temperature
+** Temp
+#+begin_src R :results output graphics file :file (org-babel-temp-file "figure" ".png") :exports both :width 1200 :height 800 :session *R*
+
+start_time <- 1130
+end_time   <- 1190
+
+df |> filter(type=="nodes3") |> #group_split(id) |> first() |>
+
+  ggplot(aes(x = elapsed_seconds, y = temperature_gpu)) +
+    geom_line(color = "red", linewidth = 0.5) +
+  labs(
+    title = "GPU energy usage on one minute around the penultimate epoch (2 Node)",
+    x = "Time",
+    y = "Energy"
+  ) +
+  meu_estilo() + facet_wrap(~ machine) +
+     coord_cartesian(
+    xlim = c(start_time, end_time)
+  ) +
+  scale_y_continuous(limits = c(0, NA)) # Ensure y-axis starts at 0
+
+ggsave(
+  filename = "energy-two-machine-range.png",
+  device = png
+)
+#+end_src
+
+#+RESULTS:
+[[file:/tmp/babel-P5m5UD/figurez1CFuj.png]]
+
+* Epoch info
+** Load epochs data
+#+begin_src R :results output :session *R* :exports both
+options(crayon.enabled=FALSE)
+suppressMessages(library(fs))
+suppressMessages(library(tidyverse))
+suppressMessages(library(janitor))
+suppressMessages(library(dplyr))
+suppressMessages(library(lubridate))
+
+BASE="./data"
+tibble(CSV = dir_ls(BASE, regexp = "csv$", recurse=TRUE)) |>
+  filter(str_detect(CSV, "epoch")) |>
+  mutate(DATA = map(CSV, read_csv, progress=FALSE, show_col_types = FALSE)) |>
+  separate(CSV, into=paste0("XX", 1:5), sep="/") |>
+  separate(XX5, into=paste0("YY", 1:2), sep="-") |>
+  mutate(nodes = gsub("\\.csv", "", YY2)) |>
+  select(nodes, DATA) |>
+  unnest(DATA) |> clean_names() |>
+  group_by(nodes) |> mutate(cumulative_time = cumsum(time)) |>
+  ungroup() -> epochs
+
+names(epochs)
+epochs
+#+end_src
+
+#+RESULTS:
+#+begin_example
+[1] "nodes"           "epoch"           "time"            "loss"            "accuracy"
+[6] "cumulative_time"
+# A tibble: 15 × 6
+   nodes epoch  time  loss accuracy cumulative_time
+   <chr> <dbl> <dbl> <dbl>    <dbl>           <dbl>
+ 1 one       1   130 1.70     0.390             130
+ 2 one       2    89 1.50     0.494             219
+ 3 one       3    89 1.75     0.518             308
+ 4 one       4    89 1.11     0.631             397
+ 5 one       5    89 1.06     0.650             486
+ 6 two       1   324 2.00     0.277             324
+ 7 two       2   277 1.39     0.489             601
+ 8 two       3   277 1.12     0.592             878
+ 9 two       4   277 0.914    0.671            1155
+10 two       5   279 0.75     0.733            1434
+11 three     1  1666 2.17     0.238            1666
+12 three     2  1618 1.54     0.417            3284
+13 three     3  1620 1.30     0.518            4904
+14 three     4  1619 1.09     0.603            6523
+15 three     5  1620 0.923    0.668            8143
+#+end_example
+
+** Quering per epoch info
+#+begin_src R :results output graphics file :file (org-babel-temp-file "figure" ".png") :exports both :width 1200 :height 800 :session *R*
+epochs |>
+  ggplot(aes(x = epoch, y = loss, color=nodes, group=nodes)) +
+  geom_point(size = 5) +
+  geom_line(linewidth = 2) +
+  labs(
+    title = "Training accuracy",
+    x = "Epoch",
+    y = "Accuracy"
+  ) +
+  meu_estilo() #+ #facet_wrap(~ nodes) +
+
+## ggsave(
+##   filename = "accuracy-for-epoch.png",
+##   device = png
+## )
+#+end_src
+
+#+RESULTS:
+[[file:/tmp/babel-P5m5UD/figuregVUIOd.png]]
