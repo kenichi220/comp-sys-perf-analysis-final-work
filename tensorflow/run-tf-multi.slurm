@@ -20,6 +20,8 @@ echo "================================================================="
 # Change to working directory
 ################################
 
+mkdir -p ~/logs
+
 echo "Create TF_CONFIG"
 nodes=$(scontrol show hostnames $SLURM_JOB_NODELIST)
 nodes_array=($nodes)
