@@ -7,9 +7,18 @@ from tensorflow.keras.optimizers import SGD
 import os
 import json
 import time
+from datetime import datetime
 import subprocess
 import pathlib
 import pandas as pd
+
+log_dir = "logs/profile/" + datetime.now().strftime("%Y%m%d-%H%M%S")
+
+# 1. Create the TensorBoard callback
+tensorboard_callback = tf.keras.callbacks.TensorBoard(
+    log_dir=log_dir,
+    profile_batch='100,105'  # Profile batches 100 through 105
+)
 
 def get_num_gpus():
     try:
@@ -86,17 +95,17 @@ def load_tiny_imagenet_datasets(data_path, num_classes):
 
     val_annotations_path = val_path / 'val_annotations.txt'
     val_data = pd.read_csv(val_annotations_path, sep='\t', header=None, names=['File', 'Class', 'X1', 'Y1', 'X2', 'Y2'])
-    
+
     class_names = sorted(os.listdir(train_path))
     class_to_idx = {name: index for index, name in enumerate(class_names)}
-    
+
     val_images = [str(val_path / 'images' / fname) for fname in val_data['File']]
     val_labels_str = val_data['Class'].values
     val_labels_int = [class_to_idx[name] for name in val_labels_str]
     val_labels_cat = to_categorical(val_labels_int, num_classes=num_classes)
-    
+
     val_dataset = tf.data.Dataset.from_tensor_slices((val_images, val_labels_cat))
-    
+
     def parse_image(filename, label):
         image = tf.io.read_file(filename)
         image = tf.image.decode_jpeg(image, channels=3)
@@ -108,7 +117,7 @@ def load_tiny_imagenet_datasets(data_path, num_classes):
 
 SEED = 1
 IMG_SIZE = (224, 224)
-BATCH_SIZE_PER_REPLICA = 256
+BATCH_SIZE_PER_REPLICA = 96
 NUM_CLASSES = 200
 NUM_TRAIN_IMAGES = 100000
 
@@ -126,8 +135,7 @@ print(f"Worker ID: {worker_id}")
 
 print("Carregando o dataset Tiny ImageNet de um diretório local...")
 
-
-tiny_imagenet_path = pathlib.Path('/home/users/mcogulart/tiny-imagenet/tiny-imagenet-200')
+tiny_imagenet_path = pathlib.Path('/scratch/rrdmatos/tiny-imagenet-200')
 
 train_dataset, test_dataset = load_tiny_imagenet_datasets(tiny_imagenet_path, NUM_CLASSES)
 
@@ -146,13 +154,13 @@ print(f"Batch size global (total): {GLOBAL_BATCH_SIZE}\n")
 options = tf.data.Options()
 options.experimental_distribute.auto_shard_policy = tf.data.experimental.AutoShardPolicy.DATA
 
-train_dataset = train_dataset.map(preprocess_image, num_parallel_calls=tf.data.AUTOTUNE)
+train_dataset = train_dataset.map(preprocess_image, num_parallel_calls=40)# tf.data.AUTOTUNE)
 train_dataset = train_dataset.with_options(options)
-train_dataset = train_dataset.shuffle(NUM_TRAIN_IMAGES, seed=SEED).batch(GLOBAL_BATCH_SIZE).prefetch(tf.data.AUTOTUNE)
+train_dataset = train_dataset.shuffle(NUM_TRAIN_IMAGES, seed=SEED).batch(GLOBAL_BATCH_SIZE).prefetch(100)#.prefetch(tf.data.AUTOTUNE)
 
-test_dataset = test_dataset.map(preprocess_image, num_parallel_calls=tf.data.AUTOTUNE)
+test_dataset = test_dataset.map(preprocess_image, num_parallel_calls=40)#tf.data.AUTOTUNE)
 test_dataset = test_dataset.with_options(options)
-test_dataset = test_dataset.batch(GLOBAL_BATCH_SIZE).prefetch(tf.data.AUTOTUNE)
+test_dataset = test_dataset.batch(GLOBAL_BATCH_SIZE).prefetch(100)#.prefetch(tf.data.AUTOTUNE)
 
 with strategy.scope():
     input_shape = (224, 224, 3)
@@ -178,9 +186,9 @@ duration_seconds = 0
 try:
     monitor_processes, log_files = start_continuous_monitoring(unique_id, log_directory, 500)
     print("Iniciando o treinamento distribuído...")
-    
+
     start_train_time = time.perf_counter()
-    history = model.fit(train_dataset, epochs=5, validation_data=test_dataset)
+    history = model.fit(train_dataset, epochs=5, validation_data=test_dataset, callbacks=[tensorboard_callback])
     close_train_time = time.perf_counter()
 
     duration_seconds = close_train_time - start_train_time
