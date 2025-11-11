@@ -17,7 +17,8 @@ log_dir = "logs/profile/" + datetime.now().strftime("%Y%m%d-%H%M%S")
 # 1. Create the TensorBoard callback
 tensorboard_callback = tf.keras.callbacks.TensorBoard(
     log_dir=log_dir,
-    profile_batch='100,105'  # Profile batches 100 through 105
+    histogram_freq=1,
+    profile_batch='2,10'  # Profile batches 100 through 105
 )
 
 def get_num_gpus():
@@ -121,8 +122,8 @@ BATCH_SIZE_PER_REPLICA = 96
 NUM_CLASSES = 200
 NUM_TRAIN_IMAGES = 100000
 
-unique_id = generate_unique_id()
-log_directory = setup_log_directory(dir_name="logs")
+# unique_id = generate_unique_id()
+# log_directory = setup_log_directory(dir_name="logs")
 tf.random.set_seed(SEED)
 
 strategy = tf.distribute.MultiWorkerMirroredStrategy()
@@ -154,13 +155,17 @@ print(f"Batch size global (total): {GLOBAL_BATCH_SIZE}\n")
 options = tf.data.Options()
 options.experimental_distribute.auto_shard_policy = tf.data.experimental.AutoShardPolicy.DATA
 
-train_dataset = train_dataset.map(preprocess_image, num_parallel_calls=40)# tf.data.AUTOTUNE)
+train_dataset = train_dataset.map(preprocess_image, num_parallel_calls=tf.data.AUTOTUNE)
 train_dataset = train_dataset.with_options(options)
-train_dataset = train_dataset.shuffle(NUM_TRAIN_IMAGES, seed=SEED).batch(GLOBAL_BATCH_SIZE).prefetch(100)#.prefetch(tf.data.AUTOTUNE)
+train_dataset = train_dataset.shuffle(NUM_TRAIN_IMAGES, seed=SEED)
+train_dataset = train_dataset.batch(GLOBAL_BATCH_SIZE)
+train_dataset = train_dataset.prefetch(tf.data.AUTOTUNE)
+train_dataset = train_dataset.cache()
 
-test_dataset = test_dataset.map(preprocess_image, num_parallel_calls=40)#tf.data.AUTOTUNE)
+test_dataset = test_dataset.map(preprocess_image, num_parallel_calls=tf.data.AUTOTUNE)
+test_dataset = test_dataset.cache()
 test_dataset = test_dataset.with_options(options)
-test_dataset = test_dataset.batch(GLOBAL_BATCH_SIZE).prefetch(100)#.prefetch(tf.data.AUTOTUNE)
+test_dataset = test_dataset.batch(GLOBAL_BATCH_SIZE).prefetch(tf.data.AUTOTUNE)
 
 with strategy.scope():
     input_shape = (224, 224, 3)
@@ -180,11 +185,11 @@ with strategy.scope():
 
     model.compile(optimizer=opt, loss="categorical_crossentropy", metrics=["accuracy"])
 
-take_gpu_snapshot(unique_id, log_directory)
-monitor_processes, log_files = [], []
+# take_gpu_snapshot(unique_id, log_directory)
+# monitor_processes, log_files = [], []
 duration_seconds = 0
 try:
-    monitor_processes, log_files = start_continuous_monitoring(unique_id, log_directory, 500)
+    # monitor_processes, log_files = start_continuous_monitoring(unique_id, log_directory, 500)
     print("Iniciando o treinamento distribuído...")
 
     start_train_time = time.perf_counter()
@@ -199,7 +204,8 @@ try:
         print(f"Loss (perda) no teste: {score[0]:.4f}")
         print(f"Accuracy (acurácia) no teste: {score[1]:.4f}")
 finally:
-    stop_continuous_monitoring(monitor_processes, log_files)
+    pass
+    # stop_continuous_monitoring(monitor_processes, log_files)
 
 print("TIME TRAINING:", duration_seconds)
 print(f"\nWorker {worker_id} concluiu.")
