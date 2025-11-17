@@ -250,6 +250,7 @@ print(f"Batch size global (total): {GLOBAL_BATCH_SIZE}\n")
 Here is where the dataset is loaded, its needed to optimize this to
 the parallel environment.
 
+https://www.tensorflow.org/guide/data_performance
 #+begin_src python :session *P* :results output :exports both
 def load_tiny_imagenet_datasets(data_path, num_classes):
     train_path = data_path / 'train'
