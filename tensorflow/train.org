@@ -1,858 +1,742 @@
 #+STARTUP: content
 #+STARTUP: overview
 #+STARTUP: indent
-#+STARTUP: latexpreview
-#+TITLE: TensorFlow training explained
+#+TITLE: DL parallel training
 #+AUTHOR: Rayan Raddatz de Matos
 
-* Enviroment Configuration
+* Installation requirements
 :PROPERTIES:
 :header-args: :tangle create-env.sh :tangle-mode (identity #o755) :shebang "#!/usr/bin/bash"
 :END:
-** Creating a virtual enviroment
-#+begin_src shell :session *shell* :results output :exports both
+** Create venv
+
+#+begin_src shell :results output :exports both
 python3 -m venv venv
-#+end_src
 
-#+RESULTS:
-
-** Activating the enviroment
-#+begin_src shell :session *shell* :results output :exports both
 . venv/bin/activate
-which python3
-#+end_src
+which python
 
-#+RESULTS:
-:
-: /home/rayan/graduation/estudos/perf/final/tensorflow/venv/bin/python3
-
-** Checking Python and PIP versions
-#+begin_src shell :session *shell* :results output :exports both
 python3 --version
 pip --version
 #+end_src
 
 #+RESULTS:
+: /home/rayan/graduation/estudos/perf/final/tensorflow/venv/bin/python
 : Python 3.11.2
 : pip 25.2 from /home/rayan/graduation/estudos/perf/final/tensorflow/venv/lib/python3.11/site-packages/pip (python 3.11)
 
-** Installing TF
-#+begin_src shell :session *shell* :results output :exports both
+** Install packages
+
+With the previous virtual environment activated, install the required
+packages. Also freeze to save the exact used versions.
+
+#+begin_src shell :results output :exports both
 pip install --upgrade pip
 pip install tensorflow==2.15.1
 pip install tensorflow[and-gpu]==2.15.1
 pip install tensorflow[and-cuda]==2.15.1
-#+end_src
+pip install pandas # By default already installed, but need for poti for an unknow reason
 
-#+RESULTS:
-#+begin_example
-Requirement already satisfied: pip in ./venv/lib/python3.11/site-packages (25.2)
-Requirement already satisfied: tensorflow in ./venv/lib/python3.11/site-packages (2.20.0)
-=1.0.0 in ./venv/lib/python3.11/site-packages (from tensorflow) (2.3.1)
-=1.6.0 in ./venv/lib/python3.11/site-packages (from tensorflow) (1.6.3)
-=24.3.25 in ./venv/lib/python3.11/site-packages (from tensorflow) (25.9.23)
-=0.2.1 in ./venv/lib/python3.11/site-packages (from tensorflow) (0.6.0)
-=0.1.1 in ./venv/lib/python3.11/site-packages (from tensorflow) (0.2.0)
-=13.0.0 in ./venv/lib/python3.11/site-packages (from tensorflow) (18.1.1)
-=2.3.2 in ./venv/lib/python3.11/site-packages (from tensorflow) (3.4.0)
-Requirement already satisfied: packaging in ./venv/lib/python3.11/site-packages (from tensorflow) (25.0)
-=5.28.0 in ./venv/lib/python3.11/site-packages (from tensorflow) (6.32.1)
-=2.21.0 in ./venv/lib/python3.11/site-packages (from tensorflow) (2.32.5)
-Requirement already satisfied: setuptools in ./venv/lib/python3.11/site-packages (from tensorflow) (66.1.1)
-=1.12.0 in ./venv/lib/python3.11/site-packages (from tensorflow) (1.17.0)
-=1.1.0 in ./venv/lib/python3.11/site-packages (from tensorflow) (3.1.0)
-=3.6.6 in ./venv/lib/python3.11/site-packages (from tensorflow) (4.15.0)
-=1.11.0 in ./venv/lib/python3.11/site-packages (from tensorflow) (1.17.3)
-=1.24.3 in ./venv/lib/python3.11/site-packages (from tensorflow) (1.75.0)
-Requirement already satisfied: tensorboard~=2.20.0 in ./venv/lib/python3.11/site-packages (from tensorflow) (2.20.0)
-=3.10.0 in ./venv/lib/python3.11/site-packages (from tensorflow) (3.11.3)
-=1.26.0 in ./venv/lib/python3.11/site-packages (from tensorflow) (2.3.3)
-=3.11.0 in ./venv/lib/python3.11/site-packages (from tensorflow) (3.14.0)
-=0.5.1 in ./venv/lib/python3.11/site-packages (from tensorflow) (0.5.3)
-=2 in ./venv/lib/python3.11/site-packages (from requests<3,>=2.21.0->tensorflow) (3.4.3)
-=2.5 in ./venv/lib/python3.11/site-packages (from requests<3,>=2.21.0->tensorflow) (3.10)
-=1.21.1 in ./venv/lib/python3.11/site-packages (from requests<3,>=2.21.0->tensorflow) (2.5.0)
-=2017.4.17 in ./venv/lib/python3.11/site-packages (from requests<3,>=2.21.0->tensorflow) (2025.8.3)
-=2.6.8 in ./venv/lib/python3.11/site-packages (from tensorboard~=2.20.0->tensorflow) (3.9)
-tensorflow) (11.3.0)
-=0.7.0 in ./venv/lib/python3.11/site-packages (from tensorboard~=2.20.0->tensorflow) (0.7.2)
-=1.0.1 in ./venv/lib/python3.11/site-packages (from tensorboard~=2.20.0->tensorflow) (3.1.3)
-=0.23.0 in ./venv/lib/python3.11/site-packages (from astunparse>=1.6.0->tensorflow) (0.45.1)
-=3.10.0->tensorflow) (14.1.0)
-=3.10.0->tensorflow) (0.1.0)
-=3.10.0->tensorflow) (0.17.0)
-=2.1.1 in ./venv/lib/python3.11/site-packages (from werkzeug>=1.0.1->tensorboard~=2.20.0->tensorflow) (3.0.2)
-=2.2.0 in ./venv/lib/python3.11/site-packages (from rich->keras>=3.10.0->tensorflow) (4.0.0)
-=2.13.0 in ./venv/lib/python3.11/site-packages (from rich->keras>=3.10.0->tensorflow) (2.19.2)
-=2.2.0->rich->keras>=3.10.0->tensorflow) (0.1.2)
-Requirement already satisfied: tensorflow[and-gpu] in ./venv/lib/python3.11/site-packages (2.20.0)
-[33mWARNING: tensorflow 2.20.0 does not provide the extra 'and-gpu'[0m[33m
-=1.0.0 in ./venv/lib/python3.11/site-packages (from tensorflow[and-gpu]) (2.3.1)
-=1.6.0 in ./venv/lib/python3.11/site-packages (from tensorflow[and-gpu]) (1.6.3)
-=24.3.25 in ./venv/lib/python3.11/site-packages (from tensorflow[and-gpu]) (25.9.23)
-=0.2.1 in ./venv/lib/python3.11/site-packages (from tensorflow[and-gpu]) (0.6.0)
-=0.1.1 in ./venv/lib/python3.11/site-packages (from tensorflow[and-gpu]) (0.2.0)
-=13.0.0 in ./venv/lib/python3.11/site-packages (from tensorflow[and-gpu]) (18.1.1)
-=2.3.2 in ./venv/lib/python3.11/site-packages (from tensorflow[and-gpu]) (3.4.0)
-Requirement already satisfied: packaging in ./venv/lib/python3.11/site-packages (from tensorflow[and-gpu]) (25.0)
-=5.28.0 in ./venv/lib/python3.11/site-packages (from tensorflow[and-gpu]) (6.32.1)
-=2.21.0 in ./venv/lib/python3.11/site-packages (from tensorflow[and-gpu]) (2.32.5)
-Requirement already satisfied: setuptools in ./venv/lib/python3.11/site-packages (from tensorflow[and-gpu]) (66.1.1)
-=1.12.0 in ./venv/lib/python3.11/site-packages (from tensorflow[and-gpu]) (1.17.0)
-=1.1.0 in ./venv/lib/python3.11/site-packages (from tensorflow[and-gpu]) (3.1.0)
-=3.6.6 in ./venv/lib/python3.11/site-packages (from tensorflow[and-gpu]) (4.15.0)
-=1.11.0 in ./venv/lib/python3.11/site-packages (from tensorflow[and-gpu]) (1.17.3)
-=1.24.3 in ./venv/lib/python3.11/site-packages (from tensorflow[and-gpu]) (1.75.0)
-Requirement already satisfied: tensorboard~=2.20.0 in ./venv/lib/python3.11/site-packages (from tensorflow[and-gpu]) (2.20.0)
-=3.10.0 in ./venv/lib/python3.11/site-packages (from tensorflow[and-gpu]) (3.11.3)
-=1.26.0 in ./venv/lib/python3.11/site-packages (from tensorflow[and-gpu]) (2.3.3)
-=3.11.0 in ./venv/lib/python3.11/site-packages (from tensorflow[and-gpu]) (3.14.0)
-=0.5.1 in ./venv/lib/python3.11/site-packages (from tensorflow[and-gpu]) (0.5.3)
-=2 in ./venv/lib/python3.11/site-packages (from requests<3,>=2.21.0->tensorflow[and-gpu]) (3.4.3)
-=2.5 in ./venv/lib/python3.11/site-packages (from requests<3,>=2.21.0->tensorflow[and-gpu]) (3.10)
-=1.21.1 in ./venv/lib/python3.11/site-packages (from requests<3,>=2.21.0->tensorflow[and-gpu]) (2.5.0)
-=2017.4.17 in ./venv/lib/python3.11/site-packages (from requests<3,>=2.21.0->tensorflow[and-gpu]) (2025.8.3)
-=2.6.8 in ./venv/lib/python3.11/site-packages (from tensorboard~=2.20.0->tensorflow[and-gpu]) (3.9)
-tensorflow[and-gpu]) (11.3.0)
-=0.7.0 in ./venv/lib/python3.11/site-packages (from tensorboard~=2.20.0->tensorflow[and-gpu]) (0.7.2)
-=1.0.1 in ./venv/lib/python3.11/site-packages (from tensorboard~=2.20.0->tensorflow[and-gpu]) (3.1.3)
-=0.23.0 in ./venv/lib/python3.11/site-packages (from astunparse>=1.6.0->tensorflow[and-gpu]) (0.45.1)
-=3.10.0->tensorflow[and-gpu]) (14.1.0)
-=3.10.0->tensorflow[and-gpu]) (0.1.0)
-=3.10.0->tensorflow[and-gpu]) (0.17.0)
-=2.1.1 in ./venv/lib/python3.11/site-packages (from werkzeug>=1.0.1->tensorboard~=2.20.0->tensorflow[and-gpu]) (3.0.2)
-=2.2.0 in ./venv/lib/python3.11/site-packages (from rich->keras>=3.10.0->tensorflow[and-gpu]) (4.0.0)
-=2.13.0 in ./venv/lib/python3.11/site-packages (from rich->keras>=3.10.0->tensorflow[and-gpu]) (2.19.2)
-=2.2.0->rich->keras>=3.10.0->tensorflow[and-gpu]) (0.1.2)
-#+end_example
-
-** Seeing installed packages in the enviroment
-
-Saving packages to file named =reqs.txt=
-#+begin_src shell :session *shell* :results output :exports both
 pip freeze > reqs.txt
 #+end_src
 
 #+RESULTS:
 
-The output of this command can be writen to a file (e.g. reqs.txt),
-and later be used to download all this software with:
-=pip install -r reqs.txt=
+** Verify installation
 
-** Checking for GPU for TensorFlow
-#+begin_src shell :session *shell* :results output :exports both
+Verify if TensorFlow is working and print the requirements.
+
+#+begin_src shell :results output :exports both
 python3 -c "import tensorflow as tf; print(tf.config.list_physical_devices('GPU'))"
+cat reqs.txt
 #+end_src
 
 #+RESULTS:
-: 2025-09-24 16:31:35.485518: I external/local_xla/xla/tsl/cuda/cudart_stub.cc:31] Could not find cuda drivers on your machine, GPU will not be used.
-: 2025-09-24 16:31:35.859235: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
-: To enable the following instructions: AVX2 FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
-: 2025-09-24 16:31:37.521262: I external/local_xla/xla/tsl/cuda/cudart_stub.cc:31] Could not find cuda drivers on your machine, GPU will not be used.
-: 2025-09-24 16:31:37.751826: E external/local_xla/xla/stream_executor/cuda/cuda_platform.cc:51] failed call to cuInit: INTERNAL: CUDA error: Failed call to cuInit: UNKNOWN ERROR (303)
-: []
+#+begin_example
+appdirs==1.4.4
+arandr==0.1.11
+asciinema==2.2.0
+attrs==22.2.0
+beautifulsoup4==4.11.2
+beniget==0.4.1
+blinker==1.9.0
+Brlapi==0.8.4
+Brotli==1.0.9
+certifi==2025.8.3
+cffi==2.0.0
+chardet==5.1.0
+charset-normalizer==3.4.3
+click==8.2.1
+contourpy==1.0.7
+crit==3.17.1
+cryptography==38.0.4
+cupshelpers==1.0
+cycler==0.11.0
+dblatex==0.3.12
+dbus-python==1.3.2
+decorator==5.1.1
+Deprecated==1.2.18
+distro==1.8.0
+distro-info==1.5+deb12u1
+docker==5.0.3
+docker-compose==1.29.2
+dockerpty==0.4.1
+docopt==0.6.2
+epc==0.0.5
+exif==1.6.1
+Flask==3.1.2
+fonttools==4.38.0
+fs==2.4.16
+gast==0.5.2
+giturlparse==0.12.0
+gpg==1.18.0
+gyp==0.1
+html5lib==1.1
+httplib2==0.20.4
+idna==3.3
+itsdangerous==2.2.0
+Jinja2==3.1.6
+jsonpointer==2.3
+jsonschema==4.10.3
+kiwisolver==0.0.0
+lazr.restfulclient==0.14.5
+lazr.uri==1.0.6
+louis==3.24.0
+lxml==6.0.1
+lz4==4.0.2+dfsg
+MarkupSafe==3.0.2
+matplotlib==3.6.3
+mercurial==6.3.2
+meson==1.0.1
+mpmath==0.0.0
+mutagen==1.47.0
+networkx==2.8.8
+numpy==2.3.3
+oauthlib==3.2.2
+olefile==0.46
+packaging==23.0
+pillow==11.3.0
+plum-py==0.8.7
+ply==3.11
+protobuf==4.21.12
+psutil==7.0.0
+pyasn1==0.6.1
+pycairo==1.20.1
+pycparser==2.23
+pycryptodome==3.23.0
+pycups==2.0.1
+pycurl==7.45.6
+pygit2==1.18.2
+Pygments==2.19.2
+PyGObject==3.42.2
+PyJWT==2.6.0
+pyparsing==3.0.9
+pypinyin==0.55.0
+pypng==0.20220715.0
+PyQt6==6.5.0
+PyQt6-Qt6==6.5.0
+PyQt6-WebEngine==6.5.0
+PyQt6-WebEngine-Qt6==6.5.0
+PyQt6_sip==13.10.2
+pyrsistent==0.18.1
+PySimpleSOAP==1.16.2
+pysmbc==1.0.23
+PySocks==1.7.1
+pytaglib==3.0.1
+python-apt==2.6.0
+python-dateutil==2.8.2
+python-debian==0.1.49
+python-debianbts==4.0.1
+python-dotenv==0.21.0
+python_tsp==0.5.0
+pythran==0.11.0
+pytz==2022.7.1
+pywal==3.3.0
+pyxdg==0.28
+PyYAML==6.0
+qrcode==7.4.2
+reportbug==12.0.0
+requests==2.32.5
+rfc3987==1.3.8
+rsa==4.9.1
+scipy==1.10.1
+SCons==4.4.0
+sexpdata==1.0.0
+six==1.16.0
+soupsieve==2.3.2
+sympy==1.11.1
+tabulate==0.8.10
+texttable==1.6.7
+tld==0.13.1
+tsplib95==0.7.1
+typing_extensions==4.4.0
+ufoLib2==0.14.0
+unidiff==0.7.5
+uritemplate==4.1.1
+urllib3==1.26.12
+wadllib==1.3.6
+webcolors==1.11.1
+webencodings==0.5.1
+websocket-client==1.2.3
+Werkzeug==3.1.3
+wrapt==1.17.3
+xdg==5
+xdot==1.2
+#+end_example
 
-* Resnet Training
+* Synchronous parallel training
 :PROPERTIES:
-:header-args: :tangle train.py :tangle-mode (identity #o755)
+:header-args: :tangle train-sync.py :tangle-mode (identity #o755)
 :END:
-** Importing the tensorflow libraries
+** Libraries
+Needed libraries
+
 #+begin_src python :session *P* :results output :exports both
 import tensorflow as tf
-from tensorflow.keras.datasets import cifar10
 from tensorflow.keras.utils import to_categorical
 from tensorflow.keras.applications import ResNet50
 from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Dense, GlobalAveragePooling2D
 from tensorflow.keras.optimizers import SGD
-
-#print("\nVersão do TensorFlow:", tf.__version__)
-#+end_src
-** Defining functions to get gpu info (nvidia-smi)
-*** Libraries
-#+begin_src python :session *P* :results output :exports both
-
-import subprocess
 import os
-
+import json
+import time
+from datetime import datetime
+import pathlib
+import pandas as pd
 #+end_src
 
-*** Getting the numbers of GPUS
+** TensorFlow Callbacks
+
 #+begin_src python :session *P* :results output :exports both
+log_dir = "logs/profile/" + datetime.now().strftime("%Y%m%d-%H%M%S")
 
-# retorna o numero de gpus reconhecida pelo nvidia-smi
-def get_num_gpus():
-    try:
-        count_result = subprocess.run(
-            ["nvidia-smi", "--query-gpu=count", "--format=csv,noheader"],
-            capture_output=True,
-            text=True,
-            check=True,
-        )
-        num_gpus = int(count_result.stdout.strip())
-    except (subprocess.CalledProcessError, FileNotFoundError, ValueError):
-        print("Nenhuma GPU foi detectada. O monitoramento não será iniciado.")
-        num_gpus = 0
-    return num_gpus
-
+tensorboard_callback = tf.keras.callbacks.TensorBoard(
+    log_dir=log_dir,
+    histogram_freq=1,
+    profile_batch='2,10'  # Profile batches 100 through 105
+)
 #+end_src
 
-*** Creating a unique id for the analysis
+** Hyper parameters and configurations (cluster and training)
+
+Here are the run configurations but also the " tf config" configurations
 #+begin_src python :session *P* :results output :exports both
+strategy = tf.distribute.MultiWorkerMirroredStrategy()
+tf_config_str = os.environ.get('TF_CONFIG', '{}')
+tf_config = json.loads(tf_config_str)
+task_info = tf_config.get('task', {})
+worker_id = task_info.get('index', 0)
 
-
-# gera um nome unico para cada analise
-def generate_unique_id():
-    result = subprocess.run(["date", "+%s"], capture_output=True, text=True)
-    return result.stdout.strip()
-
-#+end_src
-
-*** Create a dir for the logs
-#+begin_src python :session *P* :results output :exports both
-# simplesmente cria um diretorio para colocar os logs das gpus durante o treinamento e retorna o caminho ate o diretorio
-def setup_log_directory(dir_name="logs"):
-    os.makedirs(dir_name, exist_ok=True)
-    return dir_name
-
-#+end_src
-
-*** GPU Snapshot before training
-
-#+begin_src python :session *P* :results output :exports both
-# salva as informações das gpus antes do treinamento
-def take_gpu_snapshot(unique_id, log_dir):
-    filename = f"gpu_snapshot_inicial_id_{unique_id}.csv"
-    snapshot_filepath = os.path.join(log_dir, filename)
-
-    command = [
-        "nvidia-smi",
-        "--query-gpu=timestamp,index,gpu_name,driver_version,power.draw,temperature.gpu,memory.usage",
-        "--format=csv",
-    ]
-    with open(snapshot_filepath, "w") as f:
-        subprocess.run(command, stdout=f, text=True)
-
-#+end_src
-
-*** Functions to start and end the monitoring
-#+begin_src python :session *P* :results output :exports both
-# roda o monitoramento em cada gpu
-def start_continuous_monitoring(unique_id, log_dir, interval_ms=500):
-    processes = []
-    file_handles = []
-
-    csv_header = "timestamp,gpu_index,power.draw,temperature.gpu\n"
-
-    num_gpus = get_num_gpus()
-    for i in range(num_gpus):
-        filename = f"gpu_monitoramento_{unique_id}_gpu_{i}.csv"
-        monitoring_filepath = os.path.join(log_dir, filename)
-
-        log_file = open(monitoring_filepath, "w")
-        log_file.write(csv_header)
-        log_file.flush()
-
-        command = [
-            "nvidia-smi",
-            f"--id={i}",
-            "--query-gpu=timestamp,index,power.draw,temperature.gpu,memory.usage",
-            "--format=csv,noheader,nounits",
-            f"-lms={interval_ms}",
-        ]
-
-        process = subprocess.Popen(
-            command, stdout=log_file, text=True, stderr=subprocess.DEVNULL
-        )
-        processes.append(process)
-        file_handles.append(log_file)
-
-    return processes, file_handles
-
-
-# encerra o monitoramento
-def stop_continuous_monitoring(processes, file_handles):
-    for process in processes:
-        if process.poll() is None:
-            process.terminate()
-            process.wait()
-
-    for f in file_handles:
-        f.close()
-
-#+end_src
-
-** Setting a seed for the train
-#+begin_src python :session *P* :results output :exports both
 SEED = 1
-tf.random.set_seed(SEED)
-print("SEED number :", SEED, "\n")
-#+end_src
-
-** Load Cifar10
-#+begin_src python :session *P* :results output :exports both
-print("Loading data... \n")
-(x_train, y_train), (x_test, y_test) = cifar10.load_data()
-#+end_src
-
-** Normalize the data for a unbiased training
-#+begin_src python :session *P* :results output :exports both
-x_train = x_train.astype("float32") / 255.0
-x_test = x_test.astype("float32") / 255.0
-#+end_src
-
-** Set the class numbers
-#+begin_src python :session *P* :results output :exports both
-num_classes = 10
-y_train = to_categorical(y_train, num_classes)
-y_test = to_categorical(y_test, num_classes)
-#+end_src
-
-** Resizing the images (default resnet is made for imagenet)
-#+begin_src python :session *P* :results output :exports both
 IMG_SIZE = (224, 224)
-def resize_image(image, label):
+EPOCHS = 5
+BATCH_SIZE_PER_REPLICA = 96
+NUM_CLASSES = 200
+NUM_TRAIN_IMAGES = 100000
+
+tf.random.set_seed(SEED)
+
+NUM_WORKERS = strategy.num_replicas_in_sync
+GLOBAL_BATCH_SIZE = BATCH_SIZE_PER_REPLICA * NUM_WORKERS
+
+print(f"Worker ID: {worker_id}")
+print(f"Número total de workers (réplicas): {NUM_WORKERS}")
+print(f"Batch size por worker: {BATCH_SIZE_PER_REPLICA}")
+print(f"Batch size global (total): {GLOBAL_BATCH_SIZE}\n")
+#+end_src
+
+** TODO Dataset load and config
+Here is where the dataset is loaded, its needed to optimize this to
+the parallel environment.
+
+#+begin_src python :session *P* :results output :exports both
+def load_tiny_imagenet_datasets(data_path, num_classes):
+    train_path = data_path / 'train'
+    val_path = data_path / 'val'
+
+    train_dataset = tf.keras.utils.image_dataset_from_directory(
+        train_path,
+        labels='inferred',
+        label_mode='categorical',
+        image_size=(64, 64),
+        interpolation='nearest',
+        batch_size=None,
+        shuffle=False
+    )
+
+    val_annotations_path = val_path / 'val_annotations.txt'
+    val_data = pd.read_csv(val_annotations_path, sep='\t', header=None, names=['File', 'Class', 'X1', 'Y1', 'X2', 'Y2'])
+
+    class_names = sorted(os.listdir(train_path))
+    class_to_idx = {name: index for index, name in enumerate(class_names)}
+
+    val_images = [str(val_path / 'images' / fname) for fname in val_data['File']]
+    val_labels_str = val_data['Class'].values
+    val_labels_int = [class_to_idx[name] for name in val_labels_str]
+    val_labels_cat = to_categorical(val_labels_int, num_classes=num_classes)
+
+    val_dataset = tf.data.Dataset.from_tensor_slices((val_images, val_labels_cat))
+
+    def parse_image(filename, label):
+        image = tf.io.read_file(filename)
+        image = tf.image.decode_jpeg(image, channels=3)
+        return image, label
+
+    val_dataset = val_dataset.map(parse_image, num_parallel_calls=tf.data.AUTOTUNE)
+    return train_dataset, val_dataset
+
+
+def preprocess_image(image, label):
+    image = tf.cast(image, tf.float32) / 255.0
     image = tf.image.resize(image, IMG_SIZE)
     return image, label
+
+
+print("Carregando o dataset Tiny ImageNet de um diretório local...")
+tiny_imagenet_path = pathlib.Path('/scratch/rrdmatos/tiny-imagenet-200') # Set here the path to the dataset
+train_dataset, test_dataset = load_tiny_imagenet_datasets(tiny_imagenet_path, NUM_CLASSES)
+
+options = tf.data.Options()
+options.experimental_distribute.auto_shard_policy = tf.data.experimental.AutoShardPolicy.DATA
+
+train_dataset = train_dataset.map(preprocess_image, num_parallel_calls=tf.data.AUTOTUNE)
+train_dataset = train_dataset.with_options(options)
+train_dataset = train_dataset.shuffle(NUM_TRAIN_IMAGES, seed=SEED)
+train_dataset = train_dataset.batch(GLOBAL_BATCH_SIZE)
+train_dataset = train_dataset.prefetch(tf.data.AUTOTUNE)
+train_dataset = train_dataset.cache()
+
+test_dataset = test_dataset.map(preprocess_image, num_parallel_calls=tf.data.AUTOTUNE)
+test_dataset = test_dataset.cache()
+test_dataset = test_dataset.with_options(options)
+test_dataset = test_dataset.batch(GLOBAL_BATCH_SIZE).prefetch(tf.data.AUTOTUNE)
 #+end_src
 
-** Create the dataset
+** Build and compile the model
+
+Using the strategy to create compile the model
 #+begin_src python :session *P* :results output :exports both
-train_dataset = tf.data.Dataset.from_tensor_slices((x_train, y_train))
-test_dataset = tf.data.Dataset.from_tensor_slices((x_test, y_test))
+with strategy.scope():
+    input_shape = (224, 224, 3)
+    base_model = ResNet50(weights=None, include_top=False, input_shape=input_shape)
+    base_model.trainable = True
+
+    x = GlobalAveragePooling2D()(base_model.output)
+    x = Dense(1024, activation="relu")(x)
+    predictions = Dense(NUM_CLASSES, activation="softmax")(x)
+
+    model = Model(inputs=base_model.input, outputs=predictions)
+
+    BASE_LEARNING_RATE = 0.01
+    SCALED_LEARNING_RATE = BASE_LEARNING_RATE * NUM_WORKERS
+
+    opt = SGD(learning_rate=SCALED_LEARNING_RATE, weight_decay=0.0001, momentum=0.9)
+
+    model.compile(optimizer=opt, loss="categorical_crossentropy", metrics=["accuracy"])
 #+end_src
 
-** Create batchs
+** Actual training
+
+Here is where the training really happens, we are using the model.fit
+function.
 #+begin_src python :session *P* :results output :exports both
-BATCH_SIZE = 32
-train_dataset = (
-    train_dataset.map(resize_image, num_parallel_calls=tf.data.AUTOTUNE)
-    .batch(BATCH_SIZE)
-    .prefetch(tf.data.AUTOTUNE)
-)
-test_dataset = (
-    test_dataset.map(resize_image, num_parallel_calls=tf.data.AUTOTUNE)
-    .batch(BATCH_SIZE)
-    .prefetch(tf.data.AUTOTUNE)
-)
-#+end_src
+duration_seconds = 0
+print("Iniciando o treinamento distribuído...")
 
-** Build the model (ResNet50)
-#+begin_src python :session *P* :results output :exports both
-input_shape = (224, 224, 3)
-base_model = ResNet50(weights=None, include_top=False, input_shape=input_shape)
-base_model.trainable = True
+start_train_time = time.perf_counter()
+history = model.fit(train_dataset, epochs=EPOCHS, validation_data=test_dataset, callbacks=[tensorboard_callback])
+close_train_time = time.perf_counter()
 
-x = GlobalAveragePooling2D()(base_model.output)
-x = Dense(1024, activation="relu")(x)
-predictions = Dense(num_classes, activation="softmax")(x)
+duration_seconds = close_train_time - start_train_time
 
-model = Model(inputs=base_model.input, outputs=predictions)
-#+end_src
-
-** Defining the optimizer
-#+begin_src python :session *P* :results output :exports both
-opt = SGD(learning_rate=0.01, weight_decay=0.0001, momentum=0.9)
-#+end_src
-** Compiling the model
-#+begin_src python :session *P* :results output :exports both
-model.compile(optimizer=opt, loss="categorical_crossentropy", metrics=["accuracy"])
-#+end_src
-
-** Training and evaluating
-#+begin_src python :session *P* :results output :exports both
-log_directory = setup_log_directory(dir_name="logs")
-unique_id = generate_unique_id()
-take_gpu_snapshot(unique_id, log_directory)
-
-monitor_processes, log_files = [], []
-try:
-    monitor_processes, log_files = start_continuous_monitoring(
-        unique_id, log_directory, interval_ms=500
-    )
-    history = model.fit(train_dataset, epochs=5, validation_data=test_dataset)
-    score = model.evaluate(test_dataset, verbose=0)
-    print(f"\nLoss (perda) no teste: {score[0]:.4f}")
+score = model.evaluate(test_dataset, verbose=(1 if worker_id == 0 else 0))
+if worker_id == 0:
+    print("\nIniciando avaliação final no worker 0...")
+    print(f"Loss (perda) no teste: {score[0]:.4f}")
     print(f"Accuracy (acurácia) no teste: {score[1]:.4f}")
 
-finally:
-    stop_continuous_monitoring(monitor_processes, log_files)
-#+end_src
-
-* CANCELED Distributed training with the Keras Tutorial
-CLOSED: [2025-10-02 Thu 14:18]
-# :PROPERTIES:
-# :header-args: :tangle train-minimal.py :tangle-mode (identity #o755)
-# :END:
-
-This is the distributed training example from the [[https://www.tensorflow.org/tutorials/distribute/multi_worker_with_keras][TensorFlow Official
-Documentation on Distributed Training]].
-
-First we need to import some libraries so the workers can comunicate.
-#+name: json_imports
-#+begin_src python :session *P* :tangle train-minimal-keras.py :results output :exports both
-import json
-import os
-import sys
-#+end_src
-
-Tangling the same block above for the train-single file
-#+begin_src python :session *P* :tangle train-single-keras.py :results output :exports both :noweb yes
-<<json_imports>>
-#+end_src
-
-After, we create a file called mnist_setup who will set the data and
-model for our training.
-#+begin_src python :session *P* :tangle mnist_setup-keras.py :results output :exports both
-import os
-import tensorflow as tf
-import numpy as np
-
-def mnist_dataset(batch_size):
-  (x_train, y_train), _ = tf.keras.datasets.mnist.load_data()
-  # The `x` arrays are in uint8 and have values in the [0, 255] range.
-  # You need to convert them to float32 with values in the [0, 1] range.
-  x_train = x_train / np.float32(255)
-  y_train = y_train.astype(np.int64)
-  train_dataset = tf.data.Dataset.from_tensor_slices(
-      (x_train, y_train)).shuffle(60000).repeat().batch(batch_size)
-  return train_dataset
-
-def build_and_compile_cnn_model():
-  model = tf.keras.Sequential([
-      tf.keras.layers.InputLayer(input_shape=(28, 28)),
-      tf.keras.layers.Reshape(target_shape=(28, 28, 1)),
-      tf.keras.layers.Conv2D(32, 3, activation='relu'),
-      tf.keras.layers.Flatten(),
-      tf.keras.layers.Dense(128, activation='relu'),
-      tf.keras.layers.Dense(10)
-  ])
-  model.compile(
-      loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
-      optimizer=tf.keras.optimizers.SGD(learning_rate=0.001),
-      metrics=['accuracy'])
-  return model
+print("TIME TRAINING:", duration_seconds)
+print(f"\nWorker {worker_id} concluiu.")
 #+end_src
 
 
-This create a single worker example to see if the training is working.
-[10:05:01; 02.10.2025]: Trained and working!
-#+begin_src python :session *P* :tangle train-single-keras.py :results output :exports both
-import mnist_setup
+* Examples of experimental design and running scripts
+** Creating an experimental design
 
-batch_size = 64
-single_worker_dataset = mnist_setup.mnist_dataset(batch_size)
-single_worker_model = mnist_setup.build_and_compile_cnn_model()
-single_worker_model.fit(single_worker_dataset, epochs=3, steps_per_epoch=70)
-#+end_src
+#+begin_src R :results output :session *R* :exports both :noweb yes :colnames yes
+options(crayon.enabled=FALSE)
+#install.packages('DoE.base', dependencies = TRUE, repos='http://cran.rstudio.com/')
+library(DoE.base)
+library(tidyverse)
 
-#+begin_src python :session *P* :tangle train-minimal-keras.py :results output :exports both
-import tensorflow as tf
-import mnist_setup
+fator_experiment = c("no_trace", "trace", "empty", "rast")
+fator_size = c(1024, 2048, 4096)
+fator_blocksize = c(32, 64, 128, 256)
+fator_threads = c(16, 32)
 
-per_worker_batch_size = 64
-tf_config = json.loads(os.environ['TF_CONFIG'])
-num_workers = len(tf_config['cluster']['worker'])
+fac.design(nfactors=4,
+           replications=30,
+           repeat.only= FALSE ,
+           randomize=TRUE,
+           seed=17366,
+           nlevels=c(length(fator_experiment),
+                     length(fator_size),
+                     length(fator_blocksize),
+                     length(fator_threads)),
+           factor.names=list(
+             experiment = fator_experiment,
+             size = fator_size,
+             block_size = fator_blocksize,
+             threads = fator_threads
+           )) |>
+  as_tibble() |>
+  mutate_at(vars(size:threads), as.character) |>
+  mutate_at(vars(size:threads), as.numeric) |>
+  #filter(threads == 16) |>
+  mutate(razao  = size/block_size) |>
+  filter(razao >= 8 & razao <= 64) |>
+  print() |>
+  write_csv("h.csv", progress=FALSE)
+  read_csv("h.csv", progress=FALSE, show_col_types=FALSE) |>
+  print(n=100)
 
-strategy = tf.distribute.MultiWorkerMirroredStrategy()
-
-global_batch_size = per_worker_batch_size * num_workers
-multi_worker_dataset = mnist_setup.mnist_dataset(global_batch_size)
-
-with strategy.scope():
-  # Model building/compiling need to be within `strategy.scope()`.
-  multi_worker_model = mnist_setup.build_and_compile_cnn_model()
-
-
-multi_worker_model.fit(multi_worker_dataset, epochs=3, steps_per_epoch=70)
-#+end_src
-
-[14:16:59; 02.10.2025]: The above code gives the same error about
-PerReplica type not being converted to Tensor.
-
-* DONE Distributed training with the CTL Tutorial
-CLOSED: [2025-10-02 Thu 14:51]
-- State "DONE"       from              [2025-10-02 Thu 14:51]
-# :PROPERTIES:
-# :header-args: :tangle train-minimal.py :tangle-mode (identity #o755)
-# :END:
-
-
-As the previous tutorial didnt workout for us. I will try followingg
-the example from the [[https://www.tensorflow.org/tutorials/distribute/multi_worker_with_ctl][TensorFlow Official Documentation on Distributed
-Training - Custom training loop with Keras and
-MultiWorkerMirroredStrategy]]. This is similar to the previous approach.
-
-First we need to import some libraries so the workers can comunicate.
-#+name: json_imports
-#+begin_src python :session *P* :tangle train-minimal.py :results output :exports both
-import json
-import os
-import sys
-#+end_src
-
-After, we create a file called mnist_setup who will set the data and
-model for our training.
-#+begin_src python :session *P* :tangle mnist.py :results output :exports both
-import os
-import tensorflow as tf
-import numpy as np
-
-def mnist_dataset(batch_size):
-  (x_train, y_train), _ = tf.keras.datasets.mnist.load_data()
-  # The `x` arrays are in uint8 and have values in the range [0, 255].
-  # You need to convert them to float32 with values in the range [0, 1]
-  x_train = x_train / np.float32(255)
-  y_train = y_train.astype(np.int64)
-  train_dataset = tf.data.Dataset.from_tensor_slices(
-      (x_train, y_train)).shuffle(60000)
-  return train_dataset
-
-def dataset_fn(global_batch_size, input_context):
-  batch_size = input_context.get_per_replica_batch_size(global_batch_size)
-  dataset = mnist_dataset(batch_size)
-  dataset = dataset.shard(input_context.num_input_pipelines,
-                          input_context.input_pipeline_id)
-  dataset = dataset.batch(batch_size)
-  return dataset
-
-def build_cnn_model():
-  regularizer = tf.keras.regularizers.L2(1e-5)
-  return tf.keras.Sequential([
-      tf.keras.Input(shape=(28, 28)),
-      tf.keras.layers.Reshape(target_shape=(28, 28, 1)),
-      tf.keras.layers.Conv2D(32, 3,
-                             activation='relu',
-                             kernel_regularizer=regularizer),
-      tf.keras.layers.Flatten(),
-      tf.keras.layers.Dense(128,
-                            activation='relu',
-                            kernel_regularizer=regularizer),
-      tf.keras.layers.Dense(10, kernel_regularizer=regularizer)
-  ])
-#+end_src
-
-
-Differently from the last section, here we have our own training loop,
-insted of using =model.fit=. I commented everything related to the model
-checkpoint because i think it is unnecessary.
-
-#+begin_src python :session *P* :tangle train-minimal.py :results output :exports both
-import os
-import json
-import tensorflow as tf
-import mnist
-from multiprocessing import util
-
-per_worker_batch_size = 64
-tf_config = json.loads(os.environ['TF_CONFIG'])
-num_workers = len(tf_config['cluster']['worker'])
-global_batch_size = per_worker_batch_size * num_workers
-
-num_epochs = 3
-num_steps_per_epoch=70
-
-# # Checkpoint saving and restoring
-# def _is_chief(task_type, task_id, cluster_spec):
-#   return (task_type is None
-#           or task_type == 'chief'
-#           or (task_type == 'worker'
-#               and task_id == 0
-#               and 'chief' not in cluster_spec.as_dict()))
-
-# def _get_temp_dir(dirpath, task_id):
-#   base_dirpath = 'workertemp_' + str(task_id)
-#   temp_dir = os.path.join(dirpath, base_dirpath)
-#   tf.io.gfile.makedirs(temp_dir)
-#   return temp_dir
-
-# def write_filepath(filepath, task_type, task_id, cluster_spec):
-#   dirpath = os.path.dirname(filepath)
-#   base = os.path.basename(filepath)
-#   if not _is_chief(task_type, task_id, cluster_spec):
-#     dirpath = _get_temp_dir(dirpath, task_id)
-#   return os.path.join(dirpath, base)
-
-# checkpoint_dir = os.path.join(util.get_temp_dir(), 'ckpt')
-
-
-# Define Strategy
-strategy = tf.distribute.MultiWorkerMirroredStrategy()
-
-with strategy.scope():
-  # Model building/compiling need to be within `tf.distribute.Strategy.scope`.
-  multi_worker_model = mnist.build_cnn_model()
-
-  multi_worker_dataset = strategy.distribute_datasets_from_function(
-    lambda input_context: mnist.dataset_fn(global_batch_size, input_context))
-
-  optimizer = tf.keras.optimizers.RMSprop(learning_rate=0.001)
-
-  train_accuracy = tf.keras.metrics.SparseCategoricalAccuracy(
-    name='train_accuracy')
-
-@tf.function
-def train_step(iterator):
-  """Training step function."""
-
-  def step_fn(inputs):
-    """Per-Replica step function."""
-    x, y = inputs
-    with tf.GradientTape() as tape:
-      predictions = multi_worker_model(x, training=True)
-
-      per_example_loss = tf.keras.losses.SparseCategoricalCrossentropy(
-        from_logits=True,
-        reduction=tf.keras.losses.Reduction.NONE)(y, predictions)
-
-      loss = tf.nn.compute_average_loss(per_example_loss)
-
-      model_losses = multi_worker_model.losses
-
-      if model_losses:
-        loss += tf.nn.scale_regularization_loss(tf.add_n(model_losses))
-
-    grads = tape.gradient(loss, multi_worker_model.trainable_variables)
-
-    optimizer.apply_gradients(
-      zip(grads, multi_worker_model.trainable_variables))
-
-    train_accuracy.update_state(y, predictions)
-
-    return loss
-
-  per_replica_losses = strategy.run(step_fn, args=(next(iterator),))
-
-  return strategy.reduce(
-    tf.distribute.ReduceOp.SUM, per_replica_losses, axis=None)
-
-epoch = tf.Variable(
-  initial_value=tf.constant(0, dtype=tf.dtypes.int64), name='epoch')
-
-step_in_epoch = tf.Variable(
-  initial_value=tf.constant(0, dtype=tf.dtypes.int64),
-  name='step_in_epoch')
-
-task_type, task_id, cluster_spec = (strategy.cluster_resolver.task_type,
-                                    strategy.cluster_resolver.task_id,
-                                    strategy.cluster_resolver.cluster_spec())
-
-# checkpoint = tf.train.Checkpoint(
-#   model=multi_worker_model, epoch=epoch, step_in_epoch=step_in_epoch)
-
-# write_checkpoint_dir = write_filepath(checkpoint_dir, task_type, task_id,
-#                                       cluster_spec)
-# checkpoint_manager = tf.train.CheckpointManager(
-#   checkpoint, directory=write_checkpoint_dir, max_to_keep=1)
-
-# # Restoring the checkpoint
-# latest_checkpoint = tf.train.latest_checkpoint(checkpoint_dir)
-# if latest_checkpoint:
-#   checkpoint.restore(latest_checkpoint)
-
-# Resume our CTL training
-while epoch.numpy() < num_epochs:
-  iterator = iter(multi_worker_dataset)
-  total_loss = 0.0
-  num_batches = 0
-
-  while step_in_epoch.numpy() < num_steps_per_epoch:
-    total_loss += train_step(iterator)
-    num_batches += 1
-    step_in_epoch.assign_add(1)
-
-  train_loss = total_loss / num_batches
-  print('Epoch: %d, accuracy: %f, train_loss: %f.'
-        %(epoch.numpy(), train_accuracy.result(), train_loss))
-
-  train_accuracy.reset_state()
-
-  # checkpoint_manager.save()
-  # if not _is_chief(task_type, task_id, cluster_spec):
-  #   tf.io.gfile.rmtree(write_checkpoint_dir)
-
-  epoch.assign_add(1)
-  step_in_epoch.assign(0)
-
-          #+end_src
-
-[14:42:22; 02.10.2025]: The example from the site has some outdate
-functions (small name changes and things like that).
-
-[14:45:31; 02.10.2025]: I think its now running!
-
-[14:47:08; 02.10.2025]: Ok! It worked, i think this is what made the
-program works: =strategy.distribute_datasets_from_function(lambda input_context: mnist.dataset_fn(global_batch_size, input_context))=.
-
-Here is the output and error for the run that worked:
-#+begin_src shell :results output :exports both
-tail -n +1 `ls multi_node_726049.*`
 #+end_src
 
 #+RESULTS:
 #+begin_example
-==> multi_node_726049.err <==
-2025-10-02 14:42:21.711306: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
-2025-10-02 14:42:21.718760: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
-2025-10-02 14:42:21.742640: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
-To enable the following instructions: AVX2 AVX_VNNI FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
-2025-10-02 14:42:21.735006: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
-To enable the following instructions: AVX2 AVX_VNNI FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
-2025-10-02 14:42:23.475987: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
-WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
-I0000 00:00:1759426944.130295    7487 gpu_device.cc:2020] Created device /job:localhost/replica:0/task:0/device:GPU:0 with 22282 MB memory:  -> device: 0, name: NVIDIA GeForce RTX 4090, pci bus id: 0000:01:00.0, compute capability: 8.9
-I0000 00:00:1759426944.134330    7487 gpu_device.cc:2020] Created device /job:worker/replica:0/task:0/device:GPU:0 with 22282 MB memory:  -> device: 0, name: NVIDIA GeForce RTX 4090, pci bus id: 0000:01:00.0, compute capability: 8.9
-2025-10-02 14:42:24.147453: I external/local_xla/xla/tsl/distributed_runtime/coordination/coordination_service.cc:226] Initializing CoordinationService
-I0000 00:00:1759426944.148440    7487 grpc_server_lib.cc:466] Started server with target: grpc://tupi4:29500
-2025-10-02 14:42:24.151489: I external/local_xla/xla/tsl/distributed_runtime/coordination/coordination_service.h:526] /job:worker/replica:0/task:0 has connected to coordination service. Incarnation: 4384234176783323122
-2025-10-02 14:42:24.151508: I external/local_xla/xla/tsl/distributed_runtime/coordination/coordination_service.cc:506] Waiting for 1/2 tasks to connect.
-2025-10-02 14:42:24.151512: I external/local_xla/xla/tsl/distributed_runtime/coordination/coordination_service.cc:509] Example stragglers:
-/job:worker/replica:0/task:1
-2025-10-02 14:42:24.151643: I external/local_xla/xla/tsl/distributed_runtime/coordination/coordination_service_agent.cc:344] Coordination agent has successfully connected.
-2025-10-02 14:42:24.223144: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
-WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
-I0000 00:00:1759426945.103552   98337 gpu_device.cc:2020] Created device /job:localhost/replica:0/task:0/device:GPU:0 with 22282 MB memory:  -> device: 0, name: NVIDIA GeForce RTX 4090, pci bus id: 0000:01:00.0, compute capability: 8.9
-I0000 00:00:1759426945.107390   98337 gpu_device.cc:2020] Created device /job:worker/replica:0/task:1/device:GPU:0 with 22282 MB memory:  -> device: 0, name: NVIDIA GeForce RTX 4090, pci bus id: 0000:01:00.0, compute capability: 8.9
-I0000 00:00:1759426945.121694   98337 grpc_server_lib.cc:466] Started server with target: grpc://tupi5:29500
-2025-10-02 14:42:25.123928: I external/local_xla/xla/tsl/distributed_runtime/coordination/coordination_service.h:526] /job:worker/replica:0/task:1 has connected to coordination service. Incarnation: 10086738663052207094
-2025-10-02 14:42:25.123941: I external/local_xla/xla/tsl/distributed_runtime/coordination/coordination_service.cc:506] Waiting for 0/2 tasks to connect.
-2025-10-02 14:42:25.124256: I external/local_xla/xla/tsl/distributed_runtime/coordination/coordination_service_agent.cc:344] Coordination agent has successfully connected.
-2025-10-02 14:42:25.125009: I external/local_xla/xla/tsl/distributed_runtime/coordination/coordination_service.cc:1414] Barrier(WaitForAllTasks::496470713347872003::0) has passed with status: OK
-2025-10-02 14:42:28.666402: I external/local_xla/xla/stream_executor/cuda/cuda_dnn.cc:473] Loaded cuDNN version 91300
-2025-10-02 14:42:28.797746: I external/local_xla/xla/stream_executor/cuda/cuda_dnn.cc:473] Loaded cuDNN version 91300
+creating full factorial with 96 runs ...
 
-==> multi_node_726049.out <==
-=================================================================
-Date: Thu Oct  2 02:42:21 PM -03 2025
-Submission Host: tupi4
-Submission Directory: /home/users/rrdmatos/perf/tensorflow
-Allocated Nodes: tupi[4-5]
-Number of Nodes: 2
-=================================================================
-Activate venv ---- add create venv if not has been exist
-Create TF_CONFIG
-Starting distributed training with srun...
-Host: tupi5 | Rank (PROCID): 1 | TF_CONFIG: {
-    "cluster": {
-        "worker": ["tupi4:29500","tupi5:29500"]
-    },
-    "task": {
-        "type": "worker",
-        "index": 1
-    }
-}
-Host: tupi4 | Rank (PROCID): 0 | TF_CONFIG: {
-    "cluster": {
-        "worker": ["tupi4:29500","tupi5:29500"]
-    },
-    "task": {
-        "type": "worker",
-        "index": 0
-    }
-}
-Epoch: 0, accuracy: 0.819978, train_loss: 0.580099.
-Epoch: 1, accuracy: 0.929353, train_loss: 0.248108.
-Epoch: 2, accuracy: 0.949888, train_loss: 0.171732.
-Epoch: 0, accuracy: 0.819978, train_loss: 0.580099.
-Epoch: 1, accuracy: 0.929353, train_loss: 0.248108.
-Epoch: 2, accuracy: 0.949888, train_loss: 0.171732.
-Training completed.
+# A tibble: 2,400 × 6
+   experiment  size block_size threads Blocks razao
+   <
+     <
+     <
+  <
+<
+ <dbl>
+ 1 no_trace    2048        256      32 .1         8
+ 2 no_trace    1024         64      16 .1        16
+ 3 trace       2048        128      16 .1        16
+ 4 trace       4096        256      16 .1        16
+ 5 trace       2048         64      16 .1        32
+ 6 no_trace    2048        128      16 .1        16
+ 7 no_trace    2048         32      16 .1        64
+ 8 rast        4096         64      32 .1        64
+ 9 trace       4096        256      32 .1        16
+10 empty       4096         64      16 .1        64
+# … with 2,390 more rows
+# A tibble: 2,400 × 6
+    experiment  size block_size threads Blocks razao
+    <
+     <
+     <
+  <
+ <
+<dbl>
+  1 no_trace    2048        256      32    0.1     8
+  2 no_trace    1024         64      16    0.1    16
+  3 trace       2048        128      16    0.1    16
+  4 trace       4096        256      16    0.1    16
+  5 trace       2048         64      16    0.1    32
+  6 no_trace    2048        128      16    0.1    16
+  7 no_trace    2048         32      16    0.1    64
+  8 rast        4096         64      32    0.1    64
+  9 trace       4096        256      32    0.1    16
+ 10 empty       4096         64      16    0.1    64
+ 11 no_trace    4096        128      32    0.1    32
+ 12 rast        2048        128      32    0.1    16
+ 13 no_trace    2048         64      32    0.1    32
+ 14 rast        1024        128      32    0.1     8
+ 15 no_trace    1024        128      32    0.1     8
+ 16 trace       4096         64      16    0.1    64
+ 17 trace       1024         64      32    0.1    16
+ 18 empty       2048         64      32    0.1    32
+ 19 rast        1024         32      32    0.1    32
+ 20 rast        2048        128      16    0.1    16
+ 21 trace       1024         32      16    0.1    32
+ 22 trace       4096         64      32    0.1    64
+ 23 trace       4096        128      32    0.1    32
+ 24 rast        1024         32      16    0.1    32
+ 25 trace       1024         32      32    0.1    32
+ 26 rast        4096        256      16    0.1    16
+ 27 rast        2048         32      16    0.1    64
+ 28 no_trace    4096         64      32    0.1    64
+ 29 rast        4096         64      16    0.1    64
+ 30 empty       1024         32      16    0.1    32
+ 31 rast        4096        128      16    0.1    32
+ 32 no_trace    1024         32      16    0.1    32
+ 33 no_trace    2048        256      16    0.1     8
+ 34 empty       1024        128      16    0.1     8
+ 35 no_trace    2048         64      16    0.1    32
+ 36 rast        1024         64      16    0.1    16
+ 37 empty       4096        128      32    0.1    32
+ 38 no_trace    2048         32      32    0.1    64
+ 39 trace       2048         32      16    0.1    64
+ 40 no_trace    4096        128      16    0.1    32
+ 41 no_trace    4096        256      32    0.1    16
+ 42 empty       1024         64      32    0.1    16
+ 43 trace       2048        128      32    0.1    16
+ 44 empty       2048         32      32    0.1    64
+ 45 empty       1024         32      32    0.1    32
+ 46 empty       2048        128      16    0.1    16
+ 47 no_trace    4096        256      16    0.1    16
+ 48 no_trace    1024         32      32    0.1    32
+ 49 rast        1024        128      16    0.1     8
+ 50 rast        1024         64      32    0.1    16
+ 51 trace       1024        128      16    0.1     8
+ 52 trace       1024         64      16    0.1    16
+ 53 empty       2048        256      16    0.1     8
+ 54 trace       4096        128      16    0.1    32
+ 55 rast        4096        256      32    0.1    16
+ 56 no_trace    1024        128      16    0.1     8
+ 57 no_trace    4096         64      16    0.1    64
+ 58 rast        2048        256      16    0.1     8
+ 59 rast        2048        256      32    0.1     8
+ 60 empty       2048         64      16    0.1    32
+ 61 trace       2048         32      32    0.1    64
+ 62 trace       1024        128      32    0.1     8
+ 63 rast        2048         32      32    0.1    64
+ 64 rast        2048         64      16    0.1    32
+ 65 empty       2048        256      32    0.1     8
+ 66 empty       2048         32      16    0.1    64
+ 67 no_trace    1024         64      32    0.1    16
+ 68 empty       4096        256      16    0.1    16
+ 69 rast        2048         64      32    0.1    32
+ 70 empty       1024        128      32    0.1     8
+ 71 no_trace    2048        128      32    0.1    16
+ 72 trace       2048         64      32    0.1    32
+ 73 empty       1024         64      16    0.1    16
+ 74 empty       2048        128      32    0.1    16
+ 75 trace       2048        256      32    0.1     8
+ 76 empty       4096        256      32    0.1    16
+ 77 rast        4096        128      32    0.1    32
+ 78 empty       4096         64      32    0.1    64
+ 79 trace       2048        256      16    0.1     8
+ 80 empty       4096        128      16    0.1    32
+ 81 empty       4096        128      32    0.2    32
+ 82 rast        2048        128      32    0.2    16
+ 83 trace       4096        128      16    0.2    32
+ 84 rast        1024         64      32    0.2    16
+ 85 rast        1024         64      16    0.2    16
+ 86 empty       1024         32      16    0.2    32
+ 87 rast        2048         64      32    0.2    32
+ 88 empty       2048        256      32    0.2     8
+ 89 trace       1024        128      32    0.2     8
+ 90 no_trace    1024        128      16    0.2     8
+ 91 empty       2048        128      32    0.2    16
+ 92 no_trace    2048         64      16    0.2    32
+ 93 empty       2048         64      32    0.2    32
+ 94 trace       1024         32      32    0.2    32
+ 95 empty       2048        128      16    0.2    16
+ 96 trace       2048         32      16    0.2    64
+ 97 empty       4096        256      16    0.2    16
+ 98 no_trace    4096        128      32    0.2    32
+ 99 no_trace    1024         64      16    0.2    16
+100 empty       2048         64      16    0.2    32
+# … with 2,300 more rows
 #+end_example
 
-* Going back to model fit
+** Running an experiment
+*** Running the full experiment
 
-As i think using model fit is way easier then creating a training loop
-by myself, i will try to, based on the success of the previous try,
-make the model.fit work.
+#+begin_src shell :results output :exports both :tangle run-experiment.sh :tangle-mode (identity #o755) :shebang "#!/usr/bin/bash"
 
-The example here is from [[https://www.tensorflow.org/api_docs/python/tf/distribute/MultiWorkerMirroredStrategy][TensorFlow Official Documentation for the MultiWorkerMirroredStrategy strategy]].
+# https://gist.github.com/mohanpedala/1e2ff5661761d3abd0385e8223e16425
+set -euxo pipefail
 
-First we need to import some libraries so the workers can comunicate.
-#+name: json_imports
-#+begin_src python :session *P* :tangle train-minimal-fit.py :results output :exports both
-import json
-import os
-import sys
-import tensorflow as tf
-import numpy as np
+informar_ajuda() {
+    echo "$0 <NAME> <PROJECT> <REPETITION_PER_CASE>"
+}
 
-per_worker_batch_size = 64
-tf_config = json.loads(os.environ['TF_CONFIG'])
-num_workers = len(tf_config['cluster']['worker'])
+NAME=${1:-}
+if [[ -z "${NAME}" ]]; then
+    informar_ajuda
+    exit 1
+fi
+
+PROJECT=${2:-}
+if [[ -z "${PROJECT}" ]]; then
+    informar_ajuda
+    exit 1
+fi
+
+REPETITION=${3:-}
+if [[ -z "${REPETITION}" ]]; then
+    REPETITION=1
+fi
+
+
+echo "Lapacke Version 3.12.0"
+which clang
+
+EXP="EXP-${NAME}"
+mkdir -p ${EXP}
+
+cp -r application $EXP
+cp -r scripts $EXP
+cp OMPT_Tracer.org $EXP
+
+mkdir -p "${EXP}/scripts"
+
+cp ./run-project.sh ./run-case.sh ${EXP}
+cp ${PROJECT} "${EXP}/${EXP}-project.csv"
+
+pushd $EXP
+{
+./run-project.sh "${EXP}-project.csv" ${REPETITION} > "${EXP}-project-run.log"
+mv "logs-${EXP}-project.csv" "run-logs-${EXP}"
+mv "resultados_projeto.csv" "results-${EXP}.csv"
+}
+popd
+
+cp ${0} ${EXP}
+
 #+end_src
 
-#+begin_src python :session *P* :results output :exports both
-strategy = tf.distribute.MultiWorkerMirroredStrategy()
+*** Run the experimental design
 
-with strategy.scope():
-  model = tf.keras.Sequential([
-    tf.keras.layers.Dense(2, input_shape=(5,)),
-  ])
-  optimizer = tf.keras.optimizers.SGD(learning_rate=0.1)
+1. Ler o projeto experimental no formato CSV
+2. Cada linha terá o script abaixo (run-project.sh) executado
 
-def dataset_fn(ctx):
-  x = np.random.random((2, 5)).astype(np.float32)
-  y = np.random.randint(2, size=(2, 1))
-  dataset = tf.data.Dataset.from_tensor_slices((x, y))
+#+begin_src shell :results output :exports both :tangle run-project.sh :tangle-mode (identity #o755) :shebang "#!/usr/bin/bash"
 
-  return dataset.repeat().batch(1, drop_remainder=True)
+# fail on error
+# https://gist.github.com/mohanpedala/1e2ff5661761d3abd0385e8223e16425
+set -euxo pipefail
 
-dist_dataset = strategy.distribute_datasets_from_function(dataset_fn)
+informar_ajuda() {
+    #                   REPS for each run
+    echo "$0 <PROJECT> <REPETITION>"
+}
 
-model.compile()
-model.fit(dist_dataset)
+PROJECT=${1:-}
+if [[ -z "${PROJECT}" ]]; then
+    informar_ajuda
+    exit 1
+fi
+
+REPETITION=${2:-}
+if [[ -z "${REPETITION}" ]]; then
+    REPETITION=1
+fi
+
+# Initiating necessary data ----------------
+OUTPUTFILE="resultados_projeto.csv"
+echo "run,experiment,app_time,comp_time,operations,size,blocksize,threads" > ${OUTPUTFILE}
+
+LOGS="logs-${PROJECT}"
+mkdir -p $LOGS
+
+FILE=$(tail -n +2 $PROJECT) # remove header
+
+RUNS=0
+echo "$FILE" | while IFS=, read -r TYPE SIZE BLOCK THREADS B; do
+
+    # Running ----------------
+    ./run-case.sh $TYPE $SIZE $BLOCK $REPETITION $THREADS
+    RESULTS=$(cat times.csv | tail -n +2)
+    RUNS=$(($RUNS+1))
+
+    # Saving Data --------------
+    echo "${RUNS},${RESULTS}" >> $OUTPUTFILE
+    OUTDIR="${TYPE}-${SIZE}-${BLOCK}"
+    mv $OUTDIR "${LOGS}/${RUNS}-${OUTDIR}"
+
+    # Removing unnecessary info ----------
+    rm -f times.csv
+
+done
+
+
 #+end_src
 
-[15:01:04; 02.10.2025]: The same error with convertion again.
+#+RESULTS:
 
-I will try using a experimental configuration from the strategy =
-=experimental_distribute_dataset=.
+*** Run one case and generate CSV data for analysis
 
-#+begin_src python :session *P* :results output :exports both
-strategy = tf.distribute.MultiWorkerMirroredStrategy()
+Para fazer o tangle deste trecho de código no arquivo especificado no ":tangle"
 
-with strategy.scope():
-  model = tf.keras.Sequential([
-    tf.keras.layers.Dense(2, input_shape=(5,)),
-  ])
-  optimizer = tf.keras.optimizers.SGD(learning_rate=0.1)
+C-c C-v t
 
-x = np.random.random((2, 5)).astype(np.float32)
-y = np.random.randint(2, size=(2, 1))
-dataset = tf.data.Dataset.from_tensor_slices((x, y))
-dist_dataset = strategy.experimental_distribute_dataset(dataset)
+#+begin_src shell :results output :exports both :tangle run-case.sh :tangle-mode (identity #o755) :shebang "#!/usr/bin/bash"
+# fail on error
+# https://gist.github.com/mohanpedala/1e2ff5661761d3abd0385e8223e16425
+set -euxo pipefail
 
-model.compile()
-model.fit(dist_dataset)
+informar_ajuda() {
+    echo "$0 <EXPERIMENT> <SIZE> <BLOCK> <REPETITION> <THREADS>"
+}
+
+EXPERIMENT=${1:-}
+if [[ -z "${EXPERIMENT}" ]]; then
+    informar_ajuda
+    exit 1
+fi
+
+SIZE=${2:-}
+if [[ -z "${SIZE}" ]]; then
+    informar_ajuda
+    exit 1
+fi
+
+BLOCK=${3:-}
+if [[ -z "${BLOCK}" ]]; then
+    informar_ajuda
+    exit 1
+fi
+
+REPETITION=${4:-}
+if [[ -z "${REPETITION}" ]]; then
+    informar_ajuda
+    exit 1
+fi
+
+THR=${5:-}
+if [[ -z "${THR}" ]]; then
+    THR=4
+fi
+
+HERE=$(pwd)
+
+# Set Enviroment variables -------------
+export OMP_NUM_THREADS=$THR
+export OMP_PLACES='threads(${THR})'
+export OMP_PROC_BIND=true
+export OMP_DYNAMIC=false
+export OMP_DISPLAY_ENV=verbose
+export OMP_TOOL_LIBRARIES="$HOME/graduation/ic/ompt/application/lib${EXPERIMENT}.so"
+
+export CFLAGS=-I$HOME/tmp/install/lapack-git/include
+export LDFLAGS=-L$HOME/tmp/install/lapack-git/lib
+export LD_LIBRARY_PATH=$HOME/tmp/install/lapack-git/lib:$HOME/graduation/ic/ompt/application:$HOME/tmp/install/librastro/lib:$HERE:$HERE/application
+export LAPACKE_NANCHECK=0
+
+export ASAN_OPTIONS=intercept_tls_get_addr=0
+export ASAN_OPTIONS=detect_odr_violation=0
+
+export PATH=$PATH:$HOME/tmp/install
+
+TEMPFILE=$(mktemp)
+
+pushd application
+{
+    make clean
+    make ${EXPERIMENT}
+}
+popd
+
+./scripts/run-many.sh ${REPETITION} ${SIZE} ${BLOCK} 0 2
+OUTPUTDIR="${EXPERIMENT}-${SIZE}-${BLOCK}"
+mv -v runs ${OUTPUTDIR}
+./scripts/make-csv.sh ${OUTPUTDIR} "${EXPERIMENT}"  | \
+    sed "s/$/,${SIZE},${BLOCK},${THR}/" >> ${TEMPFILE}
+
+OUTPUTFILE=times.csv
+echo "experiment,app_time,comp_time,operations,size,blocksize,threads" > ${OUTPUTFILE}
+cat ${TEMPFILE} >> ${OUTPUTFILE}
+rm -f ${TEMPFILE}
+
 #+end_src
 
-[15:16:37; 02.10.2025]: Trying using AI to help
-
-#+begin_src python :session *P* :results output :tangle train-minimal-fit.py :exports both
-strategy = tf.distribute.MultiWorkerMirroredStrategy()
-
-with strategy.scope():
-  model = tf.keras.Sequential([
-    tf.keras.layers.Dense(2, input_shape=(5,)),
-  ])
-
-  optimizer = tf.keras.optimizers.SGD(learning_rate=0.1)
-
-  loss_fn = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True)
-
-  model.compile(optimizer=optimizer, loss=loss_fn, metrics=['accuracy'])
-
-def dataset_fn(ctx):
-  x = np.random.random((2, 5)).astype(np.float32)
-  y = np.random.randint(2, size=(2, 1))
-  dataset = tf.data.Dataset.from_tensor_slices((x, y))
-
-  return dataset.repeat().batch(1, drop_remainder=True)
-
-
-dist_dataset = strategy.distribute_datasets_from_function(dataset_fn)
-
-print(dist_dataset)
-
-model.fit(dist_dataset, epochs=3, steps_per_epoch=10)
-#+end_src
+#+RESULTS:
