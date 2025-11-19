@@ -1,6 +1,7 @@
 import tensorflow as tf
 from tensorflow.keras.utils import to_categorical
 from tensorflow.keras.applications import ResNet50
+from tensorflow.keras.applications import EfficientNetB0
 from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Dense, GlobalAveragePooling2D
 from tensorflow.keras.optimizers import SGD
@@ -8,6 +9,7 @@ import os
 import json
 import time
 from datetime import datetime
+import subprocess
 import pathlib
 import pandas as pd
 
@@ -19,12 +21,6 @@ tensorboard_callback = tf.keras.callbacks.TensorBoard(
     profile_batch='2,10'  # Profile batches 100 through 105
 )
 
-strategy = tf.distribute.MultiWorkerMirroredStrategy()
-tf_config_str = os.environ.get('TF_CONFIG', '{}')
-tf_config = json.loads(tf_config_str)
-task_info = tf_config.get('task', {})
-worker_id = task_info.get('index', 0)
-
 SEED = 1
 IMG_SIZE = (224, 224)
 EPOCHS = 5
@@ -33,6 +29,12 @@ NUM_CLASSES = 200
 NUM_TRAIN_IMAGES = 100000
 
 tf.random.set_seed(SEED)
+
+strategy = tf.distribute.MultiWorkerMirroredStrategy()
+tf_config_str = os.environ.get('TF_CONFIG', '{}')
+tf_config = json.loads(tf_config_str)
+task_info = tf_config.get('task', {})
+worker_id = task_info.get('index', 0)
 
 NUM_WORKERS = strategy.num_replicas_in_sync
 GLOBAL_BATCH_SIZE = BATCH_SIZE_PER_REPLICA * NUM_WORKERS
@@ -77,35 +79,35 @@ def load_tiny_imagenet_datasets(data_path, num_classes):
     val_dataset = val_dataset.map(parse_image, num_parallel_calls=tf.data.AUTOTUNE)
     return train_dataset, val_dataset
 
+print("Carregando o dataset Tiny ImageNet de um diretório local...")
+tiny_imagenet_path = pathlib.Path('/scratch/rrdmatos/tiny-imagenet-200') # Set here the path to the dataset
+train_dataset, test_dataset = load_tiny_imagenet_datasets(tiny_imagenet_path, NUM_CLASSES)
 
 def preprocess_image(image, label):
     image = tf.cast(image, tf.float32) / 255.0
     image = tf.image.resize(image, IMG_SIZE)
     return image, label
 
-
-print("Carregando o dataset Tiny ImageNet de um diretório local...")
-tiny_imagenet_path = pathlib.Path('/scratch/rrdmatos/tiny-imagenet-200') # Set here the path to the dataset
-train_dataset, test_dataset = load_tiny_imagenet_datasets(tiny_imagenet_path, NUM_CLASSES)
-
 options = tf.data.Options()
 options.experimental_distribute.auto_shard_policy = tf.data.experimental.AutoShardPolicy.DATA
 
-train_dataset = train_dataset.map(preprocess_image, num_parallel_calls=tf.data.AUTOTUNE)
-train_dataset = train_dataset.with_options(options)
-train_dataset = train_dataset.shuffle(NUM_TRAIN_IMAGES, seed=SEED)
-train_dataset = train_dataset.batch(GLOBAL_BATCH_SIZE)
-train_dataset = train_dataset.prefetch(tf.data.AUTOTUNE)
-train_dataset = train_dataset.cache()
+train_dataset = train_dataset.batch(GLOBAL_BATCH_SIZE).map(preprocess_image, num_parallel_calls=tf.data.AUTOTUNE).cache().prefetch(tf.data.AUTOTUNE)
+    #, num_parallel_calls=tf.data.AUTOTUNE)
+#train_dataset = train_dataset.with_options(options)
+#train_dataset = train_dataset.shuffle(NUM_TRAIN_IMAGES, seed=SEED)
+#train_dataset = train_dataset.batch(GLOBAL_BATCH_SIZE)
+#train_dataset = train_dataset.prefetch(tf.data.AUTOTUNE)
+#train_dataset = train_dataset.cache()
 
-test_dataset = test_dataset.map(preprocess_image, num_parallel_calls=tf.data.AUTOTUNE)
-test_dataset = test_dataset.cache()
-test_dataset = test_dataset.with_options(options)
-test_dataset = test_dataset.batch(GLOBAL_BATCH_SIZE).prefetch(tf.data.AUTOTUNE)
+test_dataset = test_dataset.batch(GLOBAL_BATCH_SIZE).map(preprocess_image, num_parallel_calls=tf.data.AUTOTUNE).cache().prefetch(tf.data.AUTOTUNE)
+    #, num_parallel_calls=tf.data.AUTOTUNE)
+#test_dataset = test_dataset.cache()
+#test_dataset = test_dataset.with_options(options)
+#test_dataset = test_dataset.batch(GLOBAL_BATCH_SIZE).prefetch(tf.data.AUTOTUNE)
 
 with strategy.scope():
     input_shape = (224, 224, 3)
-    base_model = ResNet50(weights=None, include_top=False, input_shape=input_shape)
+    base_model = ResNet50(weights=None, include_top=False, input_shape=(224,224,3))
     base_model.trainable = True
 
     x = GlobalAveragePooling2D()(base_model.output)
