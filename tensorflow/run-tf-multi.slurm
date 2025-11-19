@@ -48,6 +48,15 @@ else
     echo "Repository directory already exists on $(hostname)."
 fi
 
+DATA_DIR="tiny-imagenet-200"
+if [ ! -d "$DATA_DIR" ]; then
+	echo "Directory not found on $(hostname). Download data..."
+	wget http://cs231n.stanford.edu/tiny-imagenet-200.zip
+	unzip -q *.zip
+else
+	echo "Data already exists on $(hostname)"
+fi
+
 cd $REPO_DIR/tensorflow
 
 if [ ! -d "venv" ]; then
@@ -60,6 +69,15 @@ echo "--- Setup on $(hostname) complete ---"
 '
 
 scontrol show hostnames $SLURM_JOB_NODELIST > /dev/null && echo "All nodes finished setup."
+
+TO_RUN = "train-sync.py"
+
+if [ "$S_TYPE" == "ctl" ]; then
+	echo "==============================================="
+	echo "=============> Model $MODEL <=================="
+	echo "==============================================="
+	TO_RUN = "train-ctl.py"
+fi
 
 CMD="
 TF_CONFIG=\$(cat <<EOF
@@ -78,7 +96,7 @@ export TF_CONFIG
 
 echo \"Host: \$(hostname) | Rank (PROCID): \${SLURM_PROCID} | TF_CONFIG: \${TF_CONFIG}\"
 
-python train-parallel.py
+python $TO_RUN --model $PY_MODEL --batch $PY_BATCH_SIZE
 
 cp -r $SCRATCH/comp-sys-perf-analysis-final-work/tensorflow/logs/* ~/logs
 "

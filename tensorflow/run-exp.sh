@@ -1,0 +1,38 @@
+#!/bin/bash
+
+INPUT_CSV="config.csv"
+
+SLURM_SCRIPT="run-tf-multi.slurm"
+
+if [ ! -f "$INPUT_CSV" ]; then
+    echo "Not found $INPUT_CSV"
+    exit 1
+fi
+
+grep -v '^#' "$INPUT_CSV" | while IFS=',' read -r NODES TYPE MODEL BATCH_SIZE
+do
+    # Diff format, jump
+    if [ -z "$NODES" ] || [ -z "$TYPE" ] || [ -z "$MODEL" ] || [ -z "$BATCH_SIZE" ]; then
+        echo "Jump line: $NODES,$TYPE,$MODEL,$BATCH_SIZE"
+        continue
+    fi
+
+    echo "=========================================================="
+    echo "  Launch job"
+    echo "  Nodes: $NODES"
+    echo "  TYPE: $TYPE"
+    echo "  MODEL: $MODEL"
+    echo "  Batch Size: $BATCH_SIZE"
+    echo "=========================================================="
+
+    sbatch \
+        --nodes=$NODES \
+        --job-name="train_${MODEL}_${TYPE}_${NODES}" \
+        --export=ALL,S_TYPE=$TYPE,PY_BATCH_SIZE=$BATCH_SIZE,PY_MODEL=$MODEL \
+        "$SLURM_SCRIPT"
+
+    sleep 1
+
+done
+
+echo "All jobs finished"
