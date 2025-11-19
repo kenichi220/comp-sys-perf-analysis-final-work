@@ -1,13 +1,15 @@
 #!/bin/bash -l
 
 #SBATCH --job-name=multi_node
-#SBATCH --partition=tupi
+#SBATCH --partition=poti
 #SBATCH --output=%x_%j.out
 #SBATCH --error=%x_%j.err
 #SBATCH --nodes=3
 #SBATCH --ntasks-per-node=1
 #SBATCH --gpus-per-task=1
 #SBATCH --time=06:00:00
+
+export SCRATCH="/scratch/kbrumati"
 
 echo "================================================================="
 echo "Date: $(date)"
@@ -35,7 +37,7 @@ done
 worker_list=${worker_list%,}
 
 
-srun --export=ALL bash -c '
+srun --export=ALL,SCRATCH=$SCRATCH bash -c '
 # This block of code is executed by each Slurm task on its respective node
 echo "--- Running setup on $(hostname) ---"
 cd $SCRATCH
@@ -70,16 +72,23 @@ echo "--- Setup on $(hostname) complete ---"
 
 scontrol show hostnames $SLURM_JOB_NODELIST > /dev/null && echo "All nodes finished setup."
 
-TO_RUN = "train-sync.py"
+TO_RUN="train-sync.py"
 
 if [ "$S_TYPE" == "ctl" ]; then
 	echo "==============================================="
 	echo "=============> Model $MODEL <=================="
 	echo "==============================================="
-	TO_RUN = "train-ctl.py"
+	TO_RUN="train-ctl.py"
 fi
 
+WORK_DIR="$SCRATCH/comp-sys-perf-analysis-final-work/tensorflow"
+
 CMD="
+
+cd $WORK_DIR
+
+source venv/bin/activate
+
 TF_CONFIG=\$(cat <<EOF
 {
     \"cluster\": {
@@ -103,6 +112,6 @@ cp -r $SCRATCH/comp-sys-perf-analysis-final-work/tensorflow/logs/* ~/logs
 
 echo "Starting distributed training with srun..."
 
-srun --export=ALL bash -c "$CMD"
+srun --export=ALL,SCRATCH=$SCRATCH bash -c "$CMD"
 
 echo "Training completed."
