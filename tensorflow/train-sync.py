@@ -13,6 +13,14 @@ import subprocess
 import pathlib
 import pandas as pd
 
+import argparse
+
+parser = argparse.ArgumentParser(description='Configure the training.')
+parser.add_argument('-m', '--model', choices=['ResNet50', 'EfficientNetB0'], required=True, help='Model to be trained.')
+parser.add_argument('-b', '--batch', type=int, required=True, help='Batch size for train.')
+
+args = parser.parse_args()
+
 log_dir = "logs/profile/" + datetime.now().strftime("%Y%m%d-%H%M%S")
 
 tensorboard_callback = tf.keras.callbacks.TensorBoard(
@@ -24,7 +32,7 @@ tensorboard_callback = tf.keras.callbacks.TensorBoard(
 SEED = 1
 IMG_SIZE = (224, 224)
 EPOCHS = 5
-BATCH_SIZE_PER_REPLICA = 96
+BATCH_SIZE_PER_REPLICA = args.batch
 NUM_CLASSES = 200
 NUM_TRAIN_IMAGES = 100000
 
@@ -107,7 +115,13 @@ test_dataset = test_dataset.batch(GLOBAL_BATCH_SIZE).map(preprocess_image, num_p
 
 with strategy.scope():
     input_shape = (224, 224, 3)
-    base_model = ResNet50(weights=None, include_top=False, input_shape=(224,224,3))
+
+    if args.model == 'ResNet50':
+        base_model = ResNet50(weights=None, include_top=False, input_shape=(224,224,3))
+    elif args.model == 'EfficientNetB0':
+        base_model = EfficientNetB0(weights=None, include_top=False, input_shape=(224,224,3))
+
+
     base_model.trainable = True
 
     x = GlobalAveragePooling2D()(base_model.output)

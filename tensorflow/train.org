@@ -215,6 +215,25 @@ import subprocess
 import pathlib
 import pandas as pd
 #+end_src
+** Inputs for the training
+
+#+begin_src python :session *P* :results output :exports both
+import argparse
+
+parser = argparse.ArgumentParser(description='Configure the training.')
+parser.add_argument('-m', '--model', choices=['ResNet50', 'EfficientNetB0'], required=True, help='Model to be trained.')
+parser.add_argument('-b', '--batch', type=int, required=True, help='Batch size for train.')
+
+args = parser.parse_args()
+#+end_src
+
+
+To run the training you can run with:
+
+=python train-sync.py -m ResNet50 -b 256=
+
+This will run the ResNet50 with batchsize 256
+
 
 ** TensorFlow Callbacks
 
@@ -235,7 +254,7 @@ Here are the run configurations but also the " tf config" configurations
 SEED = 1
 IMG_SIZE = (224, 224)
 EPOCHS = 5
-BATCH_SIZE_PER_REPLICA = 96
+BATCH_SIZE_PER_REPLICA = args.batch
 NUM_CLASSES = 200
 NUM_TRAIN_IMAGES = 100000
 
@@ -336,7 +355,13 @@ Using the strategy to create compile the model
 #+begin_src python :session *P* :results output :exports both
 with strategy.scope():
     input_shape = (224, 224, 3)
-    base_model = ResNet50(weights=None, include_top=False, input_shape=(224,224,3))
+
+    if args.model == 'ResNet50':
+        base_model = ResNet50(weights=None, include_top=False, input_shape=(224,224,3))
+    elif args.model == 'EfficientNetB0':
+        base_model = EfficientNetB0(weights=None, include_top=False, input_shape=(224,224,3))
+
+
     base_model.trainable = True
 
     x = GlobalAveragePooling2D()(base_model.output)
