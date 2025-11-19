@@ -89,7 +89,7 @@ def load_tiny_imagenet_datasets(data_path, num_classes):
     return train_dataset, val_dataset
 
 print("Carregando o dataset Tiny ImageNet de um diretório local...")
-tiny_imagenet_path = pathlib.Path('/scratch/rrdmatos/tiny-imagenet-200') # Set here the path to the dataset
+tiny_imagenet_path = pathlib.Path('/scratch/kbrumati/tiny-imagenet-200') # Set here the path to the dataset
 train_dataset, test_dataset = load_tiny_imagenet_datasets(tiny_imagenet_path, NUM_CLASSES)
 
 def preprocess_image(image, label):

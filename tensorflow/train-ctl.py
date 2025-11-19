@@ -41,7 +41,7 @@ tf.random.set_seed(SEED)
 print(f"SEED number: {SEED}\n")
 
 print("Carregando o dataset Tiny ImageNet...")
-tiny_imagenet_path = pathlib.Path('/scratch/rrdmatos/tiny-imagenet-200')
+tiny_imagenet_path = pathlib.Path('/scratch/kbrumati/tiny-imagenet-200')
 num_classes = 200
 
 BATCH_SIZE_PER_REPLICA = args.batch

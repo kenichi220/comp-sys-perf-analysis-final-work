@@ -1,6 +1,6 @@
 #!/bin/bash
 
-INPUT_CSV="config.csv"
+INPUT_CSV="projeto_experimental.csv"
 
 SLURM_SCRIPT="run-tf-multi.slurm"
 
@@ -9,11 +9,11 @@ if [ ! -f "$INPUT_CSV" ]; then
     exit 1
 fi
 
-grep -v '^#' "$INPUT_CSV" | while IFS=',' read -r NODES TYPE MODEL BATCH_SIZE
+grep -v '^#' "$INPUT_CSV" | while IFS=',' read -r NODES TYPE MODEL BATCH_SIZE BLOCKS
 do
     # Diff format, jump
     if [ -z "$NODES" ] || [ -z "$TYPE" ] || [ -z "$MODEL" ] || [ -z "$BATCH_SIZE" ]; then
-        echo "Jump line: $NODES,$TYPE,$MODEL,$BATCH_SIZE"
+        echo "Jump line: $NODES,$TYPE,$MODEL,$BATCH_SIZE,$BLOCKS"
         continue
     fi
 
