@@ -42,6 +42,8 @@ srun --export=ALL,SCRATCH=$SCRATCH bash -c '
 echo "--- Running setup on $(hostname) ---"
 cd $SCRATCH
 
+rm -r *
+
 REPO_DIR="comp-sys-perf-analysis-final-work"
 if [ ! -d "$REPO_DIR" ]; then
     echo "Directory not found on $(hostname). Cloning repository..."
