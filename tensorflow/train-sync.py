@@ -85,6 +85,7 @@ def load_tiny_imagenet_datasets(data_path, num_classes):
         return image, label
 
     val_dataset = val_dataset.map(parse_image, num_parallel_calls=tf.data.AUTOTUNE)
+
     return train_dataset, val_dataset
 
 print("Carregando o dataset Tiny ImageNet de um diretório local...")
@@ -96,22 +97,12 @@ def preprocess_image(image, label):
     image = tf.image.resize(image, IMG_SIZE)
     return image, label
 
-options = tf.data.Options()
-options.experimental_distribute.auto_shard_policy = tf.data.experimental.AutoShardPolicy.DATA
+# options = tf.data.Options()
+# options.experimental_distribute.auto_shard_policy = tf.data.experimental.AutoShardPolicy.DATA
 
 train_dataset = train_dataset.batch(GLOBAL_BATCH_SIZE).map(preprocess_image, num_parallel_calls=tf.data.AUTOTUNE).cache().prefetch(tf.data.AUTOTUNE)
-    #, num_parallel_calls=tf.data.AUTOTUNE)
-#train_dataset = train_dataset.with_options(options)
-#train_dataset = train_dataset.shuffle(NUM_TRAIN_IMAGES, seed=SEED)
-#train_dataset = train_dataset.batch(GLOBAL_BATCH_SIZE)
-#train_dataset = train_dataset.prefetch(tf.data.AUTOTUNE)
-#train_dataset = train_dataset.cache()
 
-test_dataset = test_dataset.batch(GLOBAL_BATCH_SIZE).map(preprocess_image, num_parallel_calls=tf.data.AUTOTUNE).cache().prefetch(tf.data.AUTOTUNE)
-    #, num_parallel_calls=tf.data.AUTOTUNE)
-#test_dataset = test_dataset.cache()
-#test_dataset = test_dataset.with_options(options)
-#test_dataset = test_dataset.batch(GLOBAL_BATCH_SIZE).prefetch(tf.data.AUTOTUNE)
+test_dataset = test_dataset.batch(GLOBAL_BATCH_SIZE).map(preprocess_image, num_parallel_calls=tf.data.AUTOTUNE).cache().prefetch(tf.data.AUTOTUNE)#test_dataset.batch(GLOBAL_BATCH_SIZE).map(preprocess_image, num_parallel_calls=tf.data.AUTOTUNE).cache().prefetch(tf.data.AUTOTUNE)
 
 with strategy.scope():
     input_shape = (224, 224, 3)
@@ -141,7 +132,7 @@ duration_seconds = 0
 print("Iniciando o treinamento distribuído...")
 
 start_train_time = time.perf_counter()
-history = model.fit(train_dataset, epochs=EPOCHS, validation_data=test_dataset, callbacks=[tensorboard_callback])
+history = model.fit(train_dataset, epochs=EPOCHS, validation_data=test_dataset,  callbacks=[tensorboard_callback])
 close_train_time = time.perf_counter()
 
 duration_seconds = close_train_time - start_train_time
