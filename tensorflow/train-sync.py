@@ -12,7 +12,7 @@ from datetime import datetime
 import subprocess
 import pathlib
 import pandas as pd
-
+import csv
 import argparse
 
 parser = argparse.ArgumentParser(description='Configure the training.')
@@ -35,6 +35,7 @@ EPOCHS = 5
 BATCH_SIZE_PER_REPLICA = args.batch
 NUM_CLASSES = 200
 NUM_TRAIN_IMAGES = 100000
+epoch_start_time = 0.0 #var global 
 
 tf.random.set_seed(SEED)
 
@@ -51,6 +52,18 @@ print(f"Worker ID: {worker_id}")
 print(f"Número total de workers (réplicas): {NUM_WORKERS}")
 print(f"Batch size por worker: {BATCH_SIZE_PER_REPLICA}")
 print(f"Batch size global (total): {GLOBAL_BATCH_SIZE}\n")
+
+def start_timer(epoca, logs):
+    global epoch_start_time  
+    epoch_start_time = time.time()
+
+def end_timer(epoca, logs):
+    global epoch_start_time
+    tempo = time.time() - epoch_start_time
+
+    if worker_id == 0:
+        with open(csv_file, mode='a', newline='') as file:
+            csv.writer(file).writerow([epoca,tempo])
 
 def load_tiny_imagenet_datasets(data_path, num_classes):
     train_path = data_path / 'train'
@@ -131,8 +144,17 @@ with strategy.scope():
 duration_seconds = 0
 print("Iniciando o treinamento distribuído...")
 
+timestamp = datetime.now().strftime("%d_%H%M%S")
+csv_file = f"logs_sync/log_{args.model}_{timestamp}.csv"
+if worker_id == 0:
+    os.makedirs(os.path.dirname(csv_file), exist_ok=True)
+    with open(csv_file, mode='w', newline='') as file:
+        csv.writer(file).writerow(['epoca', 'tempo'])
+csv_callback = tf.keras.callbacks.LambdaCallback(on_epoch_begin=start_timer,on_epoch_end=end_timer)
+
+
 start_train_time = time.perf_counter()
-history = model.fit(train_dataset, epochs=EPOCHS, validation_data=test_dataset,  callbacks=[tensorboard_callback])
+history = model.fit(train_dataset, epochs=EPOCHS, validation_data=test_dataset,  callbacks=[tensorboard_callback,csv_callback])
 close_train_time = time.perf_counter()
 
 duration_seconds = close_train_time - start_train_time
