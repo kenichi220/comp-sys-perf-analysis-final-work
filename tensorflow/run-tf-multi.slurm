@@ -7,9 +7,9 @@
 #SBATCH --nodes=3
 #SBATCH --ntasks-per-node=1
 #SBATCH --gpus-per-task=1
-#SBATCH --time=06:00:00
+#SBATCH --time=03:00:00
 
-export SCRATCH="/scratch/kbrumati"
+export SCRATCH="/scratch/rrdmatos"
 
 echo "================================================================="
 echo "Date: $(date)"
@@ -21,6 +21,8 @@ echo "================================================================="
 ################################
 # Change to working directory
 ################################
+
+set -euxo pipefail
 
 mkdir -p ~/logs
 
@@ -44,32 +46,13 @@ cd $SCRATCH
 
 rm -r *
 
-REPO_DIR="comp-sys-perf-analysis-final-work"
-if [ ! -d "$REPO_DIR" ]; then
-    echo "Directory not found on $(hostname). Cloning repository..."
-    git clone https://github.com/kenichi220/comp-sys-perf-analysis-final-work.git
-else
-    echo "Repository directory already exists on $(hostname)."
-fi
-
+cp -r ~/perf/tensorflow/create-env.sh ~/perf/tensorflow/train-* .
 DATA_DIR="tiny-imagenet-200"
-if [ ! -d "$DATA_DIR" ]; then
-	echo "Directory not found on $(hostname). Download data..."
-	wget http://cs231n.stanford.edu/tiny-imagenet-200.zip
-	unzip -q *.zip
-else
-	echo "Data already exists on $(hostname)"
-fi
 
-cd $REPO_DIR/tensorflow
+wget http://cs231n.stanford.edu/tiny-imagenet-200.zip
+unzip -q *.zip
 
-if [ ! -d "venv" ]; then
-    echo "Virtual environment not found on $(hostname). Creating..."
-    ./create-env.sh
-else
-    echo "Virtual environment already exists on $(hostname)."
-fi
-echo "--- Setup on $(hostname) complete ---"
+.  ./create-env.sh
 '
 
 scontrol show hostnames $SLURM_JOB_NODELIST > /dev/null && echo "All nodes finished setup."
@@ -77,43 +60,44 @@ scontrol show hostnames $SLURM_JOB_NODELIST > /dev/null && echo "All nodes finis
 TO_RUN="train-sync.py"
 
 if [ "$S_TYPE" == "ctl" ]; then
-	echo "==============================================="
-	echo "=============> Model $MODEL <=================="
-	echo "==============================================="
 	TO_RUN="train-ctl.py"
 fi
 
-WORK_DIR="$SCRATCH/comp-sys-perf-analysis-final-work/tensorflow"
+env
 
-CMD="
 
-cd $WORK_DIR
+srun --export=ALL,SCRATCH=$SCRATCH,TO_RUN=$TO_RUN,worker_list=$worker_list bash -c '
 
+cd $SCRATCH
+env
 source venv/bin/activate
 
-TF_CONFIG=\$(cat <<EOF
+TF_CONFIG=$(cat <<EOF
 {
-    \"cluster\": {
-        \"worker\": [${worker_list}]
+    "cluster": {
+        "worker": [${worker_list}]
     },
-    \"task\": {
-        \"type\": \"worker\",
-        \"index\": \${SLURM_PROCID}
+    "task": {
+        "type": "worker",
+        "index": ${SLURM_PROCID}
     }
 }
 EOF
 )
 export TF_CONFIG
 
-echo \"Host: \$(hostname) | Rank (PROCID): \${SLURM_PROCID} | TF_CONFIG: \${TF_CONFIG}\"
+echo "Host: $(hostname) | Rank (PROCID): ${SLURM_PROCID} | TF_CONFIG: ${TF_CONFIG}"
 
+echo "$TO_RUN,$PY_MODEL\n"
 python $TO_RUN --model $PY_MODEL --batch $PY_BATCH_SIZE
 
-cp -r $SCRATCH/comp-sys-perf-analysis-final-work/tensorflow/logs/* ~/logs
-"
+LOGS_DIR="~/logs/${TO_RUN}_${SLURM_JOB_ID}_${SLURM_PROCID}"
+
+mkdir -p $LOGS_DIR
+cp -r "$SCRATCH/logs/*" $LOGS_DIR
+'
 
 echo "Starting distributed training with srun..."
 
-srun --export=ALL,SCRATCH=$SCRATCH bash -c "$CMD"
 
 echo "Training completed."

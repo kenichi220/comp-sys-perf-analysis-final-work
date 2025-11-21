@@ -27,7 +27,7 @@ do
 
     sbatch \
         --nodes=$NODES \
-        --job-name="train_${MODEL}_${TYPE}_${NODES}" \
+        --job-name="train_${MODEL}_${TYPE}_${BATCH_SIZE}_${NODES}" \
         --export=ALL,S_TYPE=$TYPE,PY_BATCH_SIZE=$BATCH_SIZE,PY_MODEL=$MODEL \
         "$SLURM_SCRIPT"
 
