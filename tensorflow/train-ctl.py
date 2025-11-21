@@ -12,6 +12,8 @@ import pathlib
 import glob
 import pandas as pd
 import argparse
+import csv
+from datetime import datetime
 
 parser = argparse.ArgumentParser(description='Configure the training.')
 parser.add_argument('-m', '--model', choices=['ResNet50', 'EfficientNetB0'], required=True, help='Model to be trained.')
@@ -19,8 +21,8 @@ parser.add_argument('-b', '--batch', type=int, required=True, help='Batch size f
 
 args = parser.parse_args()
 
-unique_id = generate_unique_id()
-log_directory = setup_log_directory(dir_name="logs")
+# unique_id = generate_unique_id()
+log_directory = "logs_ctl"
 
 strategy = tf.distribute.MultiWorkerMirroredStrategy()
 
@@ -153,8 +155,8 @@ with tf.device('/GPU:0'):
         train_accuracy = tf.keras.metrics.CategoricalAccuracy(name='train_accuracy')
         train_loss = tf.keras.metrics.Mean(name='train_loss')
 
-        take_gpu_snapshot(unique_id, log_directory)
-        monitor_processes, log_files = [], []
+        #take_gpu_snapshot(unique_id, log_directory)
+        #monitor_processes, log_files = [], []
 
 @tf.function
 def distributed_train_step(dist_inputs):
@@ -203,6 +205,15 @@ with tf.device('/GPU:0'):
 
         steps_per_epoch = num_train_images // GLOBAL_BATCH_SIZE
 
+        timestamp = datetime.now().strftime("%d_%H%M%S")
+
+        csv_file = os.path.join(log_directory,f"log_{args.model}_{timestamp}.csv")
+        if worker_id == 0:
+            os.makedirs(log_directory,exist_ok=True)
+            with open(csv_file,mode='w' , newline ='') as file:
+                writer = csv.writer(file)
+                writer.writerow(['epoca','tempo'])
+
         for epoch in range(EPOCHS):
             start_time = time.time()
             train_accuracy.reset_state()
@@ -220,6 +231,10 @@ with tf.device('/GPU:0'):
 
             epoch_time = time.time() - start_time
             print(f"\nEpoch {epoch+1} finished in {epoch_time:.2f}s. Loss: {train_loss.result():.4f}, Accuracy: {train_accuracy.result():.4f}")
+            if worker_id == 0:
+                with open(csv_file,mode = 'a', newline ='') as file:
+                    writer = csv.writer(file)
+                    writer.writerow([epoch,epoch_time])
 
         print("\nTraining complete! 🎉")
 
