@@ -35,7 +35,7 @@ EPOCHS = 5
 BATCH_SIZE_PER_REPLICA = args.batch
 NUM_CLASSES = 200
 NUM_TRAIN_IMAGES = 100000
-epoch_start_time = 0.0 #var global 
+epoch_start_time = 0.0 #var global
 
 tf.random.set_seed(SEED)
 
@@ -53,11 +53,13 @@ print(f"Número total de workers (réplicas): {NUM_WORKERS}")
 print(f"Batch size por worker: {BATCH_SIZE_PER_REPLICA}")
 print(f"Batch size global (total): {GLOBAL_BATCH_SIZE}\n")
 
+
 def start_timer(epoca, logs):
-    global epoch_start_time  
+    global epoch_start_time
     epoch_start_time = time.time()
 
 def end_timer(epoca, logs):
+
     global epoch_start_time
     tempo = time.time() - epoch_start_time
 
@@ -102,7 +104,7 @@ def load_tiny_imagenet_datasets(data_path, num_classes):
     return train_dataset, val_dataset
 
 print("Carregando o dataset Tiny ImageNet de um diretório local...")
-tiny_imagenet_path = pathlib.Path('/scratch/kbrumati/tiny-imagenet-200') # Set here the path to the dataset
+tiny_imagenet_path = pathlib.Path('/scratch/rrdmatos/tiny-imagenet-200') # Set here the path to the dataset
 train_dataset, test_dataset = load_tiny_imagenet_datasets(tiny_imagenet_path, NUM_CLASSES)
 
 def preprocess_image(image, label):
@@ -141,17 +143,17 @@ with strategy.scope():
 
     model.compile(optimizer=opt, loss="categorical_crossentropy", metrics=["accuracy"])
 
-duration_seconds = 0
-print("Iniciando o treinamento distribuído...")
-
 timestamp = datetime.now().strftime("%d_%H%M%S")
 csv_file = f"logs_sync/log_{args.model}_{timestamp}.csv"
 if worker_id == 0:
     os.makedirs(os.path.dirname(csv_file), exist_ok=True)
     with open(csv_file, mode='w', newline='') as file:
         csv.writer(file).writerow(['epoca', 'tempo'])
+
 csv_callback = tf.keras.callbacks.LambdaCallback(on_epoch_begin=start_timer,on_epoch_end=end_timer)
 
+duration_seconds = 0
+print("Iniciando o treinamento distribuído...")
 
 start_train_time = time.perf_counter()
 history = model.fit(train_dataset, epochs=EPOCHS, validation_data=test_dataset,  callbacks=[tensorboard_callback,csv_callback])
