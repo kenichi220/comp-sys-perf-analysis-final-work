@@ -442,10 +442,10 @@ Prefetch will stay.
 | Map parallel    | ~ 05:00 |
 | No Map Parallel | ~ 04:50 |
 
+* Experimental design
 
-* Examples of experimental design and running scripts
-** Creating an experimental design
-
+If i use 128 as batch size in the Tupi machine, i get a OOM error, so
+we will set the maximum batch size as 1000
 #+begin_src R :results output :session *R* :exports both :noweb yes :colnames yes
 options(crayon.enabled=FALSE)
 #install.packages('DoE.base', dependencies = TRUE, repos='http://cran.rstudio.com/')
@@ -453,7 +453,7 @@ library(DoE.base)
 library(tidyverse)
 
 fator_modelo = c("ResNet50", "EfficientNetB0")
-fator_batch = c(64, 256)
+fator_batch = c(32, 64, 100)
 fator_tipo = c("sync", "ctl")
 fator_nodos = c(1,2,3,4)
 
@@ -484,330 +484,126 @@ fac.design(nfactors=4,
 
 #+RESULTS:
 #+begin_example
-creating full factorial with 32 runs ...
+creating full factorial with 48 runs ...
 
-# A tibble: 160 × 5
+# A tibble: 240 × 5
    nodos tipo  modelo         batch Blocks
    <chr> <chr> <chr>          <fct> <fct>
- 1 1     sync  EfficientNetB0 64    .1
- 2 4     ctl   EfficientNetB0 256   .1
- 3 3     sync  EfficientNetB0 64    .1
- 4 4     sync  ResNet50       256   .1
- 5 2     ctl   EfficientNetB0 256   .1
- 6 4     ctl   EfficientNetB0 64    .1
- 7 2     ctl   EfficientNetB0 64    .1
- 8 2     sync  EfficientNetB0 256   .1
- 9 3     sync  EfficientNetB0 256   .1
-10 1     ctl   EfficientNetB0 256   .1
-# ℹ 150 more rows
+ 1 1     sync  EfficientNetB0 32    .1
+ 2 4     ctl   EfficientNetB0 100   .1
+ 3 3     sync  EfficientNetB0 32    .1
+ 4 3     sync  EfficientNetB0 100   .1
+ 5 2     ctl   EfficientNetB0 32    .1
+ 6 4     ctl   EfficientNetB0 32    .1
+ 7 2     sync  EfficientNetB0 64    .1
+ 8 1     sync  ResNet50       100   .1
+ 9 3     sync  ResNet50       32    .1
+10 4     sync  EfficientNetB0 64    .1
+# ℹ 230 more rows
 # ℹ Use `print(n = ...)` to see more rows
-# A tibble: 160 × 5
+# A tibble: 240 × 5
     nodos tipo  modelo         batch Blocks
     <dbl> <chr> <chr>          <dbl>  <dbl>
-  1     1 sync  EfficientNetB0    64    0.1
-  2     4 ctl   EfficientNetB0   256    0.1
-  3     3 sync  EfficientNetB0    64    0.1
-  4     4 sync  ResNet50         256    0.1
-  5     2 ctl   EfficientNetB0   256    0.1
-  6     4 ctl   EfficientNetB0    64    0.1
-  7     2 ctl   EfficientNetB0    64    0.1
-  8     2 sync  EfficientNetB0   256    0.1
-  9     3 sync  EfficientNetB0   256    0.1
- 10     1 ctl   EfficientNetB0   256    0.1
- 11     3 ctl   EfficientNetB0    64    0.1
- 12     1 sync  ResNet50          64    0.1
- 13     3 ctl   EfficientNetB0   256    0.1
- 14     3 sync  ResNet50          64    0.1
- 15     1 ctl   ResNet50          64    0.1
- 16     3 sync  ResNet50         256    0.1
- 17     1 ctl   ResNet50         256    0.1
- 18     2 sync  EfficientNetB0    64    0.1
- 19     3 ctl   ResNet50          64    0.1
- 20     1 ctl   EfficientNetB0    64    0.1
- 21     4 ctl   ResNet50         256    0.1
- 22     2 ctl   ResNet50          64    0.1
- 23     4 sync  ResNet50          64    0.1
- 24     2 sync  ResNet50         256    0.1
- 25     2 sync  ResNet50          64    0.1
- 26     4 sync  EfficientNetB0    64    0.1
- 27     2 ctl   ResNet50         256    0.1
- 28     1 sync  EfficientNetB0   256    0.1
- 29     4 sync  EfficientNetB0   256    0.1
- 30     4 ctl   ResNet50          64    0.1
- 31     1 sync  ResNet50         256    0.1
- 32     3 ctl   ResNet50         256    0.1
- 33     4 ctl   EfficientNetB0    64    0.2
- 34     2 sync  EfficientNetB0   256    0.2
- 35     1 ctl   ResNet50          64    0.2
- 36     2 ctl   ResNet50          64    0.2
- 37     3 ctl   EfficientNetB0   256    0.2
- 38     4 ctl   ResNet50          64    0.2
- 39     4 sync  ResNet50          64    0.2
- 40     3 ctl   ResNet50         256    0.2
- 41     2 ctl   EfficientNetB0   256    0.2
- 42     2 ctl   ResNet50         256    0.2
- 43     1 sync  ResNet50         256    0.2
- 44     1 sync  EfficientNetB0   256    0.2
- 45     1 sync  EfficientNetB0    64    0.2
- 46     2 sync  EfficientNetB0    64    0.2
- 47     1 ctl   EfficientNetB0   256    0.2
- 48     2 sync  ResNet50          64    0.2
- 49     4 ctl   EfficientNetB0   256    0.2
- 50     3 sync  EfficientNetB0   256    0.2
- 51     4 sync  ResNet50         256    0.2
- 52     3 sync  ResNet50          64    0.2
- 53     4 ctl   ResNet50         256    0.2
- 54     2 sync  ResNet50         256    0.2
- 55     3 ctl   EfficientNetB0    64    0.2
- 56     1 ctl   ResNet50         256    0.2
- 57     1 ctl   EfficientNetB0    64    0.2
- 58     4 sync  EfficientNetB0    64    0.2
- 59     2 ctl   EfficientNetB0    64    0.2
- 60     3 sync  EfficientNetB0    64    0.2
- 61     3 sync  ResNet50         256    0.2
- 62     3 ctl   ResNet50          64    0.2
- 63     4 sync  EfficientNetB0   256    0.2
- 64     1 sync  ResNet50          64    0.2
- 65     3 ctl   ResNet50         256    0.3
- 66     3 ctl   EfficientNetB0   256    0.3
- 67     2 ctl   ResNet50          64    0.3
- 68     3 sync  EfficientNetB0    64    0.3
- 69     1 sync  ResNet50          64    0.3
- 70     3 sync  ResNet50         256    0.3
- 71     3 sync  EfficientNetB0   256    0.3
- 72     1 ctl   EfficientNetB0   256    0.3
- 73     1 ctl   ResNet50         256    0.3
- 74     1 sync  ResNet50         256    0.3
- 75     2 ctl   ResNet50         256    0.3
- 76     1 ctl   EfficientNetB0    64    0.3
- 77     3 ctl   EfficientNetB0    64    0.3
- 78     4 sync  ResNet50         256    0.3
- 79     3 ctl   ResNet50          64    0.3
- 80     1 ctl   ResNet50          64    0.3
- 81     2 sync  ResNet50          64    0.3
- 82     4 sync  EfficientNetB0    64    0.3
- 83     4 ctl   EfficientNetB0   256    0.3
- 84     2 ctl   EfficientNetB0   256    0.3
- 85     4 ctl   ResNet50          64    0.3
- 86     2 sync  EfficientNetB0    64    0.3
- 87     4 ctl   EfficientNetB0    64    0.3
- 88     2 sync  EfficientNetB0   256    0.3
- 89     4 sync  ResNet50          64    0.3
- 90     4 sync  EfficientNetB0   256    0.3
- 91     3 sync  ResNet50          64    0.3
- 92     1 sync  EfficientNetB0    64    0.3
- 93     2 ctl   EfficientNetB0    64    0.3
- 94     4 ctl   ResNet50         256    0.3
- 95     2 sync  ResNet50         256    0.3
- 96     1 sync  EfficientNetB0   256    0.3
- 97     1 ctl   EfficientNetB0   256    0.4
- 98     3 ctl   ResNet50          64    0.4
- 99     2 sync  EfficientNetB0    64    0.4
-100     1 ctl   EfficientNetB0    64    0.4
-# ℹ 60 more rows
+  1     1 sync  EfficientNetB0    32    0.1
+  2     4 ctl   EfficientNetB0   100    0.1
+  3     3 sync  EfficientNetB0    32    0.1
+  4     3 sync  EfficientNetB0   100    0.1
+  5     2 ctl   EfficientNetB0    32    0.1
+  6     4 ctl   EfficientNetB0    32    0.1
+  7     2 sync  EfficientNetB0    64    0.1
+  8     1 sync  ResNet50         100    0.1
+  9     3 sync  ResNet50          32    0.1
+ 10     4 sync  EfficientNetB0    64    0.1
+ 11     1 ctl   ResNet50         100    0.1
+ 12     3 sync  ResNet50         100    0.1
+ 13     1 sync  ResNet50          32    0.1
+ 14     3 ctl   ResNet50          64    0.1
+ 15     1 sync  EfficientNetB0   100    0.1
+ 16     1 ctl   ResNet50          32    0.1
+ 17     2 sync  EfficientNetB0   100    0.1
+ 18     1 ctl   EfficientNetB0   100    0.1
+ 19     1 sync  EfficientNetB0    64    0.1
+ 20     4 sync  ResNet50          64    0.1
+ 21     4 ctl   ResNet50          32    0.1
+ 22     4 sync  ResNet50         100    0.1
+ 23     4 sync  EfficientNetB0   100    0.1
+ 24     2 ctl   ResNet50          32    0.1
+ 25     4 sync  EfficientNetB0    32    0.1
+ 26     3 ctl   EfficientNetB0    64    0.1
+ 27     2 sync  ResNet50         100    0.1
+ 28     2 ctl   EfficientNetB0    64    0.1
+ 29     3 ctl   ResNet50         100    0.1
+ 30     4 sync  ResNet50          32    0.1
+ 31     2 ctl   ResNet50          64    0.1
+ 32     1 sync  ResNet50          64    0.1
+ 33     3 sync  EfficientNetB0    64    0.1
+ 34     3 ctl   EfficientNetB0   100    0.1
+ 35     3 ctl   EfficientNetB0    32    0.1
+ 36     2 sync  EfficientNetB0    32    0.1
+ 37     1 ctl   ResNet50          64    0.1
+ 38     2 sync  ResNet50          32    0.1
+ 39     1 ctl   EfficientNetB0    64    0.1
+ 40     4 ctl   EfficientNetB0    64    0.1
+ 41     4 ctl   ResNet50         100    0.1
+ 42     2 sync  ResNet50          64    0.1
+ 43     3 ctl   ResNet50          32    0.1
+ 44     2 ctl   EfficientNetB0   100    0.1
+ 45     1 ctl   EfficientNetB0    32    0.1
+ 46     2 ctl   ResNet50         100    0.1
+ 47     4 ctl   ResNet50          64    0.1
+ 48     3 sync  ResNet50          64    0.1
+ 49     4 ctl   EfficientNetB0    32    0.2
+ 50     2 sync  EfficientNetB0    64    0.2
+ 51     2 ctl   EfficientNetB0   100    0.2
+ 52     3 ctl   EfficientNetB0   100    0.2
+ 53     3 ctl   ResNet50          64    0.2
+ 54     3 ctl   EfficientNetB0    64    0.2
+ 55     2 ctl   ResNet50         100    0.2
+ 56     3 sync  EfficientNetB0    32    0.2
+ 57     1 sync  ResNet50         100    0.2
+ 58     1 sync  EfficientNetB0   100    0.2
+ 59     3 ctl   EfficientNetB0    32    0.2
+ 60     2 sync  EfficientNetB0   100    0.2
+ 61     2 ctl   EfficientNetB0    64    0.2
+ 62     4 ctl   EfficientNetB0    64    0.2
+ 63     1 ctl   ResNet50          64    0.2
+ 64     2 ctl   ResNet50          64    0.2
+ 65     1 ctl   ResNet50          32    0.2
+ 66     2 sync  ResNet50          32    0.2
+ 67     4 sync  EfficientNetB0    32    0.2
+ 68     2 sync  ResNet50         100    0.2
+ 69     1 ctl   ResNet50         100    0.2
+ 70     2 ctl   ResNet50          32    0.2
+ 71     4 ctl   ResNet50          64    0.2
+ 72     2 sync  EfficientNetB0    32    0.2
+ 73     3 ctl   ResNet50         100    0.2
+ 74     3 sync  EfficientNetB0   100    0.2
+ 75     4 ctl   ResNet50          32    0.2
+ 76     4 sync  ResNet50          64    0.2
+ 77     4 ctl   ResNet50         100    0.2
+ 78     1 sync  EfficientNetB0    32    0.2
+ 79     4 sync  ResNet50          32    0.2
+ 80     4 sync  ResNet50         100    0.2
+ 81     3 ctl   ResNet50          32    0.2
+ 82     1 ctl   EfficientNetB0    32    0.2
+ 83     3 sync  ResNet50          64    0.2
+ 84     4 sync  EfficientNetB0    64    0.2
+ 85     4 ctl   EfficientNetB0   100    0.2
+ 86     1 sync  EfficientNetB0    64    0.2
+ 87     2 ctl   EfficientNetB0    32    0.2
+ 88     3 sync  ResNet50         100    0.2
+ 89     1 ctl   EfficientNetB0    64    0.2
+ 90     1 sync  ResNet50          32    0.2
+ 91     1 sync  ResNet50          64    0.2
+ 92     2 sync  ResNet50          64    0.2
+ 93     4 sync  EfficientNetB0   100    0.2
+ 94     3 sync  EfficientNetB0    64    0.2
+ 95     1 ctl   EfficientNetB0   100    0.2
+ 96     3 sync  ResNet50          32    0.2
+ 97     4 ctl   EfficientNetB0    32    0.3
+ 98     2 sync  EfficientNetB0   100    0.3
+ 99     3 ctl   EfficientNetB0    32    0.3
+100     2 ctl   ResNet50          32    0.3
+# ℹ 140 more rows
 # ℹ Use `print(n = ...)` to see more rows
 #+end_example
-
-** Running an experiment
-*** Running the full experiment
-
-#+begin_src shell :results output :exports both :tangle run-experiment.sh :tangle-mode (identity #o755) :shebang "#!/usr/bin/bash"
-
-# https://gist.github.com/mohanpedala/1e2ff5661761d3abd0385e8223e16425
-set -euxo pipefail
-
-informar_ajuda() {
-    echo "$0 <NAME> <PROJECT> <REPETITION_PER_CASE>"
-}
-
-NAME=${1:-}
-if [[ -z "${NAME}" ]]; then
-    informar_ajuda
-    exit 1
-fi
-
-PROJECT=${2:-}
-if [[ -z "${PROJECT}" ]]; then
-    informar_ajuda
-    exit 1
-fi
-
-REPETITION=${3:-}
-if [[ -z "${REPETITION}" ]]; then
-    REPETITION=1
-fi
-
-
-echo "Lapacke Version 3.12.0"
-which clang
-
-EXP="EXP-${NAME}"
-mkdir -p ${EXP}
-
-cp -r application $EXP
-cp -r scripts $EXP
-cp OMPT_Tracer.org $EXP
-
-mkdir -p "${EXP}/scripts"
-
-cp ./run-project.sh ./run-case.sh ${EXP}
-cp ${PROJECT} "${EXP}/${EXP}-project.csv"
-
-pushd $EXP
-{
-./run-project.sh "${EXP}-project.csv" ${REPETITION} > "${EXP}-project-run.log"
-mv "logs-${EXP}-project.csv" "run-logs-${EXP}"
-mv "resultados_projeto.csv" "results-${EXP}.csv"
-}
-popd
-
-cp ${0} ${EXP}
-
-#+end_src
-
-*** Run the experimental design
-
-1. Ler o projeto experimental no formato CSV
-2. Cada linha terá o script abaixo (run-project.sh) executado
-
-#+begin_src shell :results output :exports both :tangle run-project.sh :tangle-mode (identity #o755) :shebang "#!/usr/bin/bash"
-
-# fail on error
-# https://gist.github.com/mohanpedala/1e2ff5661761d3abd0385e8223e16425
-set -euxo pipefail
-
-informar_ajuda() {
-    #                   REPS for each run
-    echo "$0 <PROJECT> <REPETITION>"
-}
-
-PROJECT=${1:-}
-if [[ -z "${PROJECT}" ]]; then
-    informar_ajuda
-    exit 1
-fi
-
-REPETITION=${2:-}
-if [[ -z "${REPETITION}" ]]; then
-    REPETITION=1
-fi
-
-# Initiating necessary data ----------------
-OUTPUTFILE="resultados_projeto.csv"
-echo "run,experiment,app_time,comp_time,operations,size,blocksize,threads" > ${OUTPUTFILE}
-
-LOGS="logs-${PROJECT}"
-mkdir -p $LOGS
-
-FILE=$(tail -n +2 $PROJECT) # remove header
-
-RUNS=0
-echo "$FILE" | while IFS=, read -r TYPE SIZE BLOCK THREADS B; do
-
-    # Running ----------------
-    ./run-case.sh $TYPE $SIZE $BLOCK $REPETITION $THREADS
-    RESULTS=$(cat times.csv | tail -n +2)
-    RUNS=$(($RUNS+1))
-
-    # Saving Data --------------
-    echo "${RUNS},${RESULTS}" >> $OUTPUTFILE
-    OUTDIR="${TYPE}-${SIZE}-${BLOCK}"
-    mv $OUTDIR "${LOGS}/${RUNS}-${OUTDIR}"
-
-    # Removing unnecessary info ----------
-    rm -f times.csv
-
-done
-
-
-#+end_src
-
-#+RESULTS:
-
-*** Run one case and generate CSV data for analysis
-
-Para fazer o tangle deste trecho de código no arquivo especificado no ":tangle"
-
-C-c C-v t
-
-#+begin_src shell :results output :exports both :tangle run-case.sh :tangle-mode (identity #o755) :shebang "#!/usr/bin/bash"
-# fail on error
-# https://gist.github.com/mohanpedala/1e2ff5661761d3abd0385e8223e16425
-set -euxo pipefail
-
-informar_ajuda() {
-    echo "$0 <EXPERIMENT> <SIZE> <BLOCK> <REPETITION> <THREADS>"
-}
-
-EXPERIMENT=${1:-}
-if [[ -z "${EXPERIMENT}" ]]; then
-    informar_ajuda
-    exit 1
-fi
-
-SIZE=${2:-}
-if [[ -z "${SIZE}" ]]; then
-    informar_ajuda
-    exit 1
-fi
-
-BLOCK=${3:-}
-if [[ -z "${BLOCK}" ]]; then
-    informar_ajuda
-    exit 1
-fi
-
-REPETITION=${4:-}
-if [[ -z "${REPETITION}" ]]; then
-    informar_ajuda
-    exit 1
-fi
-
-THR=${5:-}
-if [[ -z "${THR}" ]]; then
-    THR=4
-fi
-
-HERE=$(pwd)
-
-# Set Enviroment variables -------------
-export OMP_NUM_THREADS=$THR
-export OMP_PLACES='threads(${THR})'
-export OMP_PROC_BIND=true
-export OMP_DYNAMIC=false
-export OMP_DISPLAY_ENV=verbose
-export OMP_TOOL_LIBRARIES="$HOME/graduation/ic/ompt/application/lib${EXPERIMENT}.so"
-
-export CFLAGS=-I$HOME/tmp/install/lapack-git/include
-export LDFLAGS=-L$HOME/tmp/install/lapack-git/lib
-export LD_LIBRARY_PATH=$HOME/tmp/install/lapack-git/lib:$HOME/graduation/ic/ompt/application:$HOME/tmp/install/librastro/lib:$HERE:$HERE/application
-export LAPACKE_NANCHECK=0
-
-export ASAN_OPTIONS=intercept_tls_get_addr=0
-export ASAN_OPTIONS=detect_odr_violation=0
-
-export PATH=$PATH:$HOME/tmp/install
-
-TEMPFILE=$(mktemp)
-
-pushd application
-{
-    make clean
-    make ${EXPERIMENT}
-}
-popd
-
-./scripts/run-many.sh ${REPETITION} ${SIZE} ${BLOCK} 0 2
-OUTPUTDIR="${EXPERIMENT}-${SIZE}-${BLOCK}"
-mv -v runs ${OUTPUTDIR}
-./scripts/make-csv.sh ${OUTPUTDIR} "${EXPERIMENT}"  | \
-    sed "s/$/,${SIZE},${BLOCK},${THR}/" >> ${TEMPFILE}
-
-OUTPUTFILE=times.csv
-echo "experiment,app_time,comp_time,operations,size,blocksize,threads" > ${OUTPUTFILE}
-cat ${TEMPFILE} >> ${OUTPUTFILE}
-rm -f ${TEMPFILE}
-
-#+end_src
-
-#+RESULTS:
