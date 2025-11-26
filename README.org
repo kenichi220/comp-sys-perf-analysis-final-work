@@ -15,5 +15,9 @@ work for the Computer System Performance Analysis Course
 - Rayan Raddatz de Matos ([[https://github.com/rddtz][@rddtz]])
 - Kenichi Brumati ([[https://github.com/kenichi220][@kenichi220]])
 - Marcelo Cardoso Oliveira Gulart ([[https://github.com/MFGROOVE][@MFGROOVE]])
-* You can run the experiment with:
+** You can run the experiment with:
+* Requeriments
+*TO VENDO COMO FAZER O MD
  Run-exp.sh and Guix -- ja adicionarei o passo a passo
+ So, if you need to lauch the experiment manually, you must follow this steps:
+      
