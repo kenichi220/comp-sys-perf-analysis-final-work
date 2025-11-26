@@ -150,17 +150,24 @@ Put the abstract here.
 *** Maketitle                                                      :ignore:
 #+LaTeX: \maketitle
 ** Introduction
+Na última década, o Deep Learning consolidou-se como o estado da
+arte para resolução de problemas complexos, como visão computacional e
+processamento de linguagem natural. Diante o avanço na
+precisão dos algoritmos, observou-se um crescimento exponencial na
+complexidade das arquiteturas de redes neurais e no volume dos
+conjuntos de dados. Este cenário impõe uma carga computacional massiva,
+tornando o treinamento de modelos robustos em uma única unidade de
+processamento uma tarefa inviável em termos de tempo e recursos.
 
-This is just an example to show how Orgmode\cite{orgmode} can be
-neatly used to write papers following the ACM latex style. Feel
-free to modify and distributed this as you wish.
-
-Be aware that this example is compatible with OrgMode 9.*. Earlier
-or later OrgMode versions require minor modifications to the Makefile
-and/or llncs.org files.
-
-For a detailed explanation on why and how to write reproducible
-articles using OrgMode, please visit the following [[https://github.com/alegrand/RR_webinars/blob/master/1_replicable_article_laboratory_notebook/index.org][page]].
+Para mitigar esses desafios, o treinamento distribuído tornou-se uma
+prática padrão, com destaque para a estratégia de Data Parallelism.
+Nesta abordagem, uma réplica completa do modelo é
+instanciada em cada unidade de processamento, GPU ou nó, e o conjunto
+de dados global é particionado em batches menores com foco local.
+Embora eficaz, essa técnica introduz desafios críticos de sincronização, uma vez que
+os gradientes calculados localmente devem ser agregados e comunicados
+entre todos os dispositivos a cada passo de treino, tipicamente
+através de operações de All-Reduce.
 
 ** Background and Experimental Context
 \label{sec.context}
