@@ -4,7 +4,8 @@
 #+TITLE: TensorFlow Results
 #+AUTHOR: Rayan Raddatz de Matos, Marcelo Gulart, Kenichi Brumati
 
-* Load data
+* Parcial
+** Load data
 
 Data is in the data directory:
 #+begin_src shell :session *shell* :results output :exports both
@@ -98,7 +99,7 @@ df |> select(power_draw)
 # ℹ Use `print(n = ...)` to see more rows
 #+end_example
 
-* Graphs style
+** Graphs style
 #+begin_src R :results output :session *R* :exports both
 
 meu_estilo <- function() {
@@ -119,8 +120,8 @@ meu_estilo <- function() {
 
 #+RESULTS:
 
-* GPU usage
-** ONE NODE: GPU usage
+** GPU usage
+*** ONE NODE: GPU usage
 
 #+begin_src R :results output graphics file :file (org-babel-temp-file "figure" ".png") :exports both :width 600 :height 400 :session *R*
 df |> filter(type=="node") |> group_split(id) |> first() |>
@@ -145,7 +146,7 @@ ggsave(
 #+RESULTS:
 [[file:/tmp/babel-P5m5UD/figureTAvIx5.png]]
 
-** TWO NODES: GPU usage
+*** TWO NODES: GPU usage
 
 #+begin_src R :results output graphics file :file (org-babel-temp-file "figure" ".png") :exports both :width 600 :height 400 :session *R*
 df |> filter(type=="nodes2") |>
@@ -170,7 +171,7 @@ ggsave(
 #+RESULTS:
 [[file:/tmp/babel-P5m5UD/figurerUgDFK.png]]
 
-** THREE NODES: GPU usage
+*** THREE NODES: GPU usage
 
 #+begin_src R :results output graphics file :file (org-babel-temp-file "figure" ".png") :exports both :width 600 :height 400 :session *R*
 df |> filter(type=="nodes3") |>
@@ -195,7 +196,7 @@ ggsave(
 #+RESULTS:
 [[file:/tmp/babel-P5m5UD/figure4CRaYi.png]]
 
-*** One machine of the train of 3 nodes
+**** One machine of the train of 3 nodes
 
 #+begin_src R :results output graphics file :file (org-babel-temp-file "figure" ".png") :exports both :width 600 :height 400 :session *R*
 df |> filter(type=="nodes3")  |> group_split(id) |> first() |>
@@ -220,7 +221,7 @@ ggsave(
 #+RESULTS:
 [[file:/tmp/babel-P5m5UD/figureKDRUiz.png]]
 
-** GPU USAGE FOR RANGE
+*** GPU USAGE FOR RANGE
 #+begin_src R :results output graphics file :file  (org-babel-temp-file "figure" ".png") :exports both :width 600 :height 400 :session *R*
 
 start_time <- 6480
@@ -250,8 +251,8 @@ ggsave(
 #+RESULTS:
 [[file:/tmp/babel-P5m5UD/figureCV30Im.png]]
 
-* Energy
 ** Energy
+*** Energy
 #+begin_src R :results output graphics file :file (org-babel-temp-file "figure" ".png") :exports both :width 1200 :height 800 :session *R*
 
 start_time <- 1130
@@ -289,8 +290,8 @@ ggsave(
 
 #+RESULTS:
 [[file:/tmp/babel-P5m5UD/figureh5YWtk.png]]
-* Temperature
-** Temp
+** Temperature
+*** Temp
 #+begin_src R :results output graphics file :file (org-babel-temp-file "figure" ".png") :exports both :width 1200 :height 800 :session *R*
 
 start_time <- 1130
@@ -320,8 +321,8 @@ ggsave(
 #+RESULTS:
 [[file:/tmp/babel-P5m5UD/figurez1CFuj.png]]
 
-* Epoch info
-** Load epochs data
+** Epoch info
+*** Load epochs data
 #+begin_src R :results output :session *R* :exports both
 options(crayon.enabled=FALSE)
 suppressMessages(library(fs))
@@ -370,7 +371,7 @@ epochs
 15 three     5  1620 0.923    0.668            8143
 #+end_example
 
-** Quering per epoch info
+*** Quering per epoch info
 #+begin_src R :results output graphics file :file (org-babel-temp-file "figure" ".png") :exports both :width 1200 :height 800 :session *R*
 epochs |>
   ggplot(aes(x = epoch, y = loss, color=nodes, group=nodes)) +
@@ -391,3 +392,209 @@ epochs |>
 
 #+RESULTS:
 [[file:/tmp/babel-P5m5UD/figuregVUIOd.png]]
+
+
+* Final
+Data is in the data directory:
+#+begin_src shell :session *shell* :results output :exports both
+ls --color=never ..
+pwd ..
+#+end_src
+
+#+RESULTS:
+:
+: data  manifest.scm  paper	   README.org  RR-notes.org  timelogs
+: imgs  meetings.org  presentations  references  tensorflow
+: /home/rayan/graduation/estudos/perf/final/tensorflow
+
+** Load combinations and run ID
+#+begin_src R :results output :session *R* :exports both
+options(crayon.enabled=FALSE)
+suppressMessages(library(fs))
+suppressMessages(library(tidyverse))
+suppressMessages(library(janitor))
+suppressMessages(library(dplyr))
+suppressMessages(library(lubridate))
+
+BASE="data/final/"
+tibble(PATH = dir_ls(BASE, regexp = "out$", recurse=TRUE))  |>
+  ## filter(!str_detect(CSV, ":")) |>
+  ## filter(!str_detect(CSV, "ep")) |>
+  ## mutate(DATA = map(CSV, read_csv, progress=FALSE, show_col_types = FALSE)) |>
+  separate(PATH, into=paste0("XX", 1:3), sep="/") |>
+  separate(XX3, into=paste0("YY", 1:6), sep="_") |>
+  ## mutate(type=XX4) |> #|>
+  mutate(YY6 = gsub("\\.out", "", YY6)) |>
+  ## mutate(machine = gsub("\\-.*", "", machine)) |>
+  ## rowid_to_column("id") |>
+  select(id=YY6, model=YY2, batch=YY4, type=YY3, nodes=YY5) -> configs
+
+configs
+#+end_src
+
+#+RESULTS:
+#+begin_example
+# A tibble: 130 × 5
+   id     model          batch type  nodes
+   <chr>  <chr>          <chr> <chr> <chr>
+ 1 734389 EfficientNetB0 100   ctl   1
+ 2 734466 EfficientNetB0 100   ctl   1
+ 3 734478 EfficientNetB0 100   ctl   1
+ 4 734528 EfficientNetB0 100   ctl   1
+ 5 734582 EfficientNetB0 100   ctl   1
+ 6 734415 EfficientNetB0 100   ctl   2
+ 7 734422 EfficientNetB0 100   ctl   2
+ 8 734474 EfficientNetB0 100   ctl   2
+ 9 734527 EfficientNetB0 100   ctl   2
+10 734567 EfficientNetB0 100   ctl   2
+# ℹ 120 more rows
+# ℹ Use `print(n = ...)` to see more rows
+#+end_example
+
+** Get the data and join with the run
+#+begin_src R :results output :session *R* :exports both
+BASE="data/final/logs"
+tibble(CSV = dir_ls(BASE, regexp = "csv$", recurse=TRUE)) |>
+  ## filter(!str_detect(CSV, ":")) |>
+  ## filter(!str_detect(CSV, "ep")) |>
+  mutate(DATA = map(CSV, read_csv, progress=FALSE, show_col_types = FALSE)) |>
+  separate(CSV, into=paste0("XX", 1:7), sep="/")  |>
+  separate(XX4, into=paste0("YY", 1:2), sep="_") |>
+  select(id=YY2, DATA) |>
+  mutate(
+    DATA = map(DATA, function(x) {
+      if (is.data.frame(x)) {
+        return(x %>% mutate(epoca = as.character(epoca),
+                            tempo = as.character(tempo)))
+      } else {
+        return(x)
+      }
+    })
+  ) |>
+  unnest(DATA) -> results
+
+results
+#+end_src
+
+#+RESULTS:
+#+begin_example
+# A tibble: 544 × 3
+   id     epoca tempo
+   <chr>  <chr> <chr>
+ 1 734376 0     1089.33614373207
+ 2 734376 1     1065.81463623047
+ 3 734376 2     1064.61720657349
+ 4 734376 3     1064.5444316864
+ 5 734376 4     1061.80225372314
+ 6 734382 0     338.284725427628
+ 7 734382 1     320.266666650772
+ 8 734382 2     321.114961624146
+ 9 734382 3     322.104963779449
+10 734382 4     321.277382850647
+# ℹ 534 more rows
+# ℹ Use `print(n = ...)` to see more rows
+#+end_example
+
+** Bring data together
+
+#+begin_src R :results output :session *R* :exports both
+df <- configs |>
+  left_join(results, by="id")
+
+df
+#+end_src
+
+#+RESULTS:
+#+begin_example
+# A tibble: 547 × 7
+   id     model          batch type  nodes epoca tempo
+   <chr>  <chr>          <chr> <chr> <chr> <chr> <chr>
+ 1 734389 EfficientNetB0 100   ctl   1     0     348.189030170441
+ 2 734466 EfficientNetB0 100   ctl   1     0     348.106799125671
+ 3 734478 EfficientNetB0 100   ctl   1     <NA>  <NA>
+ 4 734528 EfficientNetB0 100   ctl   1     0     350.219756126404
+ 5 734582 EfficientNetB0 100   ctl   1     0     345.596360206604
+ 6 734415 EfficientNetB0 100   ctl   2     <NA>  <NA>
+ 7 734422 EfficientNetB0 100   ctl   2     <NA>  <NA>
+ 8 734474 EfficientNetB0 100   ctl   2     0     219.8743724823
+ 9 734527 EfficientNetB0 100   ctl   2     <NA>  <NA>
+10 734567 EfficientNetB0 100   ctl   2     <NA>  <NA>
+# ℹ 537 more rows
+# ℹ Use `print(n = ...)` to see more rows
+#+end_example
+
+** Graphs style
+#+begin_src R :results output :session *R* :exports both
+
+meu_estilo <- function() {
+  list(
+    theme_bw(base_size = 20),
+    theme(
+      legend.title = element_blank(),
+      plot.margin = unit(c(0, 0, 0, 0), "cm"),
+      legend.spacing = unit(1, "mm"),
+      legend.position = "top",
+      legend.justification = "left",
+      legend.box.spacing = unit(0, "pt"),
+      legend.box.margin = margin(0, 0, 0, 0),
+      axis.text.x = element_text(angle=45, vjust=1, hjust=1)
+    ))
+}
+#+end_src
+
+#+RESULTS:
+
+** Verify results
+#+begin_src R :results output file :file "temp.png" :exports both :width 600 :height 400 :session *R*
+#remove NA
+df |> filter(!is.na(epoca)) |> #group_by(model, batch, type, nodes, epoca_) |>
+  filter(grepl("*Res*", model)) |>
+
+  mutate(
+    # 'epoca' must be numeric for plotting
+    epoca = as.numeric(epoca),
+    # 'tempo' must be numeric for plotting
+    tempo = as.numeric(tempo),
+    # Create a unique identifier for each configuration/run (e.g., combining ID and Configs)
+    # Replace 'config_column_1' and 'config_column_2' with your actual column names.
+    config_run = paste(model, batch, type, nodes, sep = "_")
+  ) -> data_plot
+data_plot |>
+  group_by(config_run, epoca) |>
+  summarise(
+    N = n(),
+    mean_tempo = mean(tempo, na.rm = TRUE),
+    sd_tempo = sd(tempo),
+    se_tempo = 3 * sd(tempo) / sqrt(N),
+    model = model,
+    .groups = 'drop'
+  ) |>
+  mutate(
+    lower_bound = mean_tempo - se_tempo,
+    upper_bound = mean_tempo + se_tempo
+  ) |>
+  ggplot(aes(x = epoca, y = mean_tempo, color = as.factor(epoca))) +
+
+  geom_jitter(
+    data = data_plot,
+    aes(x = epoca, y = tempo, color = as.factor(epoca), group = config_run),
+    # Set the transparency (alpha) to 0.3 for a faint look
+    alpha = 0.3,
+    size = 2
+  ) +
+  geom_line(linewidth = 1, alpha = 0) +
+  # Add points for the mean of the epochs
+  geom_point(size = 3, alpha = 0) +
+  # Add the error bars (using the calculated lower and upper bounds)
+  geom_errorbar(
+    aes(ymin = lower_bound, ymax = upper_bound),
+    width = 0.2, # Controls the width of the horizontal bar at the end of the error line
+    linewidth = 0.6, alpha = 0
+  ) +
+    facet_grid(batch~type ~ nodes) +
+#  coord_cartesian(ylim=c(0, 1000)) +
+meu_estilo()
+#+end_src
+
+#+RESULTS:
+[[file:temp.png]]
