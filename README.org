@@ -16,4 +16,4 @@ work for the Computer System Performance Analysis Course
 - Kenichi Brumati ([[https://github.com/kenichi220][@kenichi220]])
 - Marcelo Cardoso Oliveira Gulart ([[https://github.com/MFGROOVE][@MFGROOVE]])
 * You can run the experiment with:
- Run-exp.sh and Guix
+ Run-exp.sh and Guix -- ja adicionarei o passo a passo
