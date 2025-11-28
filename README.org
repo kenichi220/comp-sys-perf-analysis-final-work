@@ -21,3 +21,20 @@ work for the Computer System Performance Analysis Course
  Run-exp.sh and Guix -- ja adicionarei o passo a passo
  So, if you need to lauch the experiment manually, you must follow this steps:
       
+
+```
+	cd comp-sys-perf-analysis-final-work/tensorflow
+	chmod +x create-env.sh
+	./create-env.sh
+	source venv/bin/activate
+
+	Attention:
+		In the files "train-sync.py" (line 107), "train-ctl.py" (line 46) and "run-tf-multi.slurm" (line 12) YOU NEED TO CHANGE THE DATA DIRECTORY 
+
+```
+
+The next step you must define the workers with will be use:
+
+```
+
+```
