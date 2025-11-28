@@ -46,11 +46,13 @@ work for the Computer System Performance Analysis Course
 	
 	Attention:
 		In the files "train-sync.py" (line 107), "train-ctl.py" (line 46) and "run-tf-multi.slurm" (line 12) YOU NEED TO CHANGE THE DATA DIRECTORY.
+	
 	----------->
 
 Next step are define the master node and others:
 
 	------------>
+	
 	#First node:
 	TF_CONFIG = {
     		'cluster': {
@@ -65,6 +67,7 @@ Next step are define the master node and others:
     		},
     		'task': {'type': 'worker', 'index': 1}
 		}
+	
 	------------>
 
 Add in the "worker" the name of nodes, define the worker 0, next define the other workers changing the task.
