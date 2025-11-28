@@ -59,14 +59,14 @@ Next step are define the master node and others:
         		'worker': ['localhost:12345', 'localhost:23456']
     		},
     		'task': {'type': 'worker', 'index': 0}
-		}
+		} python train-sync.py
 	#Second node:
 	TF_CONFIG = {
     		'cluster': {
         		'worker': ['localhost:12345', 'localhost:23456']
     		},
     		'task': {'type': 'worker', 'index': 1}
-		}
+		} python train-sync.py
 	
 	------------>
 
