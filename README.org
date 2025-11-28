@@ -17,24 +17,51 @@ work for the Computer System Performance Analysis Course
 - Marcelo Cardoso Oliveira Gulart ([[https://github.com/MFGROOVE][@MFGROOVE]])
 ** You can run the experiment with:
 * Requeriments
-*TO VENDO COMO FAZER O MD
- Run-exp.sh and Guix -- ja adicionarei o passo a passo
- So, if you need to lauch the experiment manually, you must follow this steps:
-      
+ Run-exp.sh uses the "projeto_experimental.csv" to submit all jobs for slurm queue. and Guix
+ Need one or more nodes, is possible to run the experiment with single node.
+ 
 
+	So, if you need to lauch the experiment manually, you must follow these steps:
+      
+      
+	First, define the workers that will be used.
+	Set at all nodes:
 ```
+	Isso é um código:
+	
+	git clone https://github.com/kenichi220/comp-sys-perf-analysis-final-work.git
+
+	wget http://cs231n.stanford.edu/tiny-imagenet-200.zip
+	unzip -q *.zip
+
 	cd comp-sys-perf-analysis-final-work/tensorflow
 	chmod +x create-env.sh
 	./create-env.sh
 	source venv/bin/activate
-
+	
 	Attention:
-		In the files "train-sync.py" (line 107), "train-ctl.py" (line 46) and "run-tf-multi.slurm" (line 12) YOU NEED TO CHANGE THE DATA DIRECTORY 
+		In the files "train-sync.py" (line 107), "train-ctl.py" (line 46) and "run-tf-multi.slurm" (line 12) YOU NEED TO CHANGE THE DATA DIRECTORY.
+
+```
+Next step are define the master node and others:
+
+```
+	Isso é um código:
+	#First node:
+	TF_CONFIG = {
+    		'cluster': {
+        		'worker': ['localhost:12345', 'localhost:23456']
+    		},
+    		'task': {'type': 'worker', 'index': 0}
+		}
+	#Second node:
+	TF_CONFIG = {
+    		'cluster': {
+        		'worker': ['localhost:12345', 'localhost:23456']
+    		},
+    		'task': {'type': 'worker', 'index': 1}
+		}
 
 ```
 
-The next step you must define the workers with will be use:
-
-```
-
-```
+Add in the "worker" the name of nodes, define the worker 0, next define the other workers changing the task.
