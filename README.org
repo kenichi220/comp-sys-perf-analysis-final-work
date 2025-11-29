@@ -16,6 +16,10 @@ work for the Computer System Performance Analysis Course
 - Kenichi Brumati ([[https://github.com/kenichi220][@kenichi220]])
 - Marcelo Cardoso Oliveira Gulart ([[https://github.com/MFGROOVE][@MFGROOVE]])
 ** You can run the experiment with:
+* Guix:
+ You can run the experiment with a Guix environment, it is not mandatory, because the project only needs Python and Pip virtual environment to be reproducible.
+ To do the experiment with Guix you just need to run the command below in your terminal: 
+ guix shell -m manifest.scm 
 * Requeriments
  Run-exp.sh uses the "projeto_experimental.csv" to submit all jobs for slurm queue. and Guix
  Need one or more nodes, is possible to run the experiment with single node.
