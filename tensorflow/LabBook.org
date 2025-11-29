@@ -434,32 +434,32 @@ configs
 
 #+RESULTS:
 #+begin_example
-# A tibble: 130 × 5
+# A tibble: 121 × 5
    id     model          batch type  nodes
    <chr>  <chr>          <chr> <chr> <chr>
- 1 734389 EfficientNetB0 100   ctl   1
- 2 734466 EfficientNetB0 100   ctl   1
- 3 734478 EfficientNetB0 100   ctl   1
- 4 734528 EfficientNetB0 100   ctl   1
- 5 734582 EfficientNetB0 100   ctl   1
- 6 734415 EfficientNetB0 100   ctl   2
- 7 734422 EfficientNetB0 100   ctl   2
- 8 734474 EfficientNetB0 100   ctl   2
- 9 734527 EfficientNetB0 100   ctl   2
-10 734567 EfficientNetB0 100   ctl   2
-# ℹ 120 more rows
+ 1 735831 EfficientNetB0 100   ctl   1
+ 2 735908 EfficientNetB0 100   ctl   1
+ 3 735920 EfficientNetB0 100   ctl   1
+ 4 735970 EfficientNetB0 100   ctl   1
+ 5 736028 EfficientNetB0 100   ctl   1
+ 6 735857 EfficientNetB0 100   ctl   2
+ 7 735864 EfficientNetB0 100   ctl   2
+ 8 735916 EfficientNetB0 100   ctl   2
+ 9 735969 EfficientNetB0 100   ctl   2
+10 736013 EfficientNetB0 100   ctl   2
+# ℹ 111 more rows
 # ℹ Use `print(n = ...)` to see more rows
 #+end_example
 
 ** Get the data and join with the run
 #+begin_src R :results output :session *R* :exports both
-BASE="data/final/logs"
+BASE="data/final/logs/"
 tibble(CSV = dir_ls(BASE, regexp = "csv$", recurse=TRUE)) |>
   ## filter(!str_detect(CSV, ":")) |>
   ## filter(!str_detect(CSV, "ep")) |>
   mutate(DATA = map(CSV, read_csv, progress=FALSE, show_col_types = FALSE)) |>
-  separate(CSV, into=paste0("XX", 1:7), sep="/")  |>
-  separate(XX4, into=paste0("YY", 1:2), sep="_") |>
+  separate(CSV, into=paste0("XX", 1:7), sep="/") |>
+  separate(XX4, into=paste0("YY", 1:2), sep="_")  |>
   select(id=YY2, DATA) |>
   mutate(
     DATA = map(DATA, function(x) {
@@ -478,20 +478,20 @@ results
 
 #+RESULTS:
 #+begin_example
-# A tibble: 544 × 3
+# A tibble: 560 × 3
    id     epoca tempo
    <chr>  <chr> <chr>
- 1 734376 0     1089.33614373207
- 2 734376 1     1065.81463623047
- 3 734376 2     1064.61720657349
- 4 734376 3     1064.5444316864
- 5 734376 4     1061.80225372314
- 6 734382 0     338.284725427628
- 7 734382 1     320.266666650772
- 8 734382 2     321.114961624146
- 9 734382 3     322.104963779449
-10 734382 4     321.277382850647
-# ℹ 534 more rows
+ 1 735818 0     298.360699892044
+ 2 735818 1     275.497747659683
+ 3 735818 2     274.337224721909
+ 4 735818 3     274.618661165237
+ 5 735818 4     273.248296737671
+ 6 735824 0     337.033883571625
+ 7 735824 1     317.953343868256
+ 8 735824 2     318.067031621933
+ 9 735824 3     317.879886865616
+10 735824 4     317.93927025795
+# ℹ 550 more rows
 # ℹ Use `print(n = ...)` to see more rows
 #+end_example
 
@@ -506,20 +506,70 @@ df
 
 #+RESULTS:
 #+begin_example
-# A tibble: 547 × 7
+# A tibble: 566 × 7
    id     model          batch type  nodes epoca tempo
    <chr>  <chr>          <chr> <chr> <chr> <chr> <chr>
- 1 734389 EfficientNetB0 100   ctl   1     0     348.189030170441
- 2 734466 EfficientNetB0 100   ctl   1     0     348.106799125671
- 3 734478 EfficientNetB0 100   ctl   1     <NA>  <NA>
- 4 734528 EfficientNetB0 100   ctl   1     0     350.219756126404
- 5 734582 EfficientNetB0 100   ctl   1     0     345.596360206604
- 6 734415 EfficientNetB0 100   ctl   2     <NA>  <NA>
- 7 734422 EfficientNetB0 100   ctl   2     <NA>  <NA>
- 8 734474 EfficientNetB0 100   ctl   2     0     219.8743724823
- 9 734527 EfficientNetB0 100   ctl   2     <NA>  <NA>
-10 734567 EfficientNetB0 100   ctl   2     <NA>  <NA>
-# ℹ 537 more rows
+ 1 735831 EfficientNetB0 100   ctl   1     <NA>  <NA>
+ 2 735908 EfficientNetB0 100   ctl   1     0     350.095215320587
+ 3 735920 EfficientNetB0 100   ctl   1     0     344.294260263443
+ 4 735920 EfficientNetB0 100   ctl   1     1     333.430016517639
+ 5 735970 EfficientNetB0 100   ctl   1     0     344.588366985321
+ 6 736028 EfficientNetB0 100   ctl   1     <NA>  <NA>
+ 7 735857 EfficientNetB0 100   ctl   2     <NA>  <NA>
+ 8 735864 EfficientNetB0 100   ctl   2     0     223.573875904083
+ 9 735916 EfficientNetB0 100   ctl   2     <NA>  <NA>
+10 735969 EfficientNetB0 100   ctl   2     <NA>  <NA>
+# ℹ 556 more rows
+# ℹ Use `print(n = ...)` to see more rows
+#+end_example
+
+** Runs with error
+#+begin_src R :results output :session *R* :exports both
+df |> group_by(nodes, type, model, batch, id) |> summarize(N=n(), .groups="keep") |> arrange(N) |> filter(N < 5 | N > 5)
+#+end_src
+
+#+RESULTS:
+#+begin_example
+# A tibble: 10 × 6
+# Groups:   nodes, type, model, batch, id [10]
+   nodes type  model          batch id         N
+   <chr> <chr> <chr>          <chr> <chr>  <int>
+ 1 1     ctl   EfficientNetB0 100   735831     1
+ 2 1     ctl   EfficientNetB0 100   735908     1
+ 3 1     ctl   EfficientNetB0 100   735970     1
+ 4 1     ctl   EfficientNetB0 100   736028     1
+ 5 2     ctl   EfficientNetB0 100   735857     1
+ 6 2     ctl   EfficientNetB0 100   735864     1
+ 7 2     ctl   EfficientNetB0 100   735916     1
+ 8 2     ctl   EfficientNetB0 100   735969     1
+ 9 2     ctl   EfficientNetB0 100   736013     1
+10 1     ctl   EfficientNetB0 100   735920     2
+#+end_example
+
+** Remove runs with error
+#+begin_src R :results output :session *R* :exports both
+df.clean <- df |> filter(!is.na(epoca))
+
+df.clean |> group_by(id)
+#+end_src
+
+#+RESULTS:
+#+begin_example
+# A tibble: 560 × 7
+# Groups:   id [115]
+   id     model          batch type  nodes epoca tempo
+   <chr>  <chr>          <chr> <chr> <chr> <chr> <chr>
+ 1 735908 EfficientNetB0 100   ctl   1     0     350.095215320587
+ 2 735920 EfficientNetB0 100   ctl   1     0     344.294260263443
+ 3 735920 EfficientNetB0 100   ctl   1     1     333.430016517639
+ 4 735970 EfficientNetB0 100   ctl   1     0     344.588366985321
+ 5 735864 EfficientNetB0 100   ctl   2     0     223.573875904083
+ 6 735858 EfficientNetB0 32    ctl   1     0     333.319829463959
+ 7 735858 EfficientNetB0 32    ctl   1     1     312.819135427475
+ 8 735858 EfficientNetB0 32    ctl   1     2     319.11979341507
+ 9 735858 EfficientNetB0 32    ctl   1     3     319.29111123085
+10 735858 EfficientNetB0 32    ctl   1     4     314.691659450531
+# ℹ 550 more rows
 # ℹ Use `print(n = ...)` to see more rows
 #+end_example
 
@@ -548,7 +598,7 @@ meu_estilo <- function() {
 #+begin_src R :results output file :file "temp.png" :exports both :width 600 :height 400 :session *R*
 #remove NA
 df |> filter(!is.na(epoca)) |> #group_by(model, batch, type, nodes, epoca_) |>
-  filter(grepl("*Res*", model)) |>
+  filter(grepl("*50*", model)) |>
 
   mutate(
     # 'epoca' must be numeric for plotting
@@ -559,6 +609,7 @@ df |> filter(!is.na(epoca)) |> #group_by(model, batch, type, nodes, epoca_) |>
     # Replace 'config_column_1' and 'config_column_2' with your actual column names.
     config_run = paste(model, batch, type, nodes, sep = "_")
   ) -> data_plot
+
 data_plot |>
   group_by(config_run, epoca) |>
   summarise(
@@ -573,6 +624,7 @@ data_plot |>
     lower_bound = mean_tempo - se_tempo,
     upper_bound = mean_tempo + se_tempo
   ) |>
+
   ggplot(aes(x = epoca, y = mean_tempo, color = as.factor(epoca))) +
 
   geom_jitter(
@@ -598,3 +650,168 @@ meu_estilo()
 
 #+RESULTS:
 [[file:temp.png]]
+
+
+** Creating a model
+
+*** Create a separated dataset for each Model-Type combination
+
+Function to process data for all columns
+#+begin_src R :results output :session *R* :exports both
+get_data_comb <- function(df, mod, typ){
+
+  ret <- df |> filter(grepl(mod, model)) |> filter(type == typ) |> group_by(id) |>
+    mutate(tempo_treino = sum(as.numeric(tempo))) |>
+    mutate(nodes = as.factor(nodes)) |>
+    mutate(batch = as.factor(batch)) |>
+    select(-epoca, -tempo) |>
+    ungroup()
+
+
+  return(ret)
+}
+#+end_src
+
+#+RESULTS:
+
+#+begin_src R :results output :session *R* :exports both
+
+df.eff.ctl <- get_data_comb(df.clean, "B0", "ctl")
+
+df.eff.sync <- get_data_comb(df.clean, "B0", "sync")
+
+df.res.ctl <- get_data_comb(df.clean, "50", "ctl")
+
+df.res.sync <- get_data_comb(df.clean, "50", "sync")
+
+df.eff.ctl |> select(nodes, batch, tempo_treino) |> arrange(-nodes)
+#+end_src
+
+#+RESULTS:
+#+begin_example
+# A tibble: 105 × 3
+   nodes batch tempo_treino
+   <fct> <fct>        <dbl>
+ 1 1     100           350.
+ 2 1     100           678.
+ 3 1     100           678.
+ 4 1     100           345.
+ 5 2     100           224.
+ 6 1     32           1599.
+ 7 1     32           1599.
+ 8 1     32           1599.
+ 9 1     32           1599.
+10 1     32           1599.
+# ℹ 95 more rows
+# ℹ Use `print(n = ...)` to see more rows
+Warning message:
+There was 1 warning in `arrange()`.
+ℹ In argument: `..1 = -nodes`.
+Caused by warning in `Ops.factor()`:
+! ‘-’ not meaningful for factors
+#+end_example
+
+*** Create the models
+
+Just change the dataset to see the other models
+
+*** Creating the model
+#+begin_src R :results output :session *R* :exports both
+fit <- lm(data=df.res.ctl, tempo_treino ~ nodes + batch + nodes:batch)
+
+summary(fit)
+#+end_src
+
+#+RESULTS:
+#+begin_example
+
+Call:
+lm(formula = tempo_treino ~ nodes + batch + nodes:batch, data = df.res.ctl)
+
+Residuals:
+    Min      1Q  Median      3Q     Max
+-27.909  -9.757   1.156   6.638  53.166
+
+Coefficients:
+               Estimate Std. Error t value Pr(>|t|)
+(Intercept)    1616.428      2.944 549.124   <2e-16 ***
+nodes2          124.472      4.163  29.900   <2e-16 ***
+batch32          -6.089      4.163  -1.463    0.146
+batch64           3.642      4.163   0.875    0.383
+nodes2:batch32 1941.764      5.887 329.823   <2e-16 ***
+nodes2:batch64  523.991      5.887  89.004   <2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 14.72 on 144 degrees of freedom
+Multiple R-squared:  0.9996,	Adjusted R-squared:  0.9996
+F-statistic: 7.723e+04 on 5 and 144 DF,  p-value: < 2.2e-16
+#+end_example
+
+
+*** Plotting the model
+
+#+begin_src R :results output file graphics :file (org-babel-temp-file "figure" ".png") :exports both :width 600 :height 400 :session *R*
+
+library(dplyr)
+library(ggplot2)
+
+# --- 1. Reestruturar Variáveis e Modelo ---
+# O modelo categórico é o ajuste mais adequado
+R$nodes_f <- factor(R$nodes)
+R$batch_f <- factor(R$batch)
+modelo_categorico <- lm(tempo_treino ~ nodes_f * batch_f, data = R)
+
+# --- 2. Preparar Dados Agregados ---
+dados_agregados <- R %>%
+  group_by(nodes_f, batch_f) %>%
+  summarise(
+    # Média observada (ponto)
+    media_tempo_observado = mean(tempo_treino),
+    # Erro Padrão (para barras de erro)
+    se_tempo = sd(tempo_treino) / sqrt(n()),
+    .groups = 'drop'
+  )
+
+# 3. Adicionar Previsões do Modelo
+# As previsões do modelo categórico são as médias dos grupos
+dados_agregados$previsao_modelo <- predict(modelo_categorico, newdata = dados_agregados)
+
+# --- 4. Criar o Gráfico Combinado ---
+grafico_combinado <- dados_agregados %>%
+  ggplot(aes(x = batch_f, group = nodes_f, color = nodes_f)) +
+
+  # A. Pontos Observados (Média de cada Grupo)
+  geom_point(aes(y = media_tempo_observado),
+             size = 4,
+             alpha = 0.8) +
+
+  # B. Linhas do Modelo (Previsão para cada Grupo)
+  geom_line(aes(y = previsao_modelo),
+            linewidth = 1.2,
+            linetype = "solid") +
+
+  # C. Barras de Erro (Intervalo de Confiança 95% = Média +/- 1.96*SE)
+  geom_errorbar(aes(ymin = media_tempo_observado - 1.96 * se_tempo,
+                    ymax = media_tempo_observado + 1.96 * se_tempo),
+                width = 0.15) +
+
+  # Rótulos e Títulos
+  labs(
+    title = "Efeito de Interação (Modelo Categórico)",
+    subtitle = "Linhas e Pontos representam as Médias Observadas e Previstas",
+    x = "Tamanho do Batch",
+    y = "Tempo de Treino Médio (segundos)",
+    color = "Nodos"
+  ) +
+  theme_minimal()
+
+# Exibir o gráfico
+print(grafico_combinado)
+#+end_src
+
+#+RESULTS:
+: Warning message:
+: 'surface' objects don't have these attributes: 'mode'
+: Valid attributes include:
+: '_deprecated', 'autocolorscale', 'cauto', 'cmax', 'cmid', 'cmin', 'coloraxis', 'colorbar', 'colorscale', 'connectgaps', 'contours', 'customdata', 'customdatasrc', 'hidesurface', 'hoverinfo', 'hoverinfosrc', 'hoverlabel', 'hovertemplate', 'hovertemplatesrc', 'hovertext', 'hovertextsrc', 'ids', 'idssrc', 'legendgroup', 'legendgrouptitle', 'legendrank', 'lighting', 'lightposition', 'meta', 'metasrc', 'name', 'opacity', 'opacityscale', 'reversescale', 'scene', 'showlegend', 'showscale', 'stream', 'surfacecolor', 'surfacecolorsrc', 'text', 'textsrc', 'type', 'uid', 'uirevision', 'visible', 'x', 'xcalendar', 'xhoverformat', 'xsrc', 'y', 'ycalendar', 'yhoverformat', 'ysrc', 'z', 'zcalendar', 'zhoverformat', 'zsrc', 'key', 'set', 'frame', 'transforms', '_isNestedKey', '_isSimpleKey', '_isGraticule', '_bbox'
