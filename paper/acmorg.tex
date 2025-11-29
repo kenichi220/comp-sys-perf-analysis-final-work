@@ -1,0 +1,143 @@
+% Intended LaTeX compiler: pdflatex
+\documentclass[format=acmsmall, review=false, screen=true]{acmart}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{capt-of}
+\usepackage{hyperref}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\date{}
+\title{Title (appears only in the PDF properties)}
+\hypersetup{
+ pdfauthor={Lucas Mello Schnorr},
+ pdftitle={Title (appears only in the PDF properties)},
+ pdfkeywords={},
+ pdfsubject={},
+ pdfcreator={Emacs 28.2 (Org mode 9.5.5)},
+ pdflang={Brazilian}}
+\begin{document}
+
+
+% Metadata Information
+\acmJournal{TOMPECS}
+\acmVolume{9}
+\acmNumber{4}
+\acmArticle{39}
+\acmYear{2010}
+\acmMonth{3}
+\copyrightyear{2009}
+%\acmArticleSeq{9}
+
+% Copyright
+%\setcopyright{acmcopyright}
+\setcopyright{acmlicensed}
+%\setcopyright{rightsretained}
+%\setcopyright{usgov}
+%\setcopyright{usgovmixed}
+%\setcopyright{cagov}
+%\setcopyright{cagovmixed}
+
+% DOI
+\acmDOI{0000001.0000001}
+
+% Paper history
+\received{February 2007}
+\received[revised]{March 2009}
+\received[accepted]{June 2009}
+\title[Small Title]{Evaluating Tensorflow/Keras Parallel Mechanisms for Training of Deep Leaning in a HPC cluster}
+
+\author{Rayan Raddatz de Matos}
+\affiliation{%
+  \institution{Universidade Federal do Rio Grande do Sul}
+  \streetaddress{Campus do Vale - Sector 4}
+  \city{Porto Alegre}
+  \state{RS}
+  \postcode{91501-970}
+  \country{Brazil}}
+
+\author{Kenichi Brumati}
+\affiliation{%
+  \institution{Universidade Federal do Rio Grande do Sul}
+  \streetaddress{Campus do Vale - Sector 4}
+  \city{Porto Alegre}
+  \state{RS}
+  \postcode{91501-970}
+  \country{Brazil}}
+
+
+\author{Marcelo Cardoso Oliveira Gulart}
+\affiliation{%
+  \institution{Universidade Federal do Rio Grande do Sul}
+  \streetaddress{Campus do Vale - Sector 4}
+  \city{Porto Alegre}
+  \state{RS}
+  \postcode{91501-970}
+  \country{Brazil}}
+
+\begin{abstract}
+
+Put the abstract here.
+
+\end{abstract}
+
+\keywords{Keyword 1, Keyword 2}
+\thanks{This work is supported by ...}
+\maketitle
+\section{Introduction}
+\label{sec:org69f330b}
+Na última década, o Deep Learning consolidou-se como o estado da
+arte para resolução de problemas complexos, como visão computacional e
+processamento de linguagem natural. Diante o avanço na
+precisão dos algoritmos, observou-se um crescimento exponencial na
+complexidade das arquiteturas de redes neurais e no volume dos
+conjuntos de dados. Este cenário impõe uma carga computacional massiva,
+tornando o treinamento de modelos robustos em uma única unidade de
+processamento uma tarefa inviável em termos de tempo e recursos.
+
+Para mitigar esses desafios, o treinamento distribuído tornou-se uma
+prática padrão, com destaque para a estratégia de Data Parallelism.
+Nesta abordagem, uma réplica completa do modelo é
+instanciada em cada unidade de processamento, GPU ou nó, e o conjunto
+de dados global é particionado em batches menores com foco local.
+Embora eficaz, essa técnica introduz desafios críticos de sincronização, uma vez que
+os gradientes calculados localmente devem ser agregados e comunicados
+entre todos os dispositivos a cada passo de treino, tipicamente
+através de operações de All-Reduce.
+
+\section{Background and Experimental Context}
+\label{sec:org878dc0d}
+\label{sec.context}
+\subsection{Background}
+\label{sec:org4d79fce}
+\label{sec.background}
+\subsection{Experimental Context and Workload Details}
+\label{sec:org35c6e7d}
+\label{sec.setup}
+\section{Related Work and Motivation}
+\label{sec:org1570550}
+\label{sec.relatedwork}
+
+Check this paper\cite{schnorr2013visualizing} about how you need to
+semantically aggregate data.
+
+\section{Your Great Contribution to Computer Science}
+\label{sec:org3ad1828}
+\label{sec.proposal}
+\section{Your Super Results}
+\label{sec:orga797105}
+\section{Conclusion}
+\label{sec:org392e42b}
+\section*{Acknowledgements}
+
+Who paid for this?
+
+\bibliographystyle{ACM-Reference-Format}
+\bibliography{refs}
+\end{document}
