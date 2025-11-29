@@ -1,0 +1,404 @@
+#+STARTUP: content
+#+STARTUP: overview
+#+STARTUP: indent
+#+STARTUP: latexpreview
+#+TITLE: Companion for Intrusiveness and Scalability of OMPT-Based Tracing Tools for Task-based OpenMP Applications [SSCAD-2025]
+
+
+Style for all graphs
+#+begin_src R :results output :session *R* :exports both :noweb yes :colnames yes
+meu_estilo <- function() {
+  list(
+    theme_bw(base_size = 22),
+    theme(
+      legend.title = element_blank(),
+      plot.margin = unit(c(0, 0, 0, 0), "cm"),
+      legend.spacing = unit(1, "mm"),
+      legend.position = "right",
+      legend.justification = "left",
+      legend.box.spacing = unit(0, "pt"),
+      legend.box.margin = margin(0, 0, 0, 0),
+      axis.text.x = element_text(angle=45, vjust=1, hjust=1)
+    ))
+}
+#+end_src
+
+#+RESULTS:
+
+* Space-Time View (Figure 2)
+:PROPERTIES:
+:header-args: :tangle scripts/st-view-FIG2.R :tangle-mode (identity #o755) :shebang "#!/usr/bin/Rscript"
+:END:
+#+begin_src R :results output :session *R* :exports both
+
+                                        # Modification from pj_gantt from: https://github.com/schnorr/pajeng
+
+library(tidyverse)
+library(fs)
+library(patchwork)
+
+BASE <- "st-results"
+read_paje_trace <- function(file) {
+  df <- read.csv(file, header=FALSE, strip.white=TRUE)
+  names(df) <- c("Nature","ResourceId","Type","Start","End","Duration", "Depth", "Value")
+  m <- min(df$Start)
+  df$Start <- df$Start - m
+  df$End <- df$Start+df$Duration
+  df$Origin <- NULL
+  df$Nature <- NULL
+  df$Depth <- NULL
+  df
+}
+
+tibble(CSV = dir_ls(BASE, regexp = "csv$", recurse=TRUE)) |>
+  mutate(DATA = map(CSV, read_paje_trace)) |>
+  separate(CSV, into=paste0("XX", 1:4), sep="/") |>
+  separate(XX2, into=paste0("YY", 1:3), sep="-") |>
+  mutate(group=paste(YY1, YY2, YY3, sep="-")) |>
+  select(app = YY2, group, DATA) |>
+  unnest(DATA)-> df
+
+df <- df[df$Type == "TASK",];
+df <- df[df$Duration != 0,];
+df
+df |> filter(app=="qr") -> df.qr
+df |> filter(app=="gauss")  -> df.gauss
+
+gauss <- ggplot(df.gauss, aes(xmin=Start,xmax=End, ymin=as.integer(factor(ResourceId)),ymax=as.integer(factor(ResourceId))+0.9, fill=Value)) +
+  facet_wrap(~group) + theme_bw() + geom_rect()
+qr <- ggplot(df.qr, aes(xmin=Start,xmax=End, ymin=as.integer(factor(ResourceId)),ymax=as.integer(factor(ResourceId))+0.9, fill=Value)) +
+  facet_wrap(~group) + theme_bw() + geom_rect()
+
+p <- gauss / qr
+
+p
+ggsave(
+  filename = "st-view-figure2.pdf",
+  plot = p,
+  device = pdf,
+  width=8, height=4
+)
+
+#+end_src
+
+#+RESULTS:
+#+begin_example
+[90m# A tibble: 27,440 × 8[39m
+   app   group     ResourceId Type    Start     End Duration Value
+   [3m[90m<chr>[39m[23m [3m[90m<chr>[39m[23m     [3m[90m<chr>[39m[23m      [3m[90m<chr>[39m[23m   [3m[90m<dbl>[39m[23m   [3m[90m<dbl>[39m[23m    [3m[90m<dbl>[39m[23m [3m[90m<chr>[39m[23m
+[90m 1[39m qr    cei-qr-64 th9        TASK  0.001[4m3[24m[4m0[24m 0.001[4m9[24m[4m9[24m 0.000[4m6[24m[4m9[24m  lapack_dlarfb
+[90m 2[39m qr    cei-qr-64 th9        TASK  0.002[4m0[24m[4m0[24m 0.002[4m4[24m[4m3[24m 0.000[4m4[24m[4m3[24m[4m2[24m lapack_dlarfb
+[90m 3[39m qr    cei-qr-64 th9        TASK  0.003[4m0[24m[4m8[24m 0.004[4m2[24m[4m1[24m 0.001[4m1[24m[4m2[24m  lapack_dtpmqrt
+[90m 4[39m qr    cei-qr-64 th9        TASK  0.004[4m2[24m[4m1[24m 0.005[4m0[24m[4m8[24m 0.000[4m8[24m[4m7[24m[4m5[24m lapack_dtpmqrt
+[90m 5[39m qr    cei-qr-64 th9        TASK  0.005[4m5[24m[4m5[24m 0.006[4m3[24m[4m4[24m 0.000[4m7[24m[4m9[24m[4m2[24m lapack_dtpmqrt
+[90m 6[39m qr    cei-qr-64 th9        TASK  0.006[4m3[24m[4m5[24m 0.007[4m1[24m[4m2[24m 0.000[4m7[24m[4m7[24m[4m1[24m lapack_dtpmqrt
+[90m 7[39m qr    cei-qr-64 th9        TASK  0.007[4m1[24m[4m2[24m 0.007[4m8[24m[4m9[24m 0.000[4m7[24m[4m6[24m[4m8[24m lapack_dtpmqrt
+[90m 8[39m qr    cei-qr-64 th9        TASK  0.007[4m9[24m[4m0[24m 0.008[4m6[24m[4m9[24m 0.000[4m7[24m[4m9[24m[4m4[24m lapack_dtpmqrt
+[90m 9[39m qr    cei-qr-64 th9        TASK  0.008[4m6[24m[4m9[24m 0.009[4m4[24m[4m8[24m 0.000[4m7[24m[4m8[24m[4m1[24m lapack_dtpmqrt
+[90m10[39m qr    cei-qr-64 th9        TASK  0.009[4m4[24m[4m8[24m 0.010[4m3[24m  0.000[4m7[24m[4m9[24m[4m1[24m lapack_dtpmqrt
+[90m# ℹ 27,430 more rows[39m
+[90m# ℹ Use `print(n = ...)` to see more rows[39m
+#+end_example
+
+* Overview of Intrusion (Figure 3)
+:PROPERTIES:
+:header-args: :tangle scripts/general-overhead-FIG3.R :tangle-mode (identity #o755) :shebang "#!/usr/bin/Rscript"
+:END:
+** Load Data
+#+begin_src R :results output :session *R* :exports both
+options(crayon.enabled=FALSE)
+suppressMessages(library(fs))
+suppressMessages(library(tidyverse))
+BASE <- "./"
+tibble(CSV = dir_ls(BASE, regexp = "csv$", recurse=TRUE)) |>
+  mutate(DATA = map(CSV, read_csv, show_col_types=FALSE, progress=FALSE)) |>
+  filter(!grepl("rastro", CSV)) |>
+  separate(CSV, into=paste0("YY", 1:2), sep="-") |>
+  select(host = YY1, app = YY2, DATA) |>
+  mutate(app = gsub("\\.csv", "", app)) |>
+  unnest(DATA) |>
+  group_by(host, app, type, problemsize, subproblemsize, threads, tasks) -> df
+
+df |>
+  summarize(comp.mean = mean(comptime),
+            comp.sd = sd(comptime),
+            comp.se = 3*comp.sd/sqrt(n()),
+            app.mean = mean(apptime),
+            app.sd = sd(apptime),
+            app.se = 3*app.sd/sqrt(n()),
+            .groups="keep") -> df.stats
+#+end_src
+
+#+RESULTS:
+
+** Compute the overhead metric (intrusion)
+
+Based on the mean values.
+
+#+begin_src R :results output :session *R* :exports both :noweb yes :colnames yes
+df.stats |>
+  # Let's disregard application time.
+  select(-contains("app.")) -> df.stats.base
+df.stats.base |>
+  # Select the "empty" as the reference
+  filter(type == "empty") |>
+  ungroup(type) |> select(-type) |>
+  rename_with(~ paste0("empty.", .), comp.mean:comp.se) -> df.stats.empty
+
+df.stats.base |>
+  # Remove the "empty", our reference
+  filter(type != "empty") |>
+  # Associate with the reference
+  ungroup(type, tasks) |>
+  left_join(df.stats.empty, by = join_by(host, app, problemsize, subproblemsize, threads)) |>
+  # Compute distances (the overhead)
+  mutate(diff.mean = comp.mean - empty.comp.mean,
+         diff.se = sqrt(comp.se^2 + empty.comp.se^2)) -> df.stats.diff
+#+end_src
+
+#+RESULTS:
+
+** General view of the intrusion plot (without the threads)
+#+begin_src R :results output :session *R* :exports both :noweb yes :colnames yes
+df.stats.diff |>
+  ungroup(threads, subproblemsize) |>
+  group_by(type, .add=TRUE) |>
+  summarize(diff.mean.super = mean(diff.mean),
+            diff.se.super = sqrt(1/n() * sum(diff.se^2)),
+            .groups="keep") |>
+  print() |>
+  ggplot(aes(
+    fill = host,
+    x = type, y = diff.mean.super,
+    ymin = diff.mean.super - diff.se.super,
+    ymax = diff.mean.super + diff.se.super)) +
+  geom_col(position="dodge") +
+  geom_errorbar(width=.8, alpha=.7, position="dodge") +
+  meu_estilo() +
+  facet_wrap(~app) +
+#  coord_cartesian(ylim=c(0, 0.15)) +
+  ylab("Intrusion time [seconds]") +
+  xlab("Tracer") +
+  theme(legend.position="top") -> p
+
+p
+
+ggsave(
+  filename = "geral-overhead.pdf",
+  plot = p,
+  device = pdf,
+#  width=20, height=6
+  width=10, height=4
+)
+#+end_src
+
+#+RESULTS:
+#+begin_example
+# A tibble: 36 × 6
+# Groups:   host, app, problemsize, type [36]
+   host  app   problemsize type   diff.mean.super diff.se.super
+   <chr> <chr>       <dbl> <chr>            <dbl>         <dbl>
+ 1 cei   gauss       10000 extrae        0.0479          0.0293
+ 2 cei   gauss       10000 oot           0.000397        0.0288
+ 3 cei   gauss       10000 printf        0.00123         0.0293
+ 4 cei   gauss       10000 scorep        0.0128          0.0848
+ 5 cei   gauss       10000 tikki         0.0774          0.0296
+ 6 cei   gauss       10000 void         -0.000692        0.0291
+ 7 cei   qr           2048 extrae        0.0492          0.0247
+ 8 cei   qr           2048 oot           0.00102         0.0109
+ 9 cei   qr           2048 printf        0.00117         0.0109
+10 cei   qr           2048 scorep        0.00322         0.0109
+# ℹ 26 more rows
+# ℹ Use `print(n = ...)` to see more rows
+#+end_example
+* Overview of Intrusion or Gauss-Seidel (Figure 4)
+:PROPERTIES:
+:header-args: :tangle scripts/gauss-overhead-FIG4.R :tangle-mode (identity #o755) :shebang "#!/usr/bin/Rscript"
+:END:
+** Load Data
+#+begin_src R :results output :session *R* :exports both
+options(crayon.enabled=FALSE)
+suppressMessages(library(fs))
+suppressMessages(library(tidyverse))
+BASE <- "./"
+tibble(CSV = dir_ls(BASE, regexp = "csv$", recurse=TRUE)) |>
+  mutate(DATA = map(CSV, read_csv, show_col_types=FALSE, progress=FALSE)) |>
+  filter(!grepl("rastro", CSV)) |>
+  separate(CSV, into=paste0("YY", 1:2), sep="-") |>
+  select(host = YY1, app = YY2, DATA) |>
+  mutate(app = gsub("\\.csv", "", app)) |>
+  unnest(DATA) |>
+  group_by(host, app, type) |>
+  filter(problemsize == max(problemsize)) |>
+  filter(threads == max(threads)) |>
+  group_by(host, app, type, problemsize, subproblemsize, threads, tasks) -> df
+
+df |>
+  summarize(comp.mean = mean(comptime),
+            comp.sd = sd(comptime),
+            comp.se = 3*comp.sd/sqrt(n()),
+            app.mean = mean(apptime),
+            app.sd = sd(apptime),
+            app.se = 3*app.sd/sqrt(n()),
+            .groups="keep") -> df.stats
+#+end_src
+
+#+RESULTS:
+
+** Compute the overhead metric (intrusion)
+
+Based on the mean values.
+
+#+begin_src R :results output :session *R* :exports both :noweb yes :colnames yes
+df.stats |>
+  # Let's disregard application time.
+  select(-contains("app.")) -> df.stats.base
+df.stats.base |>
+  # Select the "empty" as the reference
+  filter(type == "empty") |>
+  ungroup(type) |> select(-type) |>
+  rename_with(~ paste0("empty.", .), comp.mean:comp.se) -> df.stats.empty
+
+df.stats.base |>
+  # Remove the "empty", our reference
+  filter(type != "empty") |>
+  # Associate with the reference
+  ungroup(type, tasks) |>
+  left_join(df.stats.empty, by = join_by(host, app, problemsize, subproblemsize, threads)) |>
+  # Compute distances (the overhead)
+  mutate(diff.mean = comp.mean - empty.comp.mean,
+         diff.se = sqrt(comp.se^2 + empty.comp.se^2)) -> df.stats.diff
+#+end_src
+
+#+RESULTS:
+
+** General view of the intrusion plot (without the threads)
+
+#+begin_src R :results output :session *R* :exports both :noweb yes :colnames yes
+
+df.stats.diff |>
+  filter(app == "gauss") |>
+#  filter(!(type %in% c("tikki", "extrae"))) |>
+  ggplot(aes(
+    color = host,
+    fill = host,
+    x = type, y = diff.mean,
+    ymin = diff.mean - diff.se,
+    ymax = diff.mean + diff.se)) +
+  geom_col(position="dodge") +
+#  geom_violin() +
+  geom_errorbar(width=.8, alpha=.7, color="black", position="dodge") +
+  meu_estilo() +
+  facet_wrap(~subproblemsize, nrow=1) +
+#  coord_cartesian(ylim=c(0, 0.15)) +
+  xlab("Tracer") +
+  ylab("Intrusion time [seconds]") +
+  theme(legend.position="top") -> p
+
+p
+
+ggsave(
+  filename = "gauss-overhead.pdf",
+  plot = p,
+  device = pdf,
+  width=12, height=4
+)
+#+end_src
+
+#+RESULTS:
+
+* Detailed View as Function of Threads for QR (Figurze 5)
+:PROPERTIES:
+:header-args: :tangle scripts/qr-threads-overhead-FIG5.R :tangle-mode (identity #o755) :shebang "#!/usr/bin/Rscript"
+:END:
+** Load Data
+#+begin_src R :results output :session *R* :exports both
+options(crayon.enabled=FALSE)
+suppressMessages(library(fs))
+suppressMessages(library(tidyverse))
+BASE <- "./"
+tibble(CSV = dir_ls(BASE, regexp = "csv$", recurse=TRUE)) |>
+  mutate(DATA = map(CSV, read_csv, show_col_types=FALSE, progress=FALSE)) |>
+  filter(!grepl("rastro", CSV)) |>
+  separate(CSV, into=paste0("YY", 1:2), sep="-") |>
+  select(host = YY1, app = YY2, DATA) |>
+  mutate(app = gsub("\\.csv", "", app)) |>
+  unnest(DATA) |>
+  group_by(host, app, type, problemsize, subproblemsize, threads, tasks) -> df
+
+df |>
+  summarize(comp.mean = mean(comptime),
+            comp.sd = sd(comptime),
+            comp.se = 3*comp.sd/sqrt(n()),
+            app.mean = mean(apptime),
+            app.sd = sd(apptime),
+            app.se = 3*app.sd/sqrt(n()),
+            .groups="keep") -> df.stats
+#+end_src
+
+#+RESULTS:
+
+** Compute the overhead metric (intrusion)
+
+Based on the mean values.
+
+#+begin_src R :results output :session *R* :exports both :noweb yes :colnames yes
+df.stats |>
+  # Let's disregard application time.
+  select(-contains("app.")) -> df.stats.base
+df.stats.base |>
+  # Select the "empty" as the reference
+  filter(type == "empty") |>
+  ungroup(type) |> select(-type) |>
+  rename_with(~ paste0("empty.", .), comp.mean:comp.se) -> df.stats.empty
+
+df.stats.base |>
+  # Remove the "empty", our reference
+  filter(type != "empty") |>
+  # Associate with the reference
+  ungroup(type, tasks) |>
+  left_join(df.stats.empty, by = join_by(host, app, problemsize, subproblemsize, threads)) |>
+  # Compute distances (the overhead)
+  mutate(diff.mean = comp.mean - empty.comp.mean,
+         diff.se = sqrt(comp.se^2 + empty.comp.se^2)) -> df.stats.diff
+#+end_src
+
+#+RESULTS:
+
+** Detailed view
+
+#+begin_src R :results output :session *R* :exports both :noweb yes :colnames yes
+df.stats.diff |>
+  filter(app == "qr") |>
+  ggplot(aes(
+    color = host,
+    x = threads, y = diff.mean,
+    ymin = diff.mean - diff.se,
+    ymax = diff.mean + diff.se)) +
+  geom_point(position="dodge") +
+  geom_errorbar(width=.8, alpha=.7, position="dodge") +
+  meu_estilo() +
+  facet_grid(subproblemsize~type) +
+  coord_cartesian(ylim=c(0, 0.15)) +
+  xlab("Number of threads [count]") +
+  ylab("Intrusion time [seconds]") +
+  theme(legend.position="top") -> p
+
+p
+
+ggsave(
+  filename = "qr-threads-overhead.pdf",
+  plot = p,
+  device = pdf,
+  width=14, height=7
+)
+
+#+end_src
+
+#+RESULTS:
+: Warning message:
+: Width not defined
+: ℹ Set with `position_dodge(width = ...)`
+: Warning message:
+: Width not defined
+: ℹ Set with `position_dodge(width = ...)`

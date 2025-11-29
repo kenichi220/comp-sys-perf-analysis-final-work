@@ -1,0 +1,770 @@
+# #+TITLE:     Interestign and Effortless Presentations for OrgMode
+# #+AUTHOR:    Rayan Raddatz de Matos
+#+EMAIL:     rayan.raddatz@inf.ufrgs.br
+#+DATE:  14/10/2025
+#+LANGUAGE:  pt-br
+#+OPTIONS:   H:2 num:t toc:nil \n:nil @:t ::t |:t ^:t -:t f:t *:t <:t
+
+#+OPTIONS:   TeX:t LaTeX:t skip:nil d:nil todo:t pri:nil tags:not-in-toc
+#+INFOJS_OPT: view:nil toc:nil ltoc:t mouse:underline buttons:0 path:https://orgmode.org/org-info.js
+#+EXPORT_EXCLUDE_TAGS: noexport
+
+#+STARTUP: beamer
+#+LaTeX_CLASS: beamer
+#+LaTeX_CLASS_OPTIONS: [presentation, aspectratio=169, 14pt]
+
+#+BEAMER_THEME: metropolis
+#+LATEX_HEADER: \usepackage{booktabs}
+#+LATEX_HEADER: \usepackage{tgheros}
+
+# # =========== Background Color ==============
+#+LATEX_HEADER: \definecolor{mywhite}{HTML}{FFFFFF}
+#+BEAMER_HEADER:\setbeamercolor{background canvas}{bg=mywhite}
+#+LATEX_HEADER: \definecolor{myblack}{HTML}{333333}
+
+# ========== Slides title ==============
+#+LATEX_HEADER: \definecolor{slidetitlecolor}{HTML}{FF2233}
+#+LATEX_HEADER: \definecolor{mblack}{HTML}{000000}
+#+BEAMER_HEADER: \setbeamercolor{frametitle}{fg=mywhite, bg=slidetitlecolor}
+#+BEAMER_HEADER: \setbeamerfont{frametitle}{size=\small}
+
+# =========== set bold to bold ==============
+#+LATEX_HEADER: \definecolor{mybold}{HTML}{000000}
+#+BEAMER_HEADER:\setbeamercolor{alerted text}{fg=mybold}
+#+BEAMER_HEADER: \setbeamerfont{alerted text}{series=\bfseries}
+
+# =========== Change section template ==============
+# % Redefine the section page template to remove the line
+#+BEAMER_HEADER:\setbeamertemplate{section page}{%
+# #+BEAMER_HEADER:  \centering% Center the content
+#+BEAMER_HEADER:  \usebeamerfont{section title}\insertsectionhead% Display the section title
+#+BEAMER_HEADER:  \vskip1cm% Add some space below the title
+#+BEAMER_HEADER:  \usebeamerfont{subsection title}\insertsubsectionhead% Display the subsection title (if any)
+#+BEAMER_HEADER:}
+
+# =========== Title slide configuration ==============
+#+LATEX_HEADER: \definecolor{titlecolor}{HTML}{222222}
+#+LATEX_HEADER: \definecolor{namecolor}{HTML}{555555}
+#+LATEX_HEADER: \usepackage[absolute,overlay]{textpos}
+#+LATEX_HEADER: \usepackage{graphicx}
+#+LATEX_HEADER: \usepackage{tikz}
+
+#+LATEX_HEADER: \definecolor{R}{HTML}{FF0000}
+
+
+
+# ===================================================
+#          TITULO
+# ===================================================
+
+#+begin_export latex
+\begin{frame}[plain] % O [plain] remove todos os elementos do frame
+    % Set the grid for textpos. The {1cm}{1cm} means our coordinates are in cm.
+    \setlength{\TPHorizModule}{1cm}
+    \setlength{\TPVertModule}{1cm}
+
+    % The textblock environment places the content.
+    % Format is: {width of block}(x-position, y-position from top-left corner)
+    \begin{textblock*}{2.5cm}(13.2cm, 7cm)
+        \includegraphics[width=2.5cm]{~/logos/INF.png}
+    \end{textblock*}
+
+    \begin{textblock*}{2.5cm}(.5cm, 6.8cm)
+        \includegraphics[width=2cm]{~/logos/UFRGS.png}
+    \end{textblock*}
+
+  \begin{center}
+      \vspace*{2cm}
+      { \color{titlecolor} \textbf{Intrusiveness and Scalability of OMPT-Based Tracing Tools for Task-based OpenMP Applications}}\\[10px]
+      {\footnotesize \color{namecolor} \textbf{Rayan Raddatz de Matos}, Lucas Mello Schnorr}\\
+      {\tiny \{rayan.raddatz@inf.ufrgs.br, schnorr@inf.ufrgs.br\}}\\[2cm]
+      {\footnotesize SSCAD -- Bonito, MS -- October, 2025}
+  \end{center}
+
+\end{frame}
+#+end_export
+
+# ===================================================
+#    SLIDES
+# ===================================================
+
+** Agenda
+\vfill
+- Task-based OpenMP Applications
+\vfill
+- OMPT-Based Tracing Tools
+\vfill
+- Intrusiveness and Scalability
+\vfill
+* \small Intrusiveness and Scalability of OMPT-Based Tracing Tools for Task-based OpenMP Applications
+* \small \color{mblack} Intrusiveness and Scalability of OMPT-Based Tracing Tools for \color{R} Task-based OpenMP Applications
+** Task-based parallelism
+
+*** A screenshot                                            :BMCOL:B_example:
+    :PROPERTIES:
+    :BEAMER_col: 0.5
+    :END:
+
+#+ATTR_LaTeX: :width 1.05\textwidth
+[[file:dag1.pdf]]
+
+*** A block                                           :BMCOL:
+    :PROPERTIES:
+    :BEAMER_col: 0.5
+    :END:
+
+
+*Programmer:* Define the tasks and its parameters.
+
+\vspace{15px}
+*Runtime system:* Schedule tasks to the computational cores.
+
+
+
+** Task-based parallelism
+*** DAG
+    :PROPERTIES:
+    :BEAMER_col: 0.4
+    :END:
+
+\small Can be viewed as a TDG (Task Dependency Graph)
+
+\vspace{15px}
+
+
+** OpenMP
+*** What is                                                         :BMCOL:
+    :PROPERTIES:
+    :BEAMER_col: 0.6
+    :END:
+- Shared-memory multiprocessing programming interface.
+\vspace{10px}
+- Since 3.0 supports tasks.
+\vspace{10px}
+- New features for tasks with newer versions.
+
+
+
+*** Logo                                                  :BMCOL:B_example:
+    :PROPERTIES:
+    :BEAMER_col: 0.4
+    :END:
+
+[[file:imgs/openmp.png]]
+
+
+** OpenMP
+
+#+ATTR_LaTeX: :width 0.6\textwidth
+[[file:imgs/tasks.pdf]]
+
+
+** Dynamic scheduling
+ :PROPERTIES:
+ :BEAMER_FRAME_OPTIONS: plain
+   :END:
+
+- Application behavior is not simple to understand.
+\hfill \pause
+- Need for tracing tools capable of capture tasks life cycle.
+
+
+
+* \small \color{mblack} Intrusiveness and Scalability of \color{R} OMPT-Based Tracing Tools  \color{mblack} for Task-based OpenMP Applications
+
+** OMPT (OpenMP Tools)
+
+*** TEXT
+:PROPERTIES:
+    :BEAMER_col: 0.5
+    :END:
+
+Introduced in OpenMP 5.
+
+\vspace{10px}
+User-defined callbacks when OpenMP events occurs.
+
+*** IMG
+:PROPERTIES:
+    :BEAMER_col: 0.5
+    :END:
+[[file:imgs/OMPT.pdf]]
+
+** Tracing
+
+- Additional code to trace application behavior.
+#+latex: \pause
+- Changes the application environment and *introduce overhead.*
+
+** Tracing Tools
+
+*** Our                                                   :BMCOL:B_example:
+    :PROPERTIES:
+    :BEAMER_col: 0.5
+    :END:
+**** Our tools
+- Void
+- Printf
+- OOT
+
+
+*** A block                                           :BMCOL:
+    :PROPERTIES:
+    :BEAMER_col: 0.5
+    :END:
+
+****  Popular tools
+    - Score-P
+    - TiKKi
+    - Extrae
+
+
+** Void
+
+[[file:imgs/void.pdf]]
+
+** Printf
+
+[[file:imgs/printf.pdf]]
+
+** OOT
+
+[[file:imgs/oot.pdf]]
+
+* \small \color{R} Intrusiveness and Scalability \color{mblack} of OMPT-Based Tracing Tools for Task-based OpenMP Applications
+
+* Methodology
+** Benchmark
+
+*** The applications
+    :PROPERTIES:
+    :BEAMER_col: 0.6
+    :END:
+- QR Factorization
+
+\vspace{10px}
+- Gauss-Seidel
+\vspace{10px}
+- Cholesky Factorization
+
+
+*** Image here
+    :PROPERTIES:
+    :BEAMER_col: 0.4
+    :END:
+
+** Application parameters
+
+\footnotesize
+#+ATTR_LATEX: :booktabs t
+| *Application*            | *Problem* | *Block*                | *Tasks Created*          |
+| <l>                    | <l>     | <l>                  | <l>                    |
+|------------------------+---------+----------------------+------------------------|
+| QR factorization       | 2048    | 64, 128, 192, 258    | 11440, 1496, 385, 204  |
+| Cholesky factorization | 2000    | 50, 80, 100, 200     | 11480, 2925, 1540, 220 |
+| Gauss-Seidel method    | 10000   | 250, 500, 1000, 2000 | 16000, 4000, 1000, 250 |
+
+** Hardware configuration
+
+\footnotesize
+#+ATTR_LATEX: :booktabs t
+| *Nome*  |                             *CPU*                              | *RAM*         |
+|  <l>  |                             <l>                              | <l>         |
+|-------+--------------------------------------------------------------+-------------|
+|  Cei  | 2 x Intel(R) Xeon(R) Silver 4116, 2.10 GHz, 48 ths, 24 cores | 96 GB DDR4  |
+| Hype  | 2 x Intel(R) Xeon(R) E5-2650 v3, 2.30 GHz, 40 ths, 20 cores  | 128 GB DDR4 |
+| Draco | 2 x Intel(R) Xeon(R) E5-2640 v2, 2.00 GHz, 32 ths, 16 cores  | 64 GB DDR3  |
+
+** Experiments
+
+- Full factorial (application, block, # threads, etc...)
+\hfill \pause
+- 10 executions for each combination
+\hfill \pause
+- Metric: Intrusion time (overhead).
+
+
+* Results
+
+** Estilo                                                         :noexport:
+#+begin_src R :results output :session *R* :exports both
+meu_estilo <- function() {
+    list(
+        theme_bw(base_size = 22),
+        theme(
+            legend.title = element_blank(),
+            plot.margin = unit(c(0, 0, 0, 0), "cm"),
+            legend.spacing = unit(1, "mm"),
+            legend.position = "right",
+            legend.justification = "left",
+            legend.box.spacing = unit(0, "pt"),
+            legend.box.margin = margin(0, 0, 0, 0),
+            axis.text.x = element_text(angle=45, vjust=1, hjust=1)
+        ))
+}
+#+end_src
+
+#+RESULTS:
+
+** Load Data                                                      :noexport:
+#+begin_src R :results output :session *R* :exports both
+options(crayon.enabled=FALSE)
+suppressMessages(library(fs))
+suppressMessages(library(tidyverse))
+BASE <- "data/"
+tibble(CSV = dir_ls(BASE, regexp = "csv$", recurse=TRUE)) |>
+    mutate(DATA = map(CSV, read_csv, show_col_types=FALSE, progress=FALSE)) |>
+    filter(!grepl("rastro", CSV)) |>
+    separate(CSV, into=paste0("XX", 1:2), sep="/") |>
+    separate(XX2, into=paste0("YY", 1:2), sep="-") |>
+    select(host = YY1, app = YY2, DATA) |>
+    mutate(app = gsub("\\.csv", "", app)) |>
+    unnest(DATA) |>
+    group_by(host, app, type, problemsize, subproblemsize, threads, tasks) -> df
+
+
+df |>
+    summarize(comp.mean = mean(comptime),
+              comp.sd = sd(comptime),
+              comp.se = 3*comp.sd/sqrt(n()),
+              app.mean = mean(apptime),
+              app.sd = sd(apptime),
+              app.se = 3*app.sd/sqrt(n()),
+              .groups="keep") -> df.stats
+
+df.stats |>
+    ## Let's disregard application time.
+    select(-contains("app.")) -> df.stats.base
+df.stats.base |>
+    ## Select the "empty" as the reference
+    filter(type == "empty") |>
+    ungroup(type) |> select(-type) |>
+    rename_with(~ paste0("empty.", .), comp.mean:comp.se) -> df.stats.empty
+
+df.stats.base |>
+    ## Remove the "empty", our reference
+    filter(type != "empty") |>
+    ## Associate with the reference
+    ungroup(type, tasks) |>
+    left_join(df.stats.empty, by = join_by(host, app, problemsize, subproblemsize, threads)) |>
+    ## Compute distances (the overhead)
+    mutate(diff.mean = comp.mean - empty.comp.mean,
+           diff.se = sqrt(comp.se^2 + empty.comp.se^2)) -> df.stats.diff
+
+#+end_src
+
+#+RESULTS:
+
+
+#+begin_src R :results output :session *R* :exports both
+df.stats.diff |> names()
+#+end_src
+
+#+RESULTS:
+:  [1] "host"            "app"             "type"            "problemsize"     "subproblemsize"
+:  [6] "threads"         "tasks.x"         "comp.mean"       "comp.sd"         "comp.se"
+: [11] "tasks.y"         "empty.comp.mean" "empty.comp.sd"   "empty.comp.se"   "diff.mean"
+: [16] "diff.se"
+
+** Intrusion overview (QR)
+
+#+begin_src R :results output graphics file :file (org-babel-temp-file "figure" ".pdf") :exports results :width 10 :height 4 :session *R*
+df.stats.diff |>
+  filter(app == "qr") |>
+
+  ungroup(threads, subproblemsize) |>
+  group_by(type, .add=TRUE) |>
+  summarize(diff.mean.super = mean(diff.mean),
+            diff.se.super = sqrt(1/n() * sum(diff.se^2)),
+            .groups="keep") |>
+  print() |>
+
+  mutate(
+    primeira_categoria = levels(as.factor(type))[1],
+
+    diff.mean.super = if_else(type == "void", diff.mean.super, NA_real_),
+
+    diff.se.super = if_else(type == "void",
+                            diff.se.super,
+                            NA_real_)
+  ) |>
+
+  ggplot(aes(
+    fill = host,
+    x = type, y = diff.mean.super,
+    ymin = diff.mean.super - diff.se.super,
+    ymax = diff.mean.super + diff.se.super)) +
+  geom_col(position="dodge") +
+  geom_errorbar(width=.8, alpha=.7, position="dodge") +
+  meu_estilo() +
+  facet_wrap(~app) +
+
+  scale_x_discrete(drop = FALSE) +
+  coord_cartesian(ylim=c(-0.015, 0.075)) +
+
+  ##  coord_cartesian(ylim=c(0, 0.15)) +
+  ylab("Intrusion time [seconds]") +
+  xlab("Tracer") +
+  theme(legend.position="top")
+#+end_src
+
+#+RESULTS:
+[[file:/tmp/babel-5rcVgU/figure0b7k8A.png]]
+
+** Intrusion overview (QR)
+
+#+begin_src R :results output graphics file :file (org-babel-temp-file "figure" ".pdf") :exports results :width 10 :height 4 :session *R*
+df.stats.diff |>
+  filter(app == "qr") |>
+
+  ungroup(threads, subproblemsize) |>
+  group_by(type, .add=TRUE) |>
+  summarize(diff.mean.super = mean(diff.mean),
+            diff.se.super = sqrt(1/n() * sum(diff.se^2)),
+            .groups="keep") |>
+  print() |>
+
+  mutate(
+    primeira_categoria = levels(as.factor(type))[1],
+
+    diff.mean.super = if_else(type == "void" | type == "printf", diff.mean.super, NA_real_),
+
+    diff.se.super = if_else(type == "void" | type == "printf",
+                            diff.se.super,
+                            NA_real_)
+  ) |>
+
+  ggplot(aes(
+    fill = host,
+    x = type, y = diff.mean.super,
+    ymin = diff.mean.super - diff.se.super,
+    ymax = diff.mean.super + diff.se.super)) +
+  geom_col(position="dodge") +
+  geom_errorbar(width=.8, alpha=.7, position="dodge") +
+  meu_estilo() +
+  facet_wrap(~app) +
+
+  scale_x_discrete(drop = FALSE) +
+  coord_cartesian(ylim=c(-0.015, 0.075)) +
+
+  ##  coord_cartesian(ylim=c(0, 0.15)) +
+  ylab("Intrusion time [seconds]") +
+  xlab("Tracer") +
+  theme(legend.position="top")
+#+end_src
+
+#+RESULTS:
+[[file:/tmp/babel-5rcVgU/figure0b7k8A.png]]
+
+** Intrusion overview (QR)
+
+#+begin_src R :results output graphics file :file (org-babel-temp-file "figure" ".pdf") :exports results :width 10 :height 4 :session *R*
+df.stats.diff |>
+  filter(app == "qr") |>
+
+  ungroup(threads, subproblemsize) |>
+  group_by(type, .add=TRUE) |>
+  summarize(diff.mean.super = mean(diff.mean),
+            diff.se.super = sqrt(1/n() * sum(diff.se^2)),
+            .groups="keep") |>
+  print() |>
+
+  mutate(
+    primeira_categoria = levels(as.factor(type))[1],
+
+    diff.mean.super = if_else(type == "void" | type == "printf" | type == "oot", diff.mean.super, NA_real_),
+
+    diff.se.super = if_else(type == "void" | type == "printf"  | type == "oot",
+                            diff.se.super,
+                            NA_real_)
+  ) |>
+
+  ggplot(aes(
+    fill = host,
+    x = type, y = diff.mean.super,
+    ymin = diff.mean.super - diff.se.super,
+    ymax = diff.mean.super + diff.se.super)) +
+  geom_col(position="dodge") +
+  geom_errorbar(width=.8, alpha=.7, position="dodge") +
+  meu_estilo() +
+  facet_wrap(~app) +
+
+  scale_x_discrete(drop = FALSE) +
+  coord_cartesian(ylim=c(-0.015, 0.075)) +
+
+  ##  coord_cartesian(ylim=c(0, 0.15)) +
+  ylab("Intrusion time [seconds]") +
+  xlab("Tracer") +
+  theme(legend.position="top")
+#+end_src
+
+#+RESULTS:
+[[file:/tmp/babel-5rcVgU/figure0b7k8A.png]]
+
+
+
+
+** Intrusion overview (QR)
+#+begin_src R :results output graphics file :file (org-babel-temp-file "figure" ".pdf") :exports results :width 10 :height 4 :session *R*
+df.stats.diff |>
+  filter(app == "qr") |>
+
+  ungroup(threads, subproblemsize) |>
+  group_by(type, .add=TRUE) |>
+  summarize(diff.mean.super = mean(diff.mean),
+            diff.se.super = sqrt(1/n() * sum(diff.se^2)),
+            .groups="keep") |>
+  print() |>
+
+  ggplot(aes(
+    fill = host,
+    x = type, y = diff.mean.super,
+    ymin = diff.mean.super - diff.se.super,
+    ymax = diff.mean.super + diff.se.super)) +
+  geom_col(position="dodge") +
+  geom_errorbar(width=.8, alpha=.7, position="dodge") +
+  meu_estilo() +
+  facet_wrap(~app) +
+
+  scale_x_discrete(drop = FALSE) +
+  coord_cartesian(ylim=c(-0.015, 0.075)) +
+  ##  coord_cartesian(ylim=c(0, 0.15)) +
+  ylab("Intrusion time [seconds]") +
+  xlab("Tracer") +
+  theme(legend.position="top")
+#+end_src
+
+#+RESULTS:
+[[file:/tmp/babel-5rcVgU/figureoBuXQe.png]]
+
+** Intrusion overview (QR)
+#+begin_src R :results output graphics file :file (org-babel-temp-file "figure" ".pdf") :exports results :width 10 :height 5 :session *R*
+df.stats.diff |>
+  filter(app == "qr") |>
+
+  ungroup(threads) |>
+  group_by(type, .add=TRUE) |>
+  summarize(diff.mean.super = mean(diff.mean),
+            diff.se.super = sqrt(1/n() * sum(diff.se^2)),
+            .groups="keep") |>
+  print() |>
+
+  ggplot(aes(
+    fill = host,
+    x = type, y = diff.mean.super,
+    ymin = diff.mean.super - diff.se.super,
+    ymax = diff.mean.super + diff.se.super)) +
+  geom_col(position="dodge", width=.5) +
+  geom_errorbar(width=.4, alpha=.7, position="dodge") +
+  meu_estilo() +
+  facet_wrap(~subproblemsize) +
+
+  scale_x_discrete(drop = FALSE) +
+  coord_cartesian(ylim=c(-0.015, 0.075)) +
+  ##  coord_cartesian(ylim=c(0, 0.15)) +
+  ylab("Intrusion time [seconds]") +
+  xlab("Tracer") +
+  theme(legend.position="top")
+#+end_src
+
+#+RESULTS:
+[[file:/tmp/babel-s1Y10N/figureKvtOuw.pdf]]
+
+** COMMENT Intrusão Geral
+#+begin_src R :results output graphics file :file (org-babel-temp-file "figure" ".pdf") :exports results :width 10 :height 4 :session *R*
+df.stats.diff |> #filter(app=="gauss") |>
+    ungroup(threads, subproblemsize) |>
+    group_by(type, .add=TRUE) |>
+    summarize(diff.mean.super = mean(diff.mean),
+              diff.se.super = sqrt(1/n() * sum(diff.se^2)),
+              .groups="keep") |>
+    print() |>
+    ggplot(aes(
+        fill = host,
+        x = type, y = diff.mean.super,
+        ymin = diff.mean.super - diff.se.super,
+        ymax = diff.mean.super + diff.se.super)) +
+    geom_col(position="dodge") +
+    geom_errorbar(width=.8, alpha=.7, position="dodge") +
+    meu_estilo() +
+    facet_wrap(~app) +
+    ##  coord_cartesian(ylim=c(0, 0.15)) +
+    ylab("Intrusion time [seconds]") +
+    xlab("Tracer") +
+    theme(legend.position="top")
+#+end_src
+
+#+RESULTS:
+[[file:/tmp/babel-5rcVgU/figureF2xzjv.png]]
+
+
+** Scalability: Void
+#+begin_src R :results output graphics file :file (org-babel-temp-file "figure" ".pdf") :exports results :width 10 :height 4 :session *R*
+df.stats.diff |>
+    filter(app == "qr" & type == "void") |>
+    ggplot(aes(
+        color = host,
+        x = threads, y = diff.mean,
+        ymin = diff.mean - diff.se,
+        ymax = diff.mean + diff.se)) +
+    geom_point(position="dodge") +
+    geom_errorbar(width=.8, alpha=.7, position="dodge") +
+    meu_estilo() +
+    facet_grid(.~subproblemsize) +
+    coord_cartesian(ylim=c(0, 0.15)) +
+    xlab("Number of threads [count]") +
+    ylab("Intrusion time [seconds]") +
+    theme(legend.position="top")
+#+end_src
+
+#+RESULTS:
+[[file:/tmp/babel-s0Dg8C/figureSUgVHD.pdf]]
+
+** Scalability: Printf
+#+begin_src R :results output graphics file :file (org-babel-temp-file "figure" ".pdf") :exports results :width 10 :height 4 :session *R*
+df.stats.diff |>
+    filter(app == "qr" & type == "printf") |>
+    ggplot(aes(
+        color = host,
+        x = threads, y = diff.mean,
+        ymin = diff.mean - diff.se,
+        ymax = diff.mean + diff.se)) +
+    geom_point(position="dodge") +
+    geom_errorbar(width=.8, alpha=.7, position="dodge") +
+    meu_estilo() +
+    facet_grid(.~subproblemsize) +
+    coord_cartesian(ylim=c(0, 0.15)) +
+    xlab("Number of threads [count]") +
+    ylab("Intrusion time [seconds]") +
+    theme(legend.position="top")
+#+end_src
+
+#+RESULTS:
+[[file:/tmp/babel-s0Dg8C/figureSUgVHD.pdf]]
+
+** Scalability: OOT
+#+begin_src R :results output graphics file :file (org-babel-temp-file "figure" ".pdf") :exports results :width 10 :height 4 :session *R*
+df.stats.diff |>
+    filter(app == "qr" & type == "oot") |>
+    ggplot(aes(
+        color = host,
+        x = threads, y = diff.mean,
+        ymin = diff.mean - diff.se,
+        ymax = diff.mean + diff.se)) +
+    geom_point(position="dodge") +
+    geom_errorbar(width=.8, alpha=.7, position="dodge") +
+    meu_estilo() +
+    facet_grid(.~subproblemsize) +
+    coord_cartesian(ylim=c(0, 0.15)) +
+    xlab("Number of threads [count]") +
+    ylab("Intrusion time [seconds]") +
+    theme(legend.position="top")
+#+end_src
+
+#+RESULTS:
+[[file:/tmp/babel-s0Dg8C/figureSUgVHD.pdf]]
+
+** Scalability: Score-P
+#+begin_src R :results output graphics file :file (org-babel-temp-file "figure" ".pdf") :exports results :width 10 :height 4 :session *R*
+df.stats.diff |>
+    filter(app == "qr" & type == "scorep") |>
+    ggplot(aes(
+        color = host,
+        x = threads, y = diff.mean,
+        ymin = diff.mean - diff.se,
+        ymax = diff.mean + diff.se)) +
+    geom_point(position="dodge") +
+    geom_errorbar(width=.8, alpha=.7, position="dodge") +
+    meu_estilo() +
+    facet_grid(.~subproblemsize) +
+    coord_cartesian(ylim=c(0, 0.15)) +
+    xlab("Number of threads [count]") +
+    ylab("Intrusion time [seconds]") +
+    theme(legend.position="top")
+#+end_src
+
+#+RESULTS:
+[[file:/tmp/babel-s0Dg8C/figureSUgVHD.pdf]]
+
+** Scalability: TiKKi
+#+begin_src R :results output graphics file :file (org-babel-temp-file "figure" ".pdf") :exports results :width 10 :height 4 :session *R*
+df.stats.diff |>
+    filter(app == "qr" & type == "tikki") |>
+    ggplot(aes(
+        color = host,
+        x = threads, y = diff.mean,
+        ymin = diff.mean - diff.se,
+        ymax = diff.mean + diff.se)) +
+    geom_point(position="dodge") +
+    geom_errorbar(width=.8, alpha=.7, position="dodge") +
+    meu_estilo() +
+    facet_grid(.~subproblemsize) +
+    coord_cartesian(ylim=c(0, 0.15)) +
+    xlab("Number of threads [count]") +
+    ylab("Intrusion time [seconds]") +
+    theme(legend.position="top")
+#+end_src
+
+#+RESULTS:
+[[file:/tmp/babel-s0Dg8C/figureSUgVHD.pdf]]
+
+** Scalability: Extrae
+#+begin_src R :results output graphics file :file (org-babel-temp-file "figure" ".pdf") :exports results :width 10 :height 4 :session *R*
+df.stats.diff |>
+    filter(app == "qr" & type == "extrae") |>
+    ggplot(aes(
+        color = host,
+        x = threads, y = diff.mean,
+        ymin = diff.mean - diff.se,
+        ymax = diff.mean + diff.se)) +
+    geom_point(position="dodge") +
+    geom_errorbar(width=.8, alpha=.7, position="dodge") +
+    meu_estilo() +
+    facet_grid(.~subproblemsize) +
+    coord_cartesian(ylim=c(0, 0.15)) +
+    xlab("Number of threads [count]") +
+    ylab("Intrusion time [seconds]") +
+    theme(legend.position="top")
+#+end_src
+
+#+RESULTS:
+[[file:/tmp/babel-s0Dg8C/figureSUgVHD.pdf]]
+
+
+* Conclusion
+** Conclusions
+
+- The OMPT interface has a low intrusion by itself *(Void)*.
+#+latex: \pause
+- The choose of the tracer tool can impact the performance.
+#+latex: \pause
+- Tracing tool choice is crucial depending on the expected result.
+
+
+** @@duvidas:@@
+   :PROPERTIES:
+   :BEAMER_FRAME_OPTIONS: plain
+   :END:
+
+*** Text                                                  :BMCOL:B_example:
+    :PROPERTIES:
+    :BEAMER_col: 0.6
+    :END:
+
+**** \Huge *Questions?*
+\vspace{40px}
+Contact: rayan.raddatz@inf.ufrgs.br
+
+\includegraphics[width=0.05\paperwidth]{./imgs/fundo_amanha.jpeg}
+\includegraphics[width=0.1\paperwidth]{~/logos/CNPq.jpg}
+\includegraphics[width=0.1\paperwidth]{~/logos/UFRGS.png}
+\includegraphics[width=0.1\paperwidth]{~/logos/INF.png}
+
+
+
+*** QR                                                              :BMCOL:
+    :PROPERTIES:
+    :BEAMER_col: 0.4
+    :END:
+
+    \includegraphics[width=0.3\paperwidth]{./imgs/companion.pdf}

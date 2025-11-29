@@ -1,0 +1,4 @@
+10000 10 250 10 
+201611 LLVM OMP version: 5.0.20140926
+app_time,comp_time,tasks
+1.559332,1.021118,16000
