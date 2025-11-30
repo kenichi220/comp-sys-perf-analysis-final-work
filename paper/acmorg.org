@@ -2,7 +2,7 @@
 # -*- mode: org -*-
 
 #+TITLE: Title (appears only in the PDF properties)
-#+AUTHOR: Lucas Mello Schnorr
+#+AUTHOR: Rayan Raddatz de Matos, Kenichi Brumati, Marcelo Gulart
 
 #+STARTUP: overview indent
 #+LANGUAGE: pt-br
@@ -43,20 +43,20 @@
 ** Latex configurations                                             :ignore:
 #+BEGIN_EXPORT latex
 % Metadata Information
-\acmJournal{TOMPECS}
-\acmVolume{9}
-\acmNumber{4}
-\acmArticle{39}
-\acmYear{2010}
-\acmMonth{3}
-\copyrightyear{2009}
+\acmJournal{Comp. Syst. Perf. Analisys}
+%\acmVolume{}
+%\acmNumber{}
+%\acmArticle{39}
+\acmYear{2025}
+\acmMonth{12}
+%\copyrightyear{2009}
 %\acmArticleSeq{9}
 
 % Copyright
 %\setcopyright{acmcopyright}
-\setcopyright{acmlicensed}
+%\setcopyright{acmlicensed}
 %\setcopyright{rightsretained}
-%\setcopyright{usgov}
+\setcopyright{none}
 %\setcopyright{usgovmixed}
 %\setcopyright{cagov}
 %\setcopyright{cagovmixed}
@@ -65,36 +65,21 @@
 \acmDOI{0000001.0000001}
 
 % Paper history
-\received{February 2007}
-\received[revised]{March 2009}
-\received[accepted]{June 2009}
+%\received{February 2007}
+%\received[revised]{March 2009}
+%\received[accepted]{June 2009}
 #+END_EXPORT
 ** Frontpage                                                        :ignore:
 #+BEGIN_EXPORT latex
-\title[Small Title]{Evaluating Tensorflow/Keras Parallel Mechanisms for Training of Deep Leaning in a HPC cluster}
+\title[Small Title]{Evaluating Tensorflow Parallel Mechanisms for Training of Deep Leaning in a HPC cluster}
 
 \author{Rayan Raddatz de Matos}
-\affiliation{%
-  \institution{Universidade Federal do Rio Grande do Sul}
-  \streetaddress{Campus do Vale - Sector 4}
-  \city{Porto Alegre}
-  \state{RS}
-  \postcode{91501-970}
-  \country{Brazil}}
 
 \author{Kenichi Brumati}
-\affiliation{%
-  \institution{Universidade Federal do Rio Grande do Sul}
-  \streetaddress{Campus do Vale - Sector 4}
-  \city{Porto Alegre}
-  \state{RS}
-  \postcode{91501-970}
-  \country{Brazil}}
-
 
 \author{Marcelo Cardoso Oliveira Gulart}
 \affiliation{%
-  \institution{Universidade Federal do Rio Grande do Sul}
+  \institution{Federal University of Rio Grande do Sul}
   \streetaddress{Campus do Vale - Sector 4}
   \city{Porto Alegre}
   \state{RS}
@@ -102,7 +87,6 @@
   \country{Brazil}}
 
 #+END_EXPORT
-
 *** Abstract                                                       :ignore:
 
 #+LaTeX: \begin{abstract}
@@ -156,157 +140,158 @@ Put the abstract here.
 
 *** Keywords, thanks                                               :ignore:
 #+BEGIN_EXPORT latex
-\keywords{Keyword 1, Keyword 2}
-\thanks{This work is supported by ...}
+\keywords{Deep Learning, HPC, Parallel Training, Distributed Training}
+% \thanks{This work is supported by ...}
 #+END_EXPORT
 *** Maketitle                                                      :ignore:
 #+LaTeX: \maketitle
-** Introduction
-Na última década, o Deep Learning consolidou-se como o estado da
-arte para resolução de problemas complexos, como visão computacional e
-processamento de linguagem natural. Diante o avanço na
-precisão dos algoritmos, observou-se um crescimento exponencial na
-complexidade das arquiteturas de redes neurais e no volume dos
-conjuntos de dados. Este cenário impõe uma carga computacional massiva,
-tornando o treinamento de modelos robustos em uma única unidade de
-processamento uma tarefa inviável em termos de tempo e recursos.
 
-Para mitigar esses desafios, o treinamento distribuído tornou-se uma
-prática padrão, com destaque para a estratégia de Data Parallelism.
-Nesta abordagem, uma réplica completa do modelo é
-instanciada em cada unidade de processamento, GPU ou nó, e o conjunto
-de dados global é particionado em batches menores com foco local.
-Embora eficaz, essa técnica introduz desafios críticos de sincronização, uma vez que
-os gradientes calculados localmente devem ser agregados e comunicados
-entre todos os dispositivos a cada passo de treino, tipicamente
-através de operações de All-Reduce.
+** Introduction
+
+In the last decade, Deep Learning has established itself as the
+state-of-the-art for solving complex problems, such as computer vision
+and natural language processing. Given the progress in algorithmic
+precision, there has been an exponential growth in the complexity of
+neural network architectures and the volume of datasets. This scenario
+imposes a massive computational load, making the training of robust
+models on a single processing unit an difficult task in terms of time
+and resources.
+
+To mitigate these challenges, distributed training has become a
+standard practice, with an emphasis on the Data Parallelism
+strategy. In this approach, a complete replica of the model is
+instantiated on each processing unit, and the global
+dataset is partitioned into smaller, locally-focused batches. Although
+effective, this technique introduces critical synchronization
+challenges, as locally calculated gradients must be aggregated and
+communicated among all devices at every training step, typically
+through All-Reduce operations.
+
+Given this fact, in this work we decided to analyze data parallelism
+for AI training using TensorFlow in a HPC cluster to investigate how
+the factors related to the application contribute to time reduction in
+a parallel scenario.
+
+#+latex: \noindent
+*Software and Data Availability*. We endeavor to make our analysis
+reproducible for a better science. We made available a companion
+material hosted in a public GitHub repository at
+#+latex: {\scriptsize\url{https://github.com/kenichi220/comp-sys-perf-analysis-final-work/tree/main}}.
+Our companion contains the source code of this article and the
+software necessary to handle the created datasets. We also include
+instructions to run the experiment and figures.
+# An archive is also available in Zenodo at URL.
 
 ** Background and Experimental Context
 \label{sec.context}
 *** Background
 \label{sec.background}
-Para a realização dos experimentos deste trabalho, utilizou-se o
-framework TensorFlow. Segundo seus criadores
-\cite{abadi2016tensorflow}, o TensorFlow é um sistema de aprendizado
-de máquina que opera em larga escala e em ambientes heterogêneos. Ele
-utiliza grafos de fluxo de dados para representar a computação, o
-estado compartilhado e as operações que alteram esse estado.
 
-Essa arquitetura mapeia os nós de um grafo de fluxo de dados em muitas
-máquinas num cluster e dentro de uma máquina em múltiplos
-dispositivos computacionais (CPUs multicore, GPUs e TPUs). Isso
-oferece flexibilidade ao desenvolvedor para experimentar novas
-otimizações e algoritmos de treinamento, suportando uma variedade de
-aplicações com foco em redes neurais profundas.
+TensorFlow is a machine learning system that operates at a large scale
+and in heterogeneous \cite{tensorflow2016}. It uses dataflow graphs to
+represent the computation, shared state, and the operations that alter
+this state.
 
-*** Gerenciamento de Cargas de Trabalho e Scripting
-Em ambientes de computação de alto desempenho (HPC), o acesso aos
-recursos computacionais compartilhados é mediado por sistemas de
-gerenciamento de carga de trabalho. Neste trabalho, utiliza-se o Slurm
-(\textit{Simple Linux Utility for Resource Management}). O Slurm é um
-escalonador de jobs de código aberto, tolerante a falhas e altamente
-escalável, responsável por três funções principais: alocar acesso
-exclusivo ou não exclusivo aos recursos/nodos para os
-usuários, fornece uma estrutura para iniciar, executar e monitorar o
-trabalho no conjunto de nós alocados e alocar os jobs gerenciados uma fila de trabalhos
-pendentes \cite{yoo2003slurm}.
+This architecture maps the nodes of a dataflow graph onto many
+machines within a cluster and, within a machine, onto multiple
+computational devices (multicore CPUs, GPUs, and TPUs). This offers
+flexibility to the developer to experiment with new optimizations and
+training algorithms, supporting a variety of applications focused on
+deep neural networks. When it comes to distributed training, TensorFlow offers different
+strategies with the =tf.distribute.Strategy= API. The TensorFlow
+documentations adverts that /"For synchronous training on many GPUs
+onmultiple workers, use the tf.distribute.MultiWorkerMirroredStrategy with the Keras Model.fit or a custom training loop."/\cite{distributed}. Meaning for a
+distributed training across different nodes in a cluster there is two
+options: Using the MultiWorkerMirroredStrategy with the model.fit or
+creating a Custom Training Loop by yourself.
 
-A interação com o Slurm é tipicamente realizada através de
-\textit{shell scripts} escritos na linguagem Bash. Esses scripts
-contêm diretivas de pré-processamento que especificam os requisitos de recursos, como
-número de nós, tarefas por nó e tempo limite de execução, permitindo a
-automação e reprodutibilidade dos experimentos computacionais.
+*** Experimental Context
+In High-Performance Computing (HPC) environments, a highly recommended
+practice to access to shared computational resources is to mediate the
+access by workload management systems. In our context Slurm (Simple
+Linux Utility for Resource Management) is utilized. Slurm is an
+open-source, fault-tolerant, and highly scalable job scheduler,
+responsible for three main functions: Allocating exclusive or
+non-exclusive access to resources/nodes for users, providing a
+framework to initiate, execute, and monitor the work on the set of
+allocated nodes and managing a queue of pending jobs \cite{yoo2003slurm}.
 
-*** Gerenciamento de Pacotes e Reprodutibilidade
-A reprodutibilidade de experimentos computacionais é um desafio
-crítico em ciência da computação. Para mitigar problemas de
-dependências de software, explorou-se o uso do gerenciador de pacotes
-GNU Guix. O Guix implementa o paradigma de gerenciamento de pacotes
-funcional \cite{courtes2013guix}, onde cada pacote é instalado em um
-diretório único e imutável no \textit{store}, derivado de um hash
-criptográfico de suas dependências.
+Interaction with Slurm is typically performed through shell scripts
+written in the BASH language. These scripts contain preprocessing
+directives that specify resource requirements, such as the number of
+nodes, tasks per node, and execution time limit, enabling the
+automation and reproducibility of computational experiments.
 
-No entanto, o treinamento eficiente de redes neurais profundas com
-TensorFlow exige o uso de bibliotecas de aceleração de
-hardware proprietárias da NVIDIA, que não são
-distribuídas oficialmente nos canais padrão do Guix devido à sua
-política estrita de Software Livre.
-
-Diante dessa restrição, adotou-se neste trabalho uma estratégia
-de usar o PIP para o gerenciamento de ambiente, porém existe no
-github uma funcional do Guix, porém sem a bibliotecas proprietárias:
-
-Para o gerenciamento das bibliotecas específicas de Deep Learning,
-utilizou-se o gerenciador de pacotes do Python (pip).
-O estado exato das versões das bibliotecas foi congelado e documentado
-através do comando \texttt{pip freeze},
-gerando um arquivo de requisitos (\texttt{reqs.txt}) que permite a
-reconstrução do ambiente de execução. 
-
-*** Experimental Context and Workload Details
-\label{sec.setup}
-**** Hardware e Ambiente Computacional
-Os experimentos foram conduzidos no cluster PCAD-UFRGS. Para a
-avaliação de desempenho, foram utilizados até 4 nós computacionais
-interconectados por uma rede {REDE}.
-
-Cada nó computacional possui a seguinte configuração de hardware:
-- **Processador:** Intel(R) Core(TM) i7-14700KF, 3.40 GHz, 28 threads, 20 cores;
-- **Memória:** 96 GB DDR5;
-- **Acelerador:** NVIDIA GeForce RTX 4070 - 8GB;
-- **Armazenamento:** 1.7 TB SSD, 119.2 GB NVME;
-  
-**** Pip freeze e bibliotecas
-Para garantir a reprodutibilidade, o ambiente de software foi
-instanciado via Pip Freeze e req.txt. As principais bibliotecas utilizadas foram:
-- **Python:** 3?;
-- **TensorFlow:** 2.15;
-- **CUDA Toolkit:** CHECAR VERSAO NA POTI;
-- **Drivers NVIDIA:** CHECAR DRIVER DA POTI;
-
-**** Workload
-Para o treinamento da Rede Neural Convolucional (CNN), especificamente
-ResNet50 e EfficientNetB0, utilizando o conjunto de dados TinyImaginet.
-
-Para analisar o paralelismo de dados, utilizou-se a estratégia de
-distribuição `MultiWorkerMirroredStrategy` do TensorFlow, que realiza
-a sincronização dos gradientes entre os nós a cada passo de
-treinamento. Além disso, desenvolvemos um Custom Training Loop que
-diferentemente mudamos a quantos passo ele realiza a sincronização.
-
-Os experimentos variaram as seguintes dimensões:
-- **Número de nodos:** Variando de 1 a 4, cada nó com 1 GPU;
-- **Batch:** Variações de 32,64 e 100;
-- **Métrica de Avaliação:** Tempo por epoca e total.
-** Related Work and Motivation
+** COMMENT Related Work and Motivation
 \label{sec.relatedwork}
 
-Check this paper\cite{schnorr2013visualizing} about how you need to
-semantically aggregate data.
+** Methods and Materials
 
-Na atualidade a computação paralela está em extremo avanço devido a
-alta carga computacional e a limitação temporal de aplicações
-sequenciais, diante desse fato, resolvemos analisar o paralelismo de
-dados para treinamento de IA em cluster afim de analisar os fatores 
-que realizam a redução de tempo em relação aos parametros da aplicação
-(batch, tamanho do modelo, número de nodos).
+*** Software Management and Reproducibility
 
-** Your Great Contribution to Computer Science
-\label{sec.proposal}
+Reproducibility of computational experiments is a critical challenge
+in computer science. To mitigate software dependency issues, the use
+of the GNU Guix package manager was explored. Guix implements the
+functional package management paradigm where each package is
+installed in a unique and immutable directory in the store, derived
+from a cryptographic hash of its dependencies \cite{courtes2013guix}.
 
-** Your Super Results
+However, the efficient training of deep neural networks using
+TensorFlow requires the use of proprietary NVIDIA hardware
+acceleration libraries, which are not officially distributed in
+standard Guix channels due to its strict Free Software policy.
+
+Given this restriction, the strategy adopted in this work is the use
+of Python Virtual Environment for environment management. Although a
+functional version of Guix exists on GitHub without the proprietary
+libraries.
+
+For managing the specific Deep Learning libraries, the python package
+manager =pip= with version 25.3 was utilized. The exact version of the used library was
+frozen and documented using the =pip freeze command=, generating a
+requirements file (=reqs.txt=) that enables the reconstruction of the
+execution environment used in the experiments.
+
+*** Hardware and Software Configuration
+
+The experiments were run using TensorFlow 2.15 as newer versions
+showed errors when trying to train using more than one node with the
+=.fit= and =MultiWorkerMirrodStrategy= and python 3.11.2. The NVIDIA
+drivers version was 550.54.15 and CUDA 12.4. We used up to three
+computational nodes connected with a network of 1G, each node contains an
+Intel(R) Core(TM) i7-14700KF processor at 3.40 GHz with 28 threads and
+20 cores, 96 GB DDR5 RAM and NVIDIA GeForce RTX 4070 with 8GB memory
+accelerator.
+
+*** Design of Experiments (DoE)
+
+We selected two different Deep Learning models to train: *ResNet50*
+\cite{resnet} as a big model with ~25.6M parameters and
+*EfficientNetB0*\cite{efficientNet} as a small model with ~5.3M
+parameters. The two networks were trained using the TinyImageNet-200,
+a subset of the ImageNet\cite{imagenet} containing 100000 downsized to a 64×64
+colored image divided among 200 classes. We created a full factorial
+for each model with varying batch size and the number of nodes
+used. The levels for the batch size factor were 32, 64 and 100 and for the
+nodes we trained with 1, 2 and 3 nodes. Our output variable was the
+training time (full training time and time per epoch).
+
+
+** Challenges
+Multi-node communication faced a bottleneck as the node \texttt{poti4}
+was connected with a limited bandwidth of 100 Mbps. Regarding software
+management, GNU Guix does not natively support proprietary libraries
+due to its strict policy requiring free and open-source software.
+** Results
 ** Conclusion
 ** Acknowledgments                                                  :ignore:
 
 #+LATEX:\section*{Acknowledgements}
-
-Gostariamos de expressar nossa gratidão ao Professor Dr. Lucas Mello
-Schnorr pela orientação, pelos conhecimentos compartilhados sobre
-análise de desempenho.
-
-Agradeço também a estrutura PCAD fornecida pela Universidade Federal do Rio Grande do Sul
-(UFRGS) - INF pela disponibilização da infraestrutura computacional de alto
-desempenho.
+We would like to express our gratitude to Professor Dr. Lucas Mello
+Schnorr for his guidance and the valuable insights shared regarding
+performance analysis.  We also would like to thank the PCAD at
+INF/UFRGS for making infrastructure and hardware used in the
+experiments available.
 
 ** References                                                        :ignore:
 
@@ -315,48 +300,20 @@ desempenho.
 #+LATEX: \bibliographystyle{ACM-Reference-Format}
 #+LATEX: \bibliography{refs}
 
+
 * Bib file is here                                                 :noexport:
 
 Tangle this file with C-c C-v t
 
 #+begin_src bib :tangle refs.bib
-@article{orgmode,
-  author =	"Eric Schulte and Dan Davison and Thomas Dye and Carsten Dominik",
-  title =	"A Multi-Language Computing Environment for Literate Programming and Reproducible Research",
-  journal =	"J. of Stat. Soft.",
-  volume =	"46",
-  number =	"3",
-  day =  	"25",
-  year = 	"2012",
-  CODEN =	"JSSOBK",
-  ISSN = 	"1548-7660",
-  bibdate =	"2011-10-03",
-  accepted =	"2011-10-03",
-  acknowledgement = "",
-  submitted =	"2010-12-22",
-}
 
-@incollection{schnorr2013visualizing,
-  title={Visualizing More Performance Data Than What Fits on Your Screen},
-  author={Schnorr, Lucas M and Legrand, Arnaud},
-  booktitle={Tools for High Performance Computing 2012},
-  pages={149--162},
-  year={2013},
-  publisher={Springer}
-}
 
-@inproceedings{abadi2016tensorflow,
+@inproceedings{tensorflow2016,
   author    = {Abadi, Mart\'{i}n and Barham, Paul and Chen, Jianmin and Chen, Zhifeng and Davis, Andy and Dean, Jeffrey and Devin, Matthieu and Ghemawat, Sanjay and Irving, Geoffrey and Isard, Michael and Kudlur, Manjunath and Levenberg, Josh and Monga, Rajat and Moore, Sherry and Murray, Derek G. and Steiner, Benoit and Tucker, Paul and Vasudevan, Vijay and Warden, Pete and Wicke, Martin and Yu, Yuan and Zheng, Xiaoqiang},
   title     = {TensorFlow: A System for Large-Scale Machine Learning},
   booktitle = {Proceedings of the 12th USENIX Symposium on Operating Systems Design and Implementation (OSDI '16)},
   year      = {2016},
-  isbn      = {978-1-931971-33-1},
-  pages     = {265--283},
-  url       = {https://www.usenix.org/system/files/conference/osdi16/osdi16-abadi.pdf},
   publisher = {USENIX Association},
-  address   = {Savannah, GA, USA},
-  location  = {Savannah, GA, USA},
-  month     = nov
 }
 
 @inproceedings{yoo2003slurm,
@@ -376,6 +333,55 @@ Tangle this file with C-c C-v t
   pages={15--28},
   year={2013},
   url={https://arxiv.org/abs/1305.4584}
+}
+
+@article{efficientNet,
+  author       = {Mingxing Tan and
+                  Quoc V. Le},
+  title        = {EfficientNet: Rethinking Model Scaling for Convolutional Neural Networks},
+  journal      = {CoRR},
+  volume       = {abs/1905.11946},
+  year         = {2019},
+  url          = {http://arxiv.org/abs/1905.11946},
+  eprinttype    = {arXiv},
+  eprint       = {1905.11946},
+  timestamp    = {Mon, 03 Jun 2019 13:42:33 +0200},
+  biburl       = {https://dblp.org/rec/journals/corr/abs-1905-11946.bib},
+  bibsource    = {dblp computer science bibliography, https://dblp.org}
+}
+
+@article{resnet,
+  author       = {Kaiming He and
+                  Xiangyu Zhang and
+                  Shaoqing Ren and
+                  Jian Sun},
+  title        = {Deep Residual Learning for Image Recognition},
+  journal      = {CoRR},
+  volume       = {abs/1512.03385},
+  year         = {2015},
+  url          = {http://arxiv.org/abs/1512.03385},
+  eprinttype    = {arXiv},
+  eprint       = {1512.03385},
+  timestamp    = {Wed, 25 Jan 2023 11:01:16 +0100},
+  biburl       = {https://dblp.org/rec/journals/corr/HeZRS15.bib},
+  bibsource    = {dblp computer science bibliography, https://dblp.org}
+}
+
+@inproceedings{imagenet,
+  title={Imagenet: A large-scale hierarchical image database},
+  author={Deng, Jia and Dong, Wei and Socher, Richard and Li, Li-Jia and Li, Kai and Fei-Fei, Li},
+  booktitle={2009 IEEE conference on computer vision and pattern recognition},
+  pages={248--255},
+  year={2009},
+  organization={Ieee}
+}
+
+@misc{distributed,
+  author = {TensorFlow Documentation},
+  title = {Distributed training with Keras},
+  year=2023,
+  howpublished = {\url{https://www.tensorflow.org/tutorials/distribute/keras}},
+  note = {Accessed: 2025-11-30}
 }
 
 #+end_src
