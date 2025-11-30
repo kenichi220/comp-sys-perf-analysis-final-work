@@ -263,25 +263,45 @@ Intel(R) Core(TM) i7-14700KF processor at 3.40 GHz with 28 threads and
 20 cores, 96 GB DDR5 RAM and NVIDIA GeForce RTX 4070 with 8GB memory
 accelerator.
 
+*** Custom Training Loop
+
+The expected execution from training with the
+=MultiWorkerMirroredStrategy= would show a smaller training time as we
+increased the number of nodes in the execution. However, we faced a
+problem due to the connection while training that resulted in a higher
+training time as we increased the number of nodes for big models with
+a lot of parameters such as ResNet50. This problem happened because a
+synchronization is done for every batch computed by the =model.fit()=
+training method, and as we had only an 1G network, this
+synchronization resulted in a bottleneck that increased the training
+time. To mitigate this problem, we proposed a Custom Training Loop
+that instead of synchronizing the parameters between nodes in every
+batch, only synchronizes at a interval of batches, then resulting in a
+smaller synchronization overhead. To this work we defined this
+interval of batches as 4 batches.
+
 *** Design of Experiments (DoE)
 
 We selected two different Deep Learning models to train: *ResNet50*
 \cite{resnet} as a big model with ~25.6M parameters and
 *EfficientNetB0*\cite{efficientNet} as a small model with ~5.3M
 parameters. The two networks were trained using the TinyImageNet-200,
-a subset of the ImageNet\cite{imagenet} containing 100000 downsized to a 64×64
-colored image divided among 200 classes. We created a full factorial
-for each model with varying batch size and the number of nodes
-used. The levels for the batch size factor were 32, 64 and 100 and for the
-nodes we trained with 1, 2 and 3 nodes. Our output variable was the
-training time (full training time and time per epoch).
+a subset of the ImageNet\cite{imagenet} containing 100000 downsized to
+a 64×64 colored image divided among 200 classes. We created a full
+factorial for each model with varying batch size, the number of nodes
+used and the type of the training. The levels for the batch size
+factor were 32, 64 and 100, for the nodes we trained with 1, 2 and 3
+nodes and for the type of training we had "sync" that uses the
+=model.fit= method to train or "ctl" that uses our custom training loop
+to train. Our output variable was the training time (full training
+time and time per epoch).
 
-
-** Challenges
+** COMMENT Challenges
 Multi-node communication faced a bottleneck as the node \texttt{poti4}
 was connected with a limited bandwidth of 100 Mbps. Regarding software
 management, GNU Guix does not natively support proprietary libraries
 due to its strict policy requiring free and open-source software.
+
 ** Results
 ** Conclusion
 ** Acknowledgments                                                  :ignore:
@@ -306,8 +326,6 @@ experiments available.
 Tangle this file with C-c C-v t
 
 #+begin_src bib :tangle refs.bib
-
-
 @inproceedings{tensorflow2016,
   author    = {Abadi, Mart\'{i}n and Barham, Paul and Chen, Jianmin and Chen, Zhifeng and Davis, Andy and Dean, Jeffrey and Devin, Matthieu and Ghemawat, Sanjay and Irving, Geoffrey and Isard, Michael and Kudlur, Manjunath and Levenberg, Josh and Monga, Rajat and Moore, Sherry and Murray, Derek G. and Steiner, Benoit and Tucker, Paul and Vasudevan, Vijay and Warden, Pete and Wicke, Martin and Yu, Yuan and Zheng, Xiaoqiang},
   title     = {TensorFlow: A System for Large-Scale Machine Learning},
@@ -322,7 +340,7 @@ Tangle this file with C-c C-v t
   booktitle={Job Scheduling Strategies for Parallel Processing},
   pages={44--60},
   year={2003},
-  publisher={Springer},
+  publisher={Springer} ,
   doi={10.1007/10968987_3}
 }
 
@@ -383,7 +401,6 @@ Tangle this file with C-c C-v t
   howpublished = {\url{https://www.tensorflow.org/tutorials/distribute/keras}},
   note = {Accessed: 2025-11-30}
 }
-
 #+end_src
 * Emacs setup                                                      :noexport:
 # Local Variables:
