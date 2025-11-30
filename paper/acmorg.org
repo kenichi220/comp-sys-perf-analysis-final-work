@@ -185,23 +185,128 @@ através de operações de All-Reduce.
 \label{sec.context}
 *** Background
 \label{sec.background}
+Para a realização dos experimentos deste trabalho, utilizou-se o
+framework TensorFlow. Segundo seus criadores
+\cite{abadi2016tensorflow}, o TensorFlow é um sistema de aprendizado
+de máquina que opera em larga escala e em ambientes heterogêneos. Ele
+utiliza grafos de fluxo de dados para representar a computação, o
+estado compartilhado e as operações que alteram esse estado.
+
+Essa arquitetura mapeia os nós de um grafo de fluxo de dados em muitas
+máquinas num cluster e dentro de uma máquina em múltiplos
+dispositivos computacionais (CPUs multicore, GPUs e TPUs). Isso
+oferece flexibilidade ao desenvolvedor para experimentar novas
+otimizações e algoritmos de treinamento, suportando uma variedade de
+aplicações com foco em redes neurais profundas.
+
+*** Gerenciamento de Cargas de Trabalho e Scripting
+Em ambientes de computação de alto desempenho (HPC), o acesso aos
+recursos computacionais compartilhados é mediado por sistemas de
+gerenciamento de carga de trabalho. Neste trabalho, utiliza-se o Slurm
+(\textit{Simple Linux Utility for Resource Management}). O Slurm é um
+escalonador de jobs de código aberto, tolerante a falhas e altamente
+escalável, responsável por três funções principais: alocar acesso
+exclusivo ou não exclusivo aos recursos/nodos para os
+usuários, fornece uma estrutura para iniciar, executar e monitorar o
+trabalho no conjunto de nós alocados e alocar os jobs gerenciados uma fila de trabalhos
+pendentes \cite{yoo2003slurm}.
+
+A interação com o Slurm é tipicamente realizada através de
+\textit{shell scripts} escritos na linguagem Bash. Esses scripts
+contêm diretivas de pré-processamento que especificam os requisitos de recursos, como
+número de nós, tarefas por nó e tempo limite de execução, permitindo a
+automação e reprodutibilidade dos experimentos computacionais.
+
+*** Gerenciamento de Pacotes e Reprodutibilidade
+A reprodutibilidade de experimentos computacionais é um desafio
+crítico em ciência da computação. Para mitigar problemas de
+dependências de software, explorou-se o uso do gerenciador de pacotes
+GNU Guix. O Guix implementa o paradigma de gerenciamento de pacotes
+funcional \cite{courtes2013guix}, onde cada pacote é instalado em um
+diretório único e imutável no \textit{store}, derivado de um hash
+criptográfico de suas dependências.
+
+No entanto, o treinamento eficiente de redes neurais profundas com
+TensorFlow exige o uso de bibliotecas de aceleração de
+hardware proprietárias da NVIDIA, que não são
+distribuídas oficialmente nos canais padrão do Guix devido à sua
+política estrita de Software Livre.
+
+Diante dessa restrição, adotou-se neste trabalho uma estratégia
+de usar o PIP para o gerenciamento de ambiente, porém existe no
+github uma funcional do Guix, porém sem a bibliotecas proprietárias:
+
+Para o gerenciamento das bibliotecas específicas de Deep Learning,
+utilizou-se o gerenciador de pacotes do Python (pip).
+O estado exato das versões das bibliotecas foi congelado e documentado
+através do comando \texttt{pip freeze},
+gerando um arquivo de requisitos (\texttt{reqs.txt}) que permite a
+reconstrução do ambiente de execução. 
+
 *** Experimental Context and Workload Details
 \label{sec.setup}
+**** Hardware e Ambiente Computacional
+Os experimentos foram conduzidos no cluster PCAD-UFRGS. Para a
+avaliação de desempenho, foram utilizados até 4 nós computacionais
+interconectados por uma rede {REDE}.
+
+Cada nó computacional possui a seguinte configuração de hardware:
+- **Processador:** Intel(R) Core(TM) i7-14700KF, 3.40 GHz, 28 threads, 20 cores;
+- **Memória:** 96 GB DDR5;
+- **Acelerador:** NVIDIA GeForce RTX 4070 - 8GB;
+- **Armazenamento:** 1.7 TB SSD, 119.2 GB NVME;
+  
+**** Pip freeze e bibliotecas
+Para garantir a reprodutibilidade, o ambiente de software foi
+instanciado via Pip Freeze e req.txt. As principais bibliotecas utilizadas foram:
+- **Python:** 3?;
+- **TensorFlow:** 2.15;
+- **CUDA Toolkit:** CHECAR VERSAO NA POTI;
+- **Drivers NVIDIA:** CHECAR DRIVER DA POTI;
+
+**** Workload
+Para o treinamento da Rede Neural Convolucional (CNN), especificamente
+ResNet50 e EfficientNetB0, utilizando o conjunto de dados TinyImaginet.
+
+Para analisar o paralelismo de dados, utilizou-se a estratégia de
+distribuição `MultiWorkerMirroredStrategy` do TensorFlow, que realiza
+a sincronização dos gradientes entre os nós a cada passo de
+treinamento. Além disso, desenvolvemos um Custom Training Loop que
+diferentemente mudamos a quantos passo ele realiza a sincronização.
+
+Os experimentos variaram as seguintes dimensões:
+- **Número de nodos:** Variando de 1 a 4, cada nó com 1 GPU;
+- **Batch:** Variações de 32,64 e 100;
+- **Métrica de Avaliação:** Tempo por epoca e total.
 ** Related Work and Motivation
 \label{sec.relatedwork}
 
 Check this paper\cite{schnorr2013visualizing} about how you need to
 semantically aggregate data.
 
+Na atualidade a computação paralela está em extremo avanço devido a
+alta carga computacional e a limitação temporal de aplicações
+sequenciais, diante desse fato, resolvemos analisar o paralelismo de
+dados para treinamento de IA em cluster afim de analisar os fatores 
+que realizam a redução de tempo em relação aos parametros da aplicação
+(batch, tamanho do modelo, número de nodos).
+
 ** Your Great Contribution to Computer Science
 \label{sec.proposal}
+
 ** Your Super Results
 ** Conclusion
 ** Acknowledgments                                                  :ignore:
 
 #+LATEX:\section*{Acknowledgements}
 
-Who paid for this?
+Gostariamos de expressar nossa gratidão ao Professor Dr. Lucas Mello
+Schnorr pela orientação, pelos conhecimentos compartilhados sobre
+análise de desempenho.
+
+Agradeço também a estrutura PCAD fornecida pela Universidade Federal do Rio Grande do Sul
+(UFRGS) - INF pela disponibilização da infraestrutura computacional de alto
+desempenho.
 
 ** References                                                        :ignore:
 
@@ -240,6 +345,38 @@ Tangle this file with C-c C-v t
   publisher={Springer}
 }
 
+@inproceedings{abadi2016tensorflow,
+  author    = {Abadi, Mart\'{i}n and Barham, Paul and Chen, Jianmin and Chen, Zhifeng and Davis, Andy and Dean, Jeffrey and Devin, Matthieu and Ghemawat, Sanjay and Irving, Geoffrey and Isard, Michael and Kudlur, Manjunath and Levenberg, Josh and Monga, Rajat and Moore, Sherry and Murray, Derek G. and Steiner, Benoit and Tucker, Paul and Vasudevan, Vijay and Warden, Pete and Wicke, Martin and Yu, Yuan and Zheng, Xiaoqiang},
+  title     = {TensorFlow: A System for Large-Scale Machine Learning},
+  booktitle = {Proceedings of the 12th USENIX Symposium on Operating Systems Design and Implementation (OSDI '16)},
+  year      = {2016},
+  isbn      = {978-1-931971-33-1},
+  pages     = {265--283},
+  url       = {https://www.usenix.org/system/files/conference/osdi16/osdi16-abadi.pdf},
+  publisher = {USENIX Association},
+  address   = {Savannah, GA, USA},
+  location  = {Savannah, GA, USA},
+  month     = nov
+}
+
+@inproceedings{yoo2003slurm,
+  title={SLURM: Simple Linux Utility for Resource Management},
+  author={Yoo, Andy B. and Jette, Morris A. and Grondona, Mark},
+  booktitle={Job Scheduling Strategies for Parallel Processing},
+  pages={44--60},
+  year={2003},
+  publisher={Springer},
+  doi={10.1007/10968987_3}
+}
+
+@inproceedings{courtes2013guix,
+  title={Functional Package Management with Guix},
+  author={Court{\`e}s, Ludovic},
+  booktitle={Proceedings of the 6th European Lisp Symposium (ELS)},
+  pages={15--28},
+  year={2013},
+  url={https://arxiv.org/abs/1305.4584}
+}
 
 #+end_src
 * Emacs setup                                                      :noexport:
