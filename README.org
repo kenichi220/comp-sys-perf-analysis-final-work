@@ -21,7 +21,7 @@ file to automatic run the experiments by reading
 a experimental project from a =.csv= file.
 
 ** Requirements
-We used =python 3.11.x= and =pip x.x.x= for the experiments. To make it
+We used =python 3.11.2= and =pip 25.3= for the experiments. To make it
 reproducible we created a python virtual environment using our
 =create-env.sh= bash script. This script saves all the installed
 packages to a file called =reqs.txt=. Then we can pass this requirements
