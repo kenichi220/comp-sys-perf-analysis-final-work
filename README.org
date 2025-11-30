@@ -10,68 +10,79 @@ This repository contain the codes, reports and results of our final
 work for the Computer System Performance Analysis Course
 (INF01146/CMP223).
 
-
 * Members
 - Rayan Raddatz de Matos ([[https://github.com/rddtz][@rddtz]])
 - Kenichi Brumati ([[https://github.com/kenichi220][@kenichi220]])
 - Marcelo Cardoso Oliveira Gulart ([[https://github.com/MFGROOVE][@MFGROOVE]])
-** You can run the experiment with:
-* Guix:
- You can run the experiment with a Guix environment, it is not mandatory, because the project only needs Python and Pip virtual environment to be reproducible.
- To do the experiment with Guix you just need to run the command below in your terminal: 
- guix shell -m manifest.scm 
-* Requeriments
- Run-exp.sh uses the "projeto_experimental.csv" to submit all jobs for slurm queue. and Guix
- Need one or more nodes, is possible to run the experiment with single node.
- 
+* Running the experiments
 
-	So, if you need to lauch the experiment manually, you must follow these steps:
-      
-      
-	First, define the workers that will be used.
-	Set at all nodes:
+We provide the =run-exp.sh= bash script and the =run-tf-multi.slurm= slurm
+file to automatic run the experiments by reading
+a experimental project from a =.csv= file.
 
-	------------>
-	
-	git clone https://github.com/kenichi220/comp-sys-perf-analysis-final-work.git
+** Requirements
+We used =python 3.11.x= and =pip x.x.x= for the experiments. To make it
+reproducible we created a python virtual environment using our
+=create-env.sh= bash script. This script saves all the installed
+packages to a file called =reqs.txt=. Then we can pass this requirements
+file to other person and in order to install all the packages used in
+our experiments, the other person may just use the command =pip install
+-r reqs.txt=.
 
-	wget http://cs231n.stanford.edu/tiny-imagenet-200.zip
+** Running by yourself
 
-	unzip -q *.zip
+If you want to run the experiments by yourself instead of using our
+provided scripts, you can do it with the following instructions:
 
-	cd comp-sys-perf-analysis-final-work/tensorflow
+First you need to define the nodes that will be used and set the
+environment in all of the nodes:
 
-	chmod +x create-env.sh
+#+begin_src shell :results output :exports both
+# clone the repo
+git clone https://github.com/kenichi220/comp-sys-perf-analysis-final-work.git
 
-	./create-env.sh
+# download the dataset used (tiny imagenet in this case)
+wget http://cs231n.stanford.edu/tiny-imagenet-200.zip
+unzip -q *.zip
 
-	source venv/bin/activate
+cd comp-sys-perf-analysis-final-work/tensorflow
 
-	
-	Attention:
-		In the files "train-sync.py" (line 107), "train-ctl.py" (line 46) and "run-tf-multi.slurm" (line 12) YOU NEED TO CHANGE THE DATA DIRECTORY.
-	
-	----------->
+# create the environment
+chmod +x create-env.sh
+./create-env.sh
 
-Next step are define the master node and others:
+# activate the environment
+source venv/bin/activate
+#+end_src
 
-	------------>
-	
-	#First node:
-	TF_CONFIG = {
-    		'cluster': {
-        		'worker': ['localhost:12345', 'localhost:23456']
-    		},
-    		'task': {'type': 'worker', 'index': 0}
-		} python train-sync.py
-	#Second node:
-	TF_CONFIG = {
-    		'cluster': {
-        		'worker': ['localhost:12345', 'localhost:23456']
-    		},
-    		'task': {'type': 'worker', 'index': 1}
-		} python train-sync.py
-	
-	------------>
+#+begin_quote
+[!WARNING]
+It is important to change the path for the data in the training files
+in order to train the model:
 
-Add in the "worker" the name of nodes, define the worker 0, next define the other workers changing the task.
+=train-sync.py= (line 107), =train-ctl.py= (line 46) and =run-tf-multi.slurm= (line 12)
+#+end_quote
+
+Now for each node in your cluster you will need to run the script
+while setting the =TF_CONFIG= environment variable, as showed:
+
+
+#+begin_src shell :results output :exports both
+# For each node, run:
+
+TF_CONFIG = {'cluster': {
+'worker': ['localhost:12345', 'localhost:23456'] # Cluster definition is the same across all nodes
+},
+'task': {'type': 'worker', 'index': 0} # change the index for each node
+} python train-sync.py # training script
+#+end_src
+
+More information about the definition of the =TF_CONFIG= can be found [[https://www.tensorflow.org/tutorials/distribute/multi_worker_with_keras#multi-worker_configuration][here]].
+
+** Adding an extra reproducibility layer: GUIX
+While running with guix is not mandatory, you can run the experiment with a guix environment.
+To run the experiments with the guix environment, you just need to run the command below in your terminal:
+#+begin_src
+guix shell -m manifest.scm
+#+end_src
+The manifest file is included in this repository.
