@@ -26,7 +26,7 @@ suppressMessages(library(janitor))
 suppressMessages(library(dplyr))
 suppressMessages(library(lubridate))
 
-BASE="./data"
+BASE="./data/parcial"
 tibble(CSV = dir_ls(BASE, regexp = "csv$", recurse=TRUE)) |>
   filter(!str_detect(CSV, ":")) |>
   filter(!str_detect(CSV, "ep")) |>
@@ -77,25 +77,26 @@ df |> select(power_draw)
 
 #+RESULTS:
 #+begin_example
- [1] "timestamp"               "index"                   "name"
- [4] "driver_version"          "utilization_gpu"         "memory_total"
- [7] "memory_used"             "power_draw"              "temperature_gpu"
-[10] "clocks_current_graphics" "clocks_current_sm"       "clocks_current_memory"
-[13] "timestamp_fixed"         "machine"
-# A tibble: 57,260 × 1
+ [1] "elapsed_seconds"         "id"                      "type"
+ [4] "machine"                 "timestamp"               "index"
+ [7] "name"                    "driver_version"          "utilization_gpu"
+[10] "memory_total"            "memory_used"             "power_draw"
+[13] "temperature_gpu"         "clocks_current_graphics" "clocks_current_sm"
+[16] "clocks_current_memory"   "timestamp_fixed"
+# A tibble: 553,254 × 1
    power_draw
         <dbl>
- 1       54.1
- 2       54.1
- 3       54.1
- 4       54.2
- 5       54.2
- 6       54.2
- 7       54.2
- 8       54.2
- 9       54.2
-10       54.2
-# ℹ 57,250 more rows
+ 1       54.0
+ 2       54.0
+ 3       54.0
+ 4       54.1
+ 5       54.1
+ 6       54.0
+ 7       54.0
+ 8       54.0
+ 9       54.0
+10       54.0
+# ℹ 553,244 more rows
 # ℹ Use `print(n = ...)` to see more rows
 #+end_example
 
@@ -374,7 +375,7 @@ epochs
 *** Quering per epoch info
 #+begin_src R :results output graphics file :file (org-babel-temp-file "figure" ".png") :exports both :width 1200 :height 800 :session *R*
 epochs |>
-  ggplot(aes(x = epoch, y = loss, color=nodes, group=nodes)) +
+  ggplot(aes(x = epoch, y = cumulative_time, color=nodes, group=nodes)) +
   geom_point(size = 5) +
   geom_line(linewidth = 2) +
   labs(
@@ -391,7 +392,7 @@ epochs |>
 #+end_src
 
 #+RESULTS:
-[[file:/tmp/babel-P5m5UD/figuregVUIOd.png]]
+[[file:/tmp/babel-IGtNc7/figureVhtVbC.png]]
 
 
 * Final

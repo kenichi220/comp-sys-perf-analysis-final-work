@@ -113,7 +113,74 @@
 
 
 ** Resultados anteriores
-<colocar grafico antigo aqui>
+#+begin_src R :results output :session *R* :exports none
+options(crayon.enabled=FALSE)
+suppressMessages(library(fs))
+suppressMessages(library(tidyverse))
+suppressMessages(library(janitor))
+suppressMessages(library(dplyr))
+suppressMessages(library(lubridate))
+
+BASE="./data/parcial"
+tibble(CSV = dir_ls(BASE, regexp = "csv$", recurse=TRUE)) |>
+  filter(str_detect(CSV, "epoch")) |>
+  mutate(DATA = map(CSV, read_csv, progress=FALSE, show_col_types = FALSE)) |>
+  separate(CSV, into=paste0("XX", 1:5), sep="/") |>
+  separate(XX5, into=paste0("YY", 1:2), sep="-") |>
+  mutate(nodes = gsub("\\.csv", "", YY2)) |>
+  select(nodes, DATA) |>
+  unnest(DATA) |> clean_names() |>
+  group_by(nodes) |> mutate(cumulative_time = cumsum(time)) |>
+  ungroup() -> epochs
+
+names(epochs)
+epochs
+#+end_src
+
+#+RESULTS:
+#+begin_example
+[1] "nodes"           "epoch"           "time"            "loss"            "accuracy"
+[6] "cumulative_time"
+# A tibble: 15 × 6
+   nodes epoch  time  loss accuracy cumulative_time
+   <chr> <dbl> <dbl> <dbl>    <dbl>           <dbl>
+ 1 one       1   130 1.70     0.390             130
+ 2 one       2    89 1.50     0.494             219
+ 3 one       3    89 1.75     0.518             308
+ 4 one       4    89 1.11     0.631             397
+ 5 one       5    89 1.06     0.650             486
+ 6 two       1   324 2.00     0.277             324
+ 7 two       2   277 1.39     0.489             601
+ 8 two       3   277 1.12     0.592             878
+ 9 two       4   277 0.914    0.671            1155
+10 two       5   279 0.75     0.733            1434
+11 three     1  1666 2.17     0.238            1666
+12 three     2  1618 1.54     0.417            3284
+13 three     3  1620 1.30     0.518            4904
+14 three     4  1619 1.09     0.603            6523
+15 three     5  1620 0.923    0.668            8143
+#+end_example
+
+
+#+begin_src R :results output graphics file :file (org-babel-temp-file "figure" ".pdf") :exports results :width 12 :height 6 :session *R*
+epochs |>
+  ggplot(aes(x = epoch, y = cumulative_time, color=nodes, group=nodes)) +
+  geom_point(size = 5) +
+  geom_line(linewidth = 2) +
+  labs(
+    x = "Epoch",
+    y = "Training Time [Seconds]"
+  ) +
+  meu_estilo() #+ #facet_wrap(~ nodes) +
+
+## ggsave(
+##   filename = "accuracy-for-epoch.png",
+##   device = png
+## )
+#+end_src
+
+#+RESULTS:
+[[file:/tmp/babel-IGtNc7/figureBbMpPU.pdf]]
 
 ** Fenômeno Observado
     - Degradação de performance (aumento do tempo por época) ao adicionar novos workers.
@@ -195,7 +262,6 @@ Escolhemos além do *ResNet50* com *~25.6M* parâmetros um modelo menor:
 - Cada uma foi *replicada 5 vezes*.
 \vfill
 - Total de *180* execuções!
-
 
 * Resultados
 
@@ -761,7 +827,6 @@ data_treino.plot |>
 
 #+RESULTS:
 [[file:/tmp/babel-IGtNc7/figure2Z9Fjr.pdf]]
-
 
 * Modelo Linear
 

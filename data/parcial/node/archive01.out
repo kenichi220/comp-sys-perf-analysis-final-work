@@ -1,0 +1,25 @@
+Iniciando o treinamento distribuído...
+Epoch 1/5
+2025-10-05 19:59:23.063742: I external/local_xla/xla/stream_executor/cuda/cuda_dnn.cc:454] Loaded cuDNN version 8904
+2025-10-05 19:59:23.210166: I external/local_tsl/tsl/platform/default/subprocess.cc:304] Start cannot spawn child process: No such file or directory
+2025-10-05 19:59:25.525462: I external/local_xla/xla/service/service.cc:168] XLA service 0x7fd95d8464b0 initialized for platform CUDA (this does not guarantee that XLA will be used). Devices:
+2025-10-05 19:59:25.525497: I external/local_xla/xla/service/service.cc:176]   StreamExecutor device (0): NVIDIA GeForce RTX 4090, Compute Capability 8.9
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1759705165.574982 2874427 device_compiler.h:186] Compiled cluster using XLA!  This line is logged at most once for the lifetime of the process.
+391/391 [==============================] - 130s 244ms/step - loss: 1.7137 - accuracy: 0.3632 - val_loss: 1.7045 - val_accuracy: 0.3901
+Epoch 2/5
+391/391 [==============================] - 89s 218ms/step - loss: 1.2810 - accuracy: 0.5329 - val_loss: 1.4994 - val_accuracy: 0.4935
+Epoch 3/5
+391/391 [==============================] - 89s 218ms/step - loss: 1.0262 - accuracy: 0.6331 - val_loss: 1.7546 - val_accuracy: 0.5185
+Epoch 4/5
+391/391 [==============================] - 89s 218ms/step - loss: 0.8223 - accuracy: 0.7075 - val_loss: 1.1082 - val_accuracy: 0.6312
+Epoch 5/5
+391/391 [==============================] - 89s 218ms/step - loss: 0.6515 - accuracy: 0.7718 - val_loss: 1.0630 - val_accuracy: 0.6499
+79/79 [==============================] - 7s 68ms/step - loss: 1.0630 - accuracy: 0.6499
+
+Iniciando avaliação final no worker 0...
+Loss (perda) no teste: 1.0630
+Accuracy (acurácia) no teste: 0.6499
+TIME TRAINING: 494.8615831611678
+
+Worker 0 concluiu.

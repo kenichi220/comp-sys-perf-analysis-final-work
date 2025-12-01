@@ -1,0 +1,2 @@
+timestamp, index, name, driver_version, utilization.gpu [%], memory.total [MiB], memory.used [MiB], power.draw [W], temperature.gpu, clocks.current.graphics [MHz], clocks.current.sm [MHz], clocks.current.memory [MHz]
+2025/10/05 04:05:49.566, 0, NVIDIA GeForce RTX 4090, 545.23.08, 0 %, 24564 MiB, 22736 MiB, 59.01 W, 25, 2580 MHz, 2580 MHz, 10251 MHz
