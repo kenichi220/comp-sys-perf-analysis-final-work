@@ -1,0 +1,1081 @@
+=================================================================
+Date: Sat Nov 29 03:57:32 PM -03 2025
+Submission Host: poti3
+Submission Directory: /home/users/rrdmatos/perf/tensorflow
+Allocated Nodes: poti[3-4]
+Number of Nodes: 2
+=================================================================
+Create TF_CONFIG
+--- Running setup on poti3 ---
+--- Running setup on poti4 ---
+/scratch/rrdmatos/venv/bin/python
+Python 3.11.2
+pip 23.0.1 from /scratch/rrdmatos/venv/lib/python3.11/site-packages/pip (python 3.11)
+Requirement already satisfied: pip in ./venv/lib/python3.11/site-packages (23.0.1)
+Collecting pip
+  Using cached pip-25.3-py3-none-any.whl (1.8 MB)
+Installing collected packages: pip
+  Attempting uninstall: pip
+    Found existing installation: pip 23.0.1
+    Uninstalling pip-23.0.1:
+      Successfully uninstalled pip-23.0.1
+/scratch/rrdmatos/venv/bin/python
+Python 3.11.2
+pip 23.0.1 from /scratch/rrdmatos/venv/lib/python3.11/site-packages/pip (python 3.11)
+Requirement already satisfied: pip in ./venv/lib/python3.11/site-packages (23.0.1)
+Successfully installed pip-25.3
+Collecting pip
+  Using cached pip-25.3-py3-none-any.whl (1.8 MB)
+Installing collected packages: pip
+  Attempting uninstall: pip
+    Found existing installation: pip 23.0.1
+    Uninstalling pip-23.0.1:
+      Successfully uninstalled pip-23.0.1
+Collecting tensorflow==2.15.1
+  Downloading tensorflow-2.15.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (4.2 kB)
+Collecting absl-py>=1.0.0 (from tensorflow==2.15.1)
+  Downloading absl_py-2.3.1-py3-none-any.whl.metadata (3.3 kB)
+Successfully installed pip-25.3
+Collecting astunparse>=1.6.0 (from tensorflow==2.15.1)
+  Downloading astunparse-1.6.3-py2.py3-none-any.whl.metadata (4.4 kB)
+Collecting flatbuffers>=23.5.26 (from tensorflow==2.15.1)
+  Downloading flatbuffers-25.9.23-py2.py3-none-any.whl.metadata (875 bytes)
+Collecting gast!=0.5.0,!=0.5.1,!=0.5.2,>=0.2.1 (from tensorflow==2.15.1)
+  Downloading gast-0.7.0-py3-none-any.whl.metadata (1.5 kB)
+Collecting google-pasta>=0.1.1 (from tensorflow==2.15.1)
+  Downloading google_pasta-0.2.0-py3-none-any.whl.metadata (814 bytes)
+Collecting h5py>=2.9.0 (from tensorflow==2.15.1)
+  Downloading h5py-3.15.1-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (3.0 kB)
+Collecting libclang>=13.0.0 (from tensorflow==2.15.1)
+  Downloading libclang-18.1.1-py2.py3-none-manylinux2010_x86_64.whl.metadata (5.2 kB)
+Collecting ml-dtypes~=0.3.1 (from tensorflow==2.15.1)
+  Downloading ml_dtypes-0.3.2-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (20 kB)
+Collecting numpy<2.0.0,>=1.23.5 (from tensorflow==2.15.1)
+  Downloading numpy-1.26.4-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (61 kB)
+Collecting opt-einsum>=2.3.2 (from tensorflow==2.15.1)
+  Downloading opt_einsum-3.4.0-py3-none-any.whl.metadata (6.3 kB)
+Collecting tensorflow==2.15.1
+Collecting packaging (from tensorflow==2.15.1)
+  Downloading packaging-25.0-py3-none-any.whl.metadata (3.3 kB)
+  Downloading tensorflow-2.15.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (4.2 kB)
+Collecting absl-py>=1.0.0 (from tensorflow==2.15.1)
+  Downloading absl_py-2.3.1-py3-none-any.whl.metadata (3.3 kB)
+Collecting protobuf!=4.21.0,!=4.21.1,!=4.21.2,!=4.21.3,!=4.21.4,!=4.21.5,<5.0.0dev,>=3.20.3 (from tensorflow==2.15.1)
+Collecting astunparse>=1.6.0 (from tensorflow==2.15.1)
+  Downloading protobuf-4.25.8-cp37-abi3-manylinux2014_x86_64.whl.metadata (541 bytes)
+Requirement already satisfied: setuptools in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1) (66.1.1)
+  Downloading astunparse-1.6.3-py2.py3-none-any.whl.metadata (4.4 kB)
+Collecting six>=1.12.0 (from tensorflow==2.15.1)
+  Downloading six-1.17.0-py2.py3-none-any.whl.metadata (1.7 kB)
+Collecting flatbuffers>=23.5.26 (from tensorflow==2.15.1)
+  Downloading flatbuffers-25.9.23-py2.py3-none-any.whl.metadata (875 bytes)
+Collecting termcolor>=1.1.0 (from tensorflow==2.15.1)
+  Downloading termcolor-3.2.0-py3-none-any.whl.metadata (6.4 kB)
+Collecting gast!=0.5.0,!=0.5.1,!=0.5.2,>=0.2.1 (from tensorflow==2.15.1)
+  Downloading gast-0.7.0-py3-none-any.whl.metadata (1.5 kB)
+Collecting typing-extensions>=3.6.6 (from tensorflow==2.15.1)
+Collecting google-pasta>=0.1.1 (from tensorflow==2.15.1)
+  Downloading typing_extensions-4.15.0-py3-none-any.whl.metadata (3.3 kB)
+  Downloading google_pasta-0.2.0-py3-none-any.whl.metadata (814 bytes)
+Collecting h5py>=2.9.0 (from tensorflow==2.15.1)
+Collecting wrapt<1.15,>=1.11.0 (from tensorflow==2.15.1)
+  Downloading h5py-3.15.1-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (3.0 kB)
+  Downloading wrapt-1.14.2-cp311-cp311-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl.metadata (6.5 kB)
+Collecting libclang>=13.0.0 (from tensorflow==2.15.1)
+Collecting tensorflow-io-gcs-filesystem>=0.23.1 (from tensorflow==2.15.1)
+  Downloading libclang-18.1.1-py2.py3-none-manylinux2010_x86_64.whl.metadata (5.2 kB)
+  Downloading tensorflow_io_gcs_filesystem-0.37.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (14 kB)
+Collecting ml-dtypes~=0.3.1 (from tensorflow==2.15.1)
+  Downloading ml_dtypes-0.3.2-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (20 kB)
+Collecting numpy<2.0.0,>=1.23.5 (from tensorflow==2.15.1)
+  Downloading numpy-1.26.4-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (61 kB)
+Collecting opt-einsum>=2.3.2 (from tensorflow==2.15.1)
+  Downloading opt_einsum-3.4.0-py3-none-any.whl.metadata (6.3 kB)
+Collecting grpcio<2.0,>=1.24.3 (from tensorflow==2.15.1)
+  Downloading grpcio-1.76.0-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (3.7 kB)
+Collecting packaging (from tensorflow==2.15.1)
+  Downloading packaging-25.0-py3-none-any.whl.metadata (3.3 kB)
+Collecting tensorboard<2.16,>=2.15 (from tensorflow==2.15.1)
+  Downloading tensorboard-2.15.2-py3-none-any.whl.metadata (1.7 kB)
+Collecting tensorflow-estimator<2.16,>=2.15.0 (from tensorflow==2.15.1)
+Collecting protobuf!=4.21.0,!=4.21.1,!=4.21.2,!=4.21.3,!=4.21.4,!=4.21.5,<5.0.0dev,>=3.20.3 (from tensorflow==2.15.1)
+  Downloading protobuf-4.25.8-cp37-abi3-manylinux2014_x86_64.whl.metadata (541 bytes)
+Requirement already satisfied: setuptools in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1) (66.1.1)
+Collecting six>=1.12.0 (from tensorflow==2.15.1)
+  Downloading tensorflow_estimator-2.15.0-py2.py3-none-any.whl.metadata (1.3 kB)
+  Downloading six-1.17.0-py2.py3-none-any.whl.metadata (1.7 kB)
+Collecting termcolor>=1.1.0 (from tensorflow==2.15.1)
+Collecting keras<2.16,>=2.15.0 (from tensorflow==2.15.1)
+  Downloading termcolor-3.2.0-py3-none-any.whl.metadata (6.4 kB)
+  Downloading keras-2.15.0-py3-none-any.whl.metadata (2.4 kB)
+Collecting typing-extensions>=3.6.6 (from tensorflow==2.15.1)
+  Downloading typing_extensions-4.15.0-py3-none-any.whl.metadata (3.3 kB)
+Collecting google-auth<3,>=1.6.3 (from tensorboard<2.16,>=2.15->tensorflow==2.15.1)
+  Downloading google_auth-2.43.0-py2.py3-none-any.whl.metadata (6.6 kB)
+Collecting google-auth-oauthlib<2,>=0.5 (from tensorboard<2.16,>=2.15->tensorflow==2.15.1)
+Collecting wrapt<1.15,>=1.11.0 (from tensorflow==2.15.1)
+  Downloading google_auth_oauthlib-1.2.3-py3-none-any.whl.metadata (3.1 kB)
+  Downloading wrapt-1.14.2-cp311-cp311-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl.metadata (6.5 kB)
+Collecting markdown>=2.6.8 (from tensorboard<2.16,>=2.15->tensorflow==2.15.1)
+Collecting tensorflow-io-gcs-filesystem>=0.23.1 (from tensorflow==2.15.1)
+  Downloading markdown-3.10-py3-none-any.whl.metadata (5.1 kB)
+  Downloading tensorflow_io_gcs_filesystem-0.37.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (14 kB)
+Collecting requests<3,>=2.21.0 (from tensorboard<2.16,>=2.15->tensorflow==2.15.1)
+  Downloading requests-2.32.5-py3-none-any.whl.metadata (4.9 kB)
+Collecting tensorboard-data-server<0.8.0,>=0.7.0 (from tensorboard<2.16,>=2.15->tensorflow==2.15.1)
+  Downloading tensorboard_data_server-0.7.2-py3-none-manylinux_2_31_x86_64.whl.metadata (1.1 kB)
+Collecting werkzeug>=1.0.1 (from tensorboard<2.16,>=2.15->tensorflow==2.15.1)
+  Downloading werkzeug-3.1.4-py3-none-any.whl.metadata (4.0 kB)
+Collecting cachetools<7.0,>=2.0.0 (from google-auth<3,>=1.6.3->tensorboard<2.16,>=2.15->tensorflow==2.15.1)
+  Downloading cachetools-6.2.2-py3-none-any.whl.metadata (5.6 kB)
+Collecting pyasn1-modules>=0.2.1 (from google-auth<3,>=1.6.3->tensorboard<2.16,>=2.15->tensorflow==2.15.1)
+Collecting grpcio<2.0,>=1.24.3 (from tensorflow==2.15.1)
+  Downloading pyasn1_modules-0.4.2-py3-none-any.whl.metadata (3.5 kB)
+  Downloading grpcio-1.76.0-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (3.7 kB)
+Collecting rsa<5,>=3.1.4 (from google-auth<3,>=1.6.3->tensorboard<2.16,>=2.15->tensorflow==2.15.1)
+Collecting tensorboard<2.16,>=2.15 (from tensorflow==2.15.1)
+  Downloading rsa-4.9.1-py3-none-any.whl.metadata (5.6 kB)
+  Downloading tensorboard-2.15.2-py3-none-any.whl.metadata (1.7 kB)
+Collecting google-auth<3,>=1.6.3 (from tensorboard<2.16,>=2.15->tensorflow==2.15.1)
+  Downloading google_auth-2.41.1-py2.py3-none-any.whl.metadata (6.6 kB)
+Collecting tensorflow-estimator<2.16,>=2.15.0 (from tensorflow==2.15.1)
+  Downloading tensorflow_estimator-2.15.0-py2.py3-none-any.whl.metadata (1.3 kB)
+Collecting requests-oauthlib>=0.7.0 (from google-auth-oauthlib<2,>=0.5->tensorboard<2.16,>=2.15->tensorflow==2.15.1)
+  Downloading requests_oauthlib-2.0.0-py2.py3-none-any.whl.metadata (11 kB)
+Collecting keras<2.16,>=2.15.0 (from tensorflow==2.15.1)
+  Downloading keras-2.15.0-py3-none-any.whl.metadata (2.4 kB)
+Collecting charset_normalizer<4,>=2 (from requests<3,>=2.21.0->tensorboard<2.16,>=2.15->tensorflow==2.15.1)
+Collecting google-auth<3,>=1.6.3 (from tensorboard<2.16,>=2.15->tensorflow==2.15.1)
+  Downloading charset_normalizer-3.4.4-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (37 kB)
+  Downloading google_auth-2.43.0-py2.py3-none-any.whl.metadata (6.6 kB)
+Collecting idna<4,>=2.5 (from requests<3,>=2.21.0->tensorboard<2.16,>=2.15->tensorflow==2.15.1)
+Collecting google-auth-oauthlib<2,>=0.5 (from tensorboard<2.16,>=2.15->tensorflow==2.15.1)
+  Downloading idna-3.11-py3-none-any.whl.metadata (8.4 kB)
+  Downloading google_auth_oauthlib-1.2.3-py3-none-any.whl.metadata (3.1 kB)
+Collecting markdown>=2.6.8 (from tensorboard<2.16,>=2.15->tensorflow==2.15.1)
+Collecting urllib3<3,>=1.21.1 (from requests<3,>=2.21.0->tensorboard<2.16,>=2.15->tensorflow==2.15.1)
+  Downloading urllib3-2.5.0-py3-none-any.whl.metadata (6.5 kB)
+  Downloading markdown-3.10-py3-none-any.whl.metadata (5.1 kB)
+Collecting certifi>=2017.4.17 (from requests<3,>=2.21.0->tensorboard<2.16,>=2.15->tensorflow==2.15.1)
+  Downloading certifi-2025.11.12-py3-none-any.whl.metadata (2.5 kB)
+Collecting requests<3,>=2.21.0 (from tensorboard<2.16,>=2.15->tensorflow==2.15.1)
+Collecting pyasn1>=0.1.3 (from rsa<5,>=3.1.4->google-auth<3,>=1.6.3->tensorboard<2.16,>=2.15->tensorflow==2.15.1)
+  Downloading requests-2.32.5-py3-none-any.whl.metadata (4.9 kB)
+  Downloading pyasn1-0.6.1-py3-none-any.whl.metadata (8.4 kB)
+Collecting tensorboard-data-server<0.8.0,>=0.7.0 (from tensorboard<2.16,>=2.15->tensorflow==2.15.1)
+Collecting wheel<1.0,>=0.23.0 (from astunparse>=1.6.0->tensorflow==2.15.1)
+  Downloading tensorboard_data_server-0.7.2-py3-none-manylinux_2_31_x86_64.whl.metadata (1.1 kB)
+  Downloading wheel-0.45.1-py3-none-any.whl.metadata (2.3 kB)
+Collecting werkzeug>=1.0.1 (from tensorboard<2.16,>=2.15->tensorflow==2.15.1)
+  Downloading werkzeug-3.1.4-py3-none-any.whl.metadata (4.0 kB)
+Collecting oauthlib>=3.0.0 (from requests-oauthlib>=0.7.0->google-auth-oauthlib<2,>=0.5->tensorboard<2.16,>=2.15->tensorflow==2.15.1)
+  Downloading oauthlib-3.3.1-py3-none-any.whl.metadata (7.9 kB)
+Collecting cachetools<7.0,>=2.0.0 (from google-auth<3,>=1.6.3->tensorboard<2.16,>=2.15->tensorflow==2.15.1)
+  Downloading cachetools-6.2.2-py3-none-any.whl.metadata (5.6 kB)
+Collecting pyasn1-modules>=0.2.1 (from google-auth<3,>=1.6.3->tensorboard<2.16,>=2.15->tensorflow==2.15.1)
+  Downloading pyasn1_modules-0.4.2-py3-none-any.whl.metadata (3.5 kB)
+Collecting rsa<5,>=3.1.4 (from google-auth<3,>=1.6.3->tensorboard<2.16,>=2.15->tensorflow==2.15.1)
+Collecting markupsafe>=2.1.1 (from werkzeug>=1.0.1->tensorboard<2.16,>=2.15->tensorflow==2.15.1)
+  Downloading rsa-4.9.1-py3-none-any.whl.metadata (5.6 kB)
+  Downloading markupsafe-3.0.3-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (2.7 kB)
+Collecting google-auth<3,>=1.6.3 (from tensorboard<2.16,>=2.15->tensorflow==2.15.1)
+  Downloading google_auth-2.41.1-py2.py3-none-any.whl.metadata (6.6 kB)
+Downloading tensorflow-2.15.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (475.3 MB)
+Collecting requests-oauthlib>=0.7.0 (from google-auth-oauthlib<2,>=0.5->tensorboard<2.16,>=2.15->tensorflow==2.15.1)
+  Downloading requests_oauthlib-2.0.0-py2.py3-none-any.whl.metadata (11 kB)
+Collecting charset_normalizer<4,>=2 (from requests<3,>=2.21.0->tensorboard<2.16,>=2.15->tensorflow==2.15.1)
+  Downloading charset_normalizer-3.4.4-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (37 kB)
+Collecting idna<4,>=2.5 (from requests<3,>=2.21.0->tensorboard<2.16,>=2.15->tensorflow==2.15.1)
+  Downloading idna-3.11-py3-none-any.whl.metadata (8.4 kB)
+Collecting urllib3<3,>=1.21.1 (from requests<3,>=2.21.0->tensorboard<2.16,>=2.15->tensorflow==2.15.1)
+  Downloading urllib3-2.5.0-py3-none-any.whl.metadata (6.5 kB)
+Collecting certifi>=2017.4.17 (from requests<3,>=2.21.0->tensorboard<2.16,>=2.15->tensorflow==2.15.1)
+  Downloading certifi-2025.11.12-py3-none-any.whl.metadata (2.5 kB)
+Collecting pyasn1>=0.1.3 (from rsa<5,>=3.1.4->google-auth<3,>=1.6.3->tensorboard<2.16,>=2.15->tensorflow==2.15.1)
+  Downloading pyasn1-0.6.1-py3-none-any.whl.metadata (8.4 kB)
+Collecting wheel<1.0,>=0.23.0 (from astunparse>=1.6.0->tensorflow==2.15.1)
+  Downloading wheel-0.45.1-py3-none-any.whl.metadata (2.3 kB)
+Collecting oauthlib>=3.0.0 (from requests-oauthlib>=0.7.0->google-auth-oauthlib<2,>=0.5->tensorboard<2.16,>=2.15->tensorflow==2.15.1)
+  Downloading oauthlib-3.3.1-py3-none-any.whl.metadata (7.9 kB)
+Collecting markupsafe>=2.1.1 (from werkzeug>=1.0.1->tensorboard<2.16,>=2.15->tensorflow==2.15.1)
+  Downloading markupsafe-3.0.3-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (2.7 kB)
+Downloading tensorflow-2.15.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (475.3 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 475.3/475.3 MB 47.3 MB/s  0:00:07
+Downloading grpcio-1.76.0-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (6.6 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 6.6/6.6 MB 50.3 MB/s  0:00:00
+Downloading keras-2.15.0-py3-none-any.whl (1.7 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.7/1.7 MB 46.5 MB/s  0:00:00
+Downloading ml_dtypes-0.3.2-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (2.2 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.2/2.2 MB 55.6 MB/s  0:00:00
+Downloading numpy-1.26.4-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (18.3 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 18.3/18.3 MB 51.2 MB/s  0:00:00
+Downloading protobuf-4.25.8-cp37-abi3-manylinux2014_x86_64.whl (294 kB)
+Downloading tensorboard-2.15.2-py3-none-any.whl (5.5 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 5.5/5.5 MB 50.1 MB/s  0:00:00
+Downloading cachetools-6.2.2-py3-none-any.whl (11 kB)
+Downloading google_auth_oauthlib-1.2.3-py3-none-any.whl (19 kB)
+Downloading google_auth-2.41.1-py2.py3-none-any.whl (221 kB)
+Downloading requests-2.32.5-py3-none-any.whl (64 kB)
+Downloading charset_normalizer-3.4.4-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (151 kB)
+Downloading idna-3.11-py3-none-any.whl (71 kB)
+Downloading rsa-4.9.1-py3-none-any.whl (34 kB)
+Downloading tensorboard_data_server-0.7.2-py3-none-manylinux_2_31_x86_64.whl (6.6 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 6.6/6.6 MB 89.4 MB/s  0:00:00
+Downloading tensorflow_estimator-2.15.0-py2.py3-none-any.whl (441 kB)
+Downloading typing_extensions-4.15.0-py3-none-any.whl (44 kB)
+Downloading urllib3-2.5.0-py3-none-any.whl (129 kB)
+Downloading wrapt-1.14.2-cp311-cp311-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl (77 kB)
+Downloading absl_py-2.3.1-py3-none-any.whl (135 kB)
+Downloading astunparse-1.6.3-py2.py3-none-any.whl (12 kB)
+Downloading six-1.17.0-py2.py3-none-any.whl (11 kB)
+Downloading wheel-0.45.1-py3-none-any.whl (72 kB)
+Downloading certifi-2025.11.12-py3-none-any.whl (159 kB)
+Downloading flatbuffers-25.9.23-py2.py3-none-any.whl (30 kB)
+Downloading gast-0.7.0-py3-none-any.whl (22 kB)
+Downloading google_pasta-0.2.0-py3-none-any.whl (57 kB)
+Downloading h5py-3.15.1-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (4.7 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 4.7/4.7 MB 33.7 MB/s  0:00:00
+Downloading libclang-18.1.1-py2.py3-none-manylinux2010_x86_64.whl (24.5 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 475.3/475.3 MB 59.0 MB/s  0:00:09
+Downloading grpcio-1.76.0-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (6.6 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 24.5/24.5 MB 75.4 MB/s  0:00:00
+Downloading markdown-3.10-py3-none-any.whl (107 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 6.6/6.6 MB 89.5 MB/s  0:00:00
+Downloading keras-2.15.0-py3-none-any.whl (1.7 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.7/1.7 MB 82.0 MB/s  0:00:00
+Downloading opt_einsum-3.4.0-py3-none-any.whl (71 kB)
+Downloading ml_dtypes-0.3.2-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (2.2 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.2/2.2 MB 83.4 MB/s  0:00:00
+Downloading numpy-1.26.4-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (18.3 MB)
+Downloading pyasn1-0.6.1-py3-none-any.whl (83 kB)
+Downloading pyasn1_modules-0.4.2-py3-none-any.whl (181 kB)
+Downloading requests_oauthlib-2.0.0-py2.py3-none-any.whl (24 kB)
+Downloading oauthlib-3.3.1-py3-none-any.whl (160 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 18.3/18.3 MB 66.1 MB/s  0:00:00
+Downloading tensorflow_io_gcs_filesystem-0.37.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (5.1 MB)
+Downloading protobuf-4.25.8-cp37-abi3-manylinux2014_x86_64.whl (294 kB)
+Downloading tensorboard-2.15.2-py3-none-any.whl (5.5 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 5.1/5.1 MB 82.5 MB/s  0:00:00
+Downloading termcolor-3.2.0-py3-none-any.whl (7.7 kB)
+Downloading werkzeug-3.1.4-py3-none-any.whl (224 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 5.5/5.5 MB 88.3 MB/s  0:00:00
+Downloading markupsafe-3.0.3-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (22 kB)
+Downloading cachetools-6.2.2-py3-none-any.whl (11 kB)
+Downloading packaging-25.0-py3-none-any.whl (66 kB)
+Downloading google_auth_oauthlib-1.2.3-py3-none-any.whl (19 kB)
+Downloading google_auth-2.41.1-py2.py3-none-any.whl (221 kB)
+Downloading requests-2.32.5-py3-none-any.whl (64 kB)
+Downloading charset_normalizer-3.4.4-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (151 kB)
+Downloading idna-3.11-py3-none-any.whl (71 kB)
+Downloading rsa-4.9.1-py3-none-any.whl (34 kB)
+Downloading tensorboard_data_server-0.7.2-py3-none-manylinux_2_31_x86_64.whl (6.6 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 6.6/6.6 MB 60.0 MB/s  0:00:00
+Downloading tensorflow_estimator-2.15.0-py2.py3-none-any.whl (441 kB)
+Downloading typing_extensions-4.15.0-py3-none-any.whl (44 kB)
+Downloading urllib3-2.5.0-py3-none-any.whl (129 kB)
+Downloading wrapt-1.14.2-cp311-cp311-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl (77 kB)
+Downloading absl_py-2.3.1-py3-none-any.whl (135 kB)
+Downloading astunparse-1.6.3-py2.py3-none-any.whl (12 kB)
+Downloading six-1.17.0-py2.py3-none-any.whl (11 kB)
+Downloading wheel-0.45.1-py3-none-any.whl (72 kB)
+Installing collected packages: libclang, flatbuffers, wrapt, wheel, urllib3, typing-extensions, termcolor, tensorflow-io-gcs-filesystem, tensorflow-estimator, tensorboard-data-server, six, pyasn1, protobuf, packaging, opt-einsum, oauthlib, numpy, markupsafe, markdown, keras, idna, gast, charset_normalizer, certifi, cachetools, absl-py, werkzeug, rsa, requests, pyasn1-modules, ml-dtypes, h5py, grpcio, google-pasta, astunparse, requests-oauthlib, google-auth, google-auth-oauthlib, tensorboard, tensorflow
+Downloading certifi-2025.11.12-py3-none-any.whl (159 kB)
+Downloading flatbuffers-25.9.23-py2.py3-none-any.whl (30 kB)
+Downloading gast-0.7.0-py3-none-any.whl (22 kB)
+Downloading google_pasta-0.2.0-py3-none-any.whl (57 kB)
+Downloading h5py-3.15.1-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (4.7 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 4.7/4.7 MB 48.3 MB/s  0:00:00
+Downloading libclang-18.1.1-py2.py3-none-manylinux2010_x86_64.whl (24.5 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 24.5/24.5 MB 87.6 MB/s  0:00:00
+Downloading markdown-3.10-py3-none-any.whl (107 kB)
+Downloading opt_einsum-3.4.0-py3-none-any.whl (71 kB)
+Downloading pyasn1-0.6.1-py3-none-any.whl (83 kB)
+Downloading pyasn1_modules-0.4.2-py3-none-any.whl (181 kB)
+Downloading requests_oauthlib-2.0.0-py2.py3-none-any.whl (24 kB)
+Downloading oauthlib-3.3.1-py3-none-any.whl (160 kB)
+Downloading tensorflow_io_gcs_filesystem-0.37.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (5.1 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 5.1/5.1 MB 56.3 MB/s  0:00:00
+Downloading termcolor-3.2.0-py3-none-any.whl (7.7 kB)
+Downloading werkzeug-3.1.4-py3-none-any.whl (224 kB)
+Downloading markupsafe-3.0.3-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (22 kB)
+Downloading packaging-25.0-py3-none-any.whl (66 kB)
+Installing collected packages: libclang, flatbuffers, wrapt, wheel, urllib3, typing-extensions, termcolor, tensorflow-io-gcs-filesystem, tensorflow-estimator, tensorboard-data-server, six, pyasn1, protobuf, packaging, opt-einsum, oauthlib, numpy, markupsafe, markdown, keras, idna, gast, charset_normalizer, certifi, cachetools, absl-py, werkzeug, rsa, requests, pyasn1-modules, ml-dtypes, h5py, grpcio, google-pasta, astunparse, requests-oauthlib, google-auth, google-auth-oauthlib, tensorboard, tensorflow
+
+Successfully installed absl-py-2.3.1 astunparse-1.6.3 cachetools-6.2.2 certifi-2025.11.12 charset_normalizer-3.4.4 flatbuffers-25.9.23 gast-0.7.0 google-auth-2.41.1 google-auth-oauthlib-1.2.3 google-pasta-0.2.0 grpcio-1.76.0 h5py-3.15.1 idna-3.11 keras-2.15.0 libclang-18.1.1 markdown-3.10 markupsafe-3.0.3 ml-dtypes-0.3.2 numpy-1.26.4 oauthlib-3.3.1 opt-einsum-3.4.0 packaging-25.0 protobuf-4.25.8 pyasn1-0.6.1 pyasn1-modules-0.4.2 requests-2.32.5 requests-oauthlib-2.0.0 rsa-4.9.1 six-1.17.0 tensorboard-2.15.2 tensorboard-data-server-0.7.2 tensorflow-2.15.1 tensorflow-estimator-2.15.0 tensorflow-io-gcs-filesystem-0.37.1 termcolor-3.2.0 typing-extensions-4.15.0 urllib3-2.5.0 werkzeug-3.1.4 wheel-0.45.1 wrapt-1.14.2
+Requirement already satisfied: tensorflow==2.15.1 in ./venv/lib/python3.11/site-packages (from tensorflow[and-gpu]==2.15.1) (2.15.1)
+Requirement already satisfied: absl-py>=1.0.0 in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-gpu]==2.15.1) (2.3.1)
+Requirement already satisfied: astunparse>=1.6.0 in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-gpu]==2.15.1) (1.6.3)
+Requirement already satisfied: flatbuffers>=23.5.26 in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-gpu]==2.15.1) (25.9.23)
+Requirement already satisfied: gast!=0.5.0,!=0.5.1,!=0.5.2,>=0.2.1 in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-gpu]==2.15.1) (0.7.0)
+Requirement already satisfied: google-pasta>=0.1.1 in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-gpu]==2.15.1) (0.2.0)
+Requirement already satisfied: h5py>=2.9.0 in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-gpu]==2.15.1) (3.15.1)
+Requirement already satisfied: libclang>=13.0.0 in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-gpu]==2.15.1) (18.1.1)
+Requirement already satisfied: ml-dtypes~=0.3.1 in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-gpu]==2.15.1) (0.3.2)
+Requirement already satisfied: numpy<2.0.0,>=1.23.5 in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-gpu]==2.15.1) (1.26.4)
+Requirement already satisfied: opt-einsum>=2.3.2 in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-gpu]==2.15.1) (3.4.0)
+Requirement already satisfied: packaging in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-gpu]==2.15.1) (25.0)
+Requirement already satisfied: protobuf!=4.21.0,!=4.21.1,!=4.21.2,!=4.21.3,!=4.21.4,!=4.21.5,<5.0.0dev,>=3.20.3 in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-gpu]==2.15.1) (4.25.8)
+Requirement already satisfied: setuptools in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-gpu]==2.15.1) (66.1.1)
+Requirement already satisfied: six>=1.12.0 in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-gpu]==2.15.1) (1.17.0)
+Requirement already satisfied: termcolor>=1.1.0 in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-gpu]==2.15.1) (3.2.0)
+Requirement already satisfied: typing-extensions>=3.6.6 in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-gpu]==2.15.1) (4.15.0)
+Requirement already satisfied: wrapt<1.15,>=1.11.0 in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-gpu]==2.15.1) (1.14.2)
+Requirement already satisfied: tensorflow-io-gcs-filesystem>=0.23.1 in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-gpu]==2.15.1) (0.37.1)
+Requirement already satisfied: grpcio<2.0,>=1.24.3 in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-gpu]==2.15.1) (1.76.0)
+Requirement already satisfied: tensorboard<2.16,>=2.15 in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-gpu]==2.15.1) (2.15.2)
+Requirement already satisfied: tensorflow-estimator<2.16,>=2.15.0 in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-gpu]==2.15.1) (2.15.0)
+Requirement already satisfied: keras<2.16,>=2.15.0 in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-gpu]==2.15.1) (2.15.0)
+Requirement already satisfied: google-auth<3,>=1.6.3 in ./venv/lib/python3.11/site-packages (from tensorboard<2.16,>=2.15->tensorflow==2.15.1->tensorflow[and-gpu]==2.15.1) (2.41.1)
+Requirement already satisfied: google-auth-oauthlib<2,>=0.5 in ./venv/lib/python3.11/site-packages (from tensorboard<2.16,>=2.15->tensorflow==2.15.1->tensorflow[and-gpu]==2.15.1) (1.2.3)
+Requirement already satisfied: markdown>=2.6.8 in ./venv/lib/python3.11/site-packages (from tensorboard<2.16,>=2.15->tensorflow==2.15.1->tensorflow[and-gpu]==2.15.1) (3.10)
+Requirement already satisfied: requests<3,>=2.21.0 in ./venv/lib/python3.11/site-packages (from tensorboard<2.16,>=2.15->tensorflow==2.15.1->tensorflow[and-gpu]==2.15.1) (2.32.5)
+Requirement already satisfied: tensorboard-data-server<0.8.0,>=0.7.0 in ./venv/lib/python3.11/site-packages (from tensorboard<2.16,>=2.15->tensorflow==2.15.1->tensorflow[and-gpu]==2.15.1) (0.7.2)
+Requirement already satisfied: werkzeug>=1.0.1 in ./venv/lib/python3.11/site-packages (from tensorboard<2.16,>=2.15->tensorflow==2.15.1->tensorflow[and-gpu]==2.15.1) (3.1.4)
+Requirement already satisfied: cachetools<7.0,>=2.0.0 in ./venv/lib/python3.11/site-packages (from google-auth<3,>=1.6.3->tensorboard<2.16,>=2.15->tensorflow==2.15.1->tensorflow[and-gpu]==2.15.1) (6.2.2)
+Requirement already satisfied: pyasn1-modules>=0.2.1 in ./venv/lib/python3.11/site-packages (from google-auth<3,>=1.6.3->tensorboard<2.16,>=2.15->tensorflow==2.15.1->tensorflow[and-gpu]==2.15.1) (0.4.2)
+Requirement already satisfied: rsa<5,>=3.1.4 in ./venv/lib/python3.11/site-packages (from google-auth<3,>=1.6.3->tensorboard<2.16,>=2.15->tensorflow==2.15.1->tensorflow[and-gpu]==2.15.1) (4.9.1)
+Requirement already satisfied: requests-oauthlib>=0.7.0 in ./venv/lib/python3.11/site-packages (from google-auth-oauthlib<2,>=0.5->tensorboard<2.16,>=2.15->tensorflow==2.15.1->tensorflow[and-gpu]==2.15.1) (2.0.0)
+Requirement already satisfied: charset_normalizer<4,>=2 in ./venv/lib/python3.11/site-packages (from requests<3,>=2.21.0->tensorboard<2.16,>=2.15->tensorflow==2.15.1->tensorflow[and-gpu]==2.15.1) (3.4.4)
+Requirement already satisfied: idna<4,>=2.5 in ./venv/lib/python3.11/site-packages (from requests<3,>=2.21.0->tensorboard<2.16,>=2.15->tensorflow==2.15.1->tensorflow[and-gpu]==2.15.1) (3.11)
+Requirement already satisfied: urllib3<3,>=1.21.1 in ./venv/lib/python3.11/site-packages (from requests<3,>=2.21.0->tensorboard<2.16,>=2.15->tensorflow==2.15.1->tensorflow[and-gpu]==2.15.1) (2.5.0)
+Requirement already satisfied: certifi>=2017.4.17 in ./venv/lib/python3.11/site-packages (from requests<3,>=2.21.0->tensorboard<2.16,>=2.15->tensorflow==2.15.1->tensorflow[and-gpu]==2.15.1) (2025.11.12)
+Requirement already satisfied: pyasn1>=0.1.3 in ./venv/lib/python3.11/site-packages (from rsa<5,>=3.1.4->google-auth<3,>=1.6.3->tensorboard<2.16,>=2.15->tensorflow==2.15.1->tensorflow[and-gpu]==2.15.1) (0.6.1)
+Requirement already satisfied: wheel<1.0,>=0.23.0 in ./venv/lib/python3.11/site-packages (from astunparse>=1.6.0->tensorflow==2.15.1->tensorflow[and-gpu]==2.15.1) (0.45.1)
+Requirement already satisfied: oauthlib>=3.0.0 in ./venv/lib/python3.11/site-packages (from requests-oauthlib>=0.7.0->google-auth-oauthlib<2,>=0.5->tensorboard<2.16,>=2.15->tensorflow==2.15.1->tensorflow[and-gpu]==2.15.1) (3.3.1)
+Requirement already satisfied: markupsafe>=2.1.1 in ./venv/lib/python3.11/site-packages (from werkzeug>=1.0.1->tensorboard<2.16,>=2.15->tensorflow==2.15.1->tensorflow[and-gpu]==2.15.1) (3.0.3)
+Requirement already satisfied: tensorflow==2.15.1 in ./venv/lib/python3.11/site-packages (from tensorflow[and-cuda]==2.15.1) (2.15.1)
+Requirement already satisfied: absl-py>=1.0.0 in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-cuda]==2.15.1) (2.3.1)
+Requirement already satisfied: astunparse>=1.6.0 in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-cuda]==2.15.1) (1.6.3)
+Requirement already satisfied: flatbuffers>=23.5.26 in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-cuda]==2.15.1) (25.9.23)
+Requirement already satisfied: gast!=0.5.0,!=0.5.1,!=0.5.2,>=0.2.1 in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-cuda]==2.15.1) (0.7.0)
+Requirement already satisfied: google-pasta>=0.1.1 in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-cuda]==2.15.1) (0.2.0)
+Requirement already satisfied: h5py>=2.9.0 in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-cuda]==2.15.1) (3.15.1)
+Requirement already satisfied: libclang>=13.0.0 in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-cuda]==2.15.1) (18.1.1)
+Requirement already satisfied: ml-dtypes~=0.3.1 in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-cuda]==2.15.1) (0.3.2)
+Requirement already satisfied: numpy<2.0.0,>=1.23.5 in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-cuda]==2.15.1) (1.26.4)
+Requirement already satisfied: opt-einsum>=2.3.2 in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-cuda]==2.15.1) (3.4.0)
+Requirement already satisfied: packaging in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-cuda]==2.15.1) (25.0)
+Requirement already satisfied: protobuf!=4.21.0,!=4.21.1,!=4.21.2,!=4.21.3,!=4.21.4,!=4.21.5,<5.0.0dev,>=3.20.3 in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-cuda]==2.15.1) (4.25.8)
+Requirement already satisfied: setuptools in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-cuda]==2.15.1) (66.1.1)
+Requirement already satisfied: six>=1.12.0 in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-cuda]==2.15.1) (1.17.0)
+Requirement already satisfied: termcolor>=1.1.0 in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-cuda]==2.15.1) (3.2.0)
+Requirement already satisfied: typing-extensions>=3.6.6 in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-cuda]==2.15.1) (4.15.0)
+Requirement already satisfied: wrapt<1.15,>=1.11.0 in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-cuda]==2.15.1) (1.14.2)
+Requirement already satisfied: tensorflow-io-gcs-filesystem>=0.23.1 in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-cuda]==2.15.1) (0.37.1)
+Requirement already satisfied: grpcio<2.0,>=1.24.3 in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-cuda]==2.15.1) (1.76.0)
+Requirement already satisfied: tensorboard<2.16,>=2.15 in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-cuda]==2.15.1) (2.15.2)
+Requirement already satisfied: tensorflow-estimator<2.16,>=2.15.0 in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-cuda]==2.15.1) (2.15.0)
+Requirement already satisfied: keras<2.16,>=2.15.0 in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-cuda]==2.15.1) (2.15.0)
+Collecting nvidia-cublas-cu12==12.2.5.6 (from tensorflow[and-cuda]==2.15.1)
+  Downloading nvidia_cublas_cu12-12.2.5.6-py3-none-manylinux1_x86_64.whl.metadata (1.5 kB)
+Collecting nvidia-cuda-cupti-cu12==12.2.142 (from tensorflow[and-cuda]==2.15.1)
+  Downloading nvidia_cuda_cupti_cu12-12.2.142-py3-none-manylinux1_x86_64.whl.metadata (1.6 kB)
+Collecting nvidia-cuda-nvcc-cu12==12.2.140 (from tensorflow[and-cuda]==2.15.1)
+  Downloading nvidia_cuda_nvcc_cu12-12.2.140-py3-none-manylinux1_x86_64.whl.metadata (1.5 kB)
+Collecting nvidia-cuda-nvrtc-cu12==12.2.140 (from tensorflow[and-cuda]==2.15.1)
+  Downloading nvidia_cuda_nvrtc_cu12-12.2.140-py3-none-manylinux1_x86_64.whl.metadata (1.5 kB)
+Collecting nvidia-cuda-runtime-cu12==12.2.140 (from tensorflow[and-cuda]==2.15.1)
+  Downloading nvidia_cuda_runtime_cu12-12.2.140-py3-none-manylinux1_x86_64.whl.metadata (1.5 kB)
+Collecting nvidia-cudnn-cu12==8.9.4.25 (from tensorflow[and-cuda]==2.15.1)
+  Downloading nvidia_cudnn_cu12-8.9.4.25-py3-none-manylinux1_x86_64.whl.metadata (1.6 kB)
+Collecting nvidia-cufft-cu12==11.0.8.103 (from tensorflow[and-cuda]==2.15.1)
+  Downloading nvidia_cufft_cu12-11.0.8.103-py3-none-manylinux1_x86_64.whl.metadata (1.5 kB)
+Collecting nvidia-curand-cu12==10.3.3.141 (from tensorflow[and-cuda]==2.15.1)
+  Downloading nvidia_curand_cu12-10.3.3.141-py3-none-manylinux1_x86_64.whl.metadata (1.5 kB)
+Collecting nvidia-cusolver-cu12==11.5.2.141 (from tensorflow[and-cuda]==2.15.1)
+  Downloading nvidia_cusolver_cu12-11.5.2.141-py3-none-manylinux1_x86_64.whl.metadata (1.6 kB)
+
+Collecting nvidia-cusparse-cu12==12.1.2.141 (from tensorflow[and-cuda]==2.15.1)
+Successfully installed absl-py-2.3.1 astunparse-1.6.3 cachetools-6.2.2 certifi-2025.11.12 charset_normalizer-3.4.4 flatbuffers-25.9.23 gast-0.7.0 google-auth-2.41.1 google-auth-oauthlib-1.2.3 google-pasta-0.2.0 grpcio-1.76.0 h5py-3.15.1 idna-3.11 keras-2.15.0 libclang-18.1.1 markdown-3.10 markupsafe-3.0.3 ml-dtypes-0.3.2 numpy-1.26.4 oauthlib-3.3.1 opt-einsum-3.4.0 packaging-25.0 protobuf-4.25.8 pyasn1-0.6.1 pyasn1-modules-0.4.2 requests-2.32.5 requests-oauthlib-2.0.0 rsa-4.9.1 six-1.17.0 tensorboard-2.15.2 tensorboard-data-server-0.7.2 tensorflow-2.15.1 tensorflow-estimator-2.15.0 tensorflow-io-gcs-filesystem-0.37.1 termcolor-3.2.0 typing-extensions-4.15.0 urllib3-2.5.0 werkzeug-3.1.4 wheel-0.45.1 wrapt-1.14.2
+  Downloading nvidia_cusparse_cu12-12.1.2.141-py3-none-manylinux1_x86_64.whl.metadata (1.6 kB)
+Collecting nvidia-nccl-cu12==2.16.5 (from tensorflow[and-cuda]==2.15.1)
+  Downloading nvidia_nccl_cu12-2.16.5-py3-none-manylinux1_x86_64.whl.metadata (1.8 kB)
+Collecting nvidia-nvjitlink-cu12==12.2.140 (from tensorflow[and-cuda]==2.15.1)
+  Downloading nvidia_nvjitlink_cu12-12.2.140-py3-none-manylinux1_x86_64.whl.metadata (1.5 kB)
+Requirement already satisfied: google-auth<3,>=1.6.3 in ./venv/lib/python3.11/site-packages (from tensorboard<2.16,>=2.15->tensorflow==2.15.1->tensorflow[and-cuda]==2.15.1) (2.41.1)
+Requirement already satisfied: google-auth-oauthlib<2,>=0.5 in ./venv/lib/python3.11/site-packages (from tensorboard<2.16,>=2.15->tensorflow==2.15.1->tensorflow[and-cuda]==2.15.1) (1.2.3)
+Requirement already satisfied: markdown>=2.6.8 in ./venv/lib/python3.11/site-packages (from tensorboard<2.16,>=2.15->tensorflow==2.15.1->tensorflow[and-cuda]==2.15.1) (3.10)
+Requirement already satisfied: requests<3,>=2.21.0 in ./venv/lib/python3.11/site-packages (from tensorboard<2.16,>=2.15->tensorflow==2.15.1->tensorflow[and-cuda]==2.15.1) (2.32.5)
+Requirement already satisfied: tensorboard-data-server<0.8.0,>=0.7.0 in ./venv/lib/python3.11/site-packages (from tensorboard<2.16,>=2.15->tensorflow==2.15.1->tensorflow[and-cuda]==2.15.1) (0.7.2)
+Requirement already satisfied: werkzeug>=1.0.1 in ./venv/lib/python3.11/site-packages (from tensorboard<2.16,>=2.15->tensorflow==2.15.1->tensorflow[and-cuda]==2.15.1) (3.1.4)
+Requirement already satisfied: cachetools<7.0,>=2.0.0 in ./venv/lib/python3.11/site-packages (from google-auth<3,>=1.6.3->tensorboard<2.16,>=2.15->tensorflow==2.15.1->tensorflow[and-cuda]==2.15.1) (6.2.2)
+Requirement already satisfied: pyasn1-modules>=0.2.1 in ./venv/lib/python3.11/site-packages (from google-auth<3,>=1.6.3->tensorboard<2.16,>=2.15->tensorflow==2.15.1->tensorflow[and-cuda]==2.15.1) (0.4.2)
+Requirement already satisfied: rsa<5,>=3.1.4 in ./venv/lib/python3.11/site-packages (from google-auth<3,>=1.6.3->tensorboard<2.16,>=2.15->tensorflow==2.15.1->tensorflow[and-cuda]==2.15.1) (4.9.1)
+Requirement already satisfied: requests-oauthlib>=0.7.0 in ./venv/lib/python3.11/site-packages (from google-auth-oauthlib<2,>=0.5->tensorboard<2.16,>=2.15->tensorflow==2.15.1->tensorflow[and-cuda]==2.15.1) (2.0.0)
+Requirement already satisfied: charset_normalizer<4,>=2 in ./venv/lib/python3.11/site-packages (from requests<3,>=2.21.0->tensorboard<2.16,>=2.15->tensorflow==2.15.1->tensorflow[and-cuda]==2.15.1) (3.4.4)
+Requirement already satisfied: idna<4,>=2.5 in ./venv/lib/python3.11/site-packages (from requests<3,>=2.21.0->tensorboard<2.16,>=2.15->tensorflow==2.15.1->tensorflow[and-cuda]==2.15.1) (3.11)
+Requirement already satisfied: urllib3<3,>=1.21.1 in ./venv/lib/python3.11/site-packages (from requests<3,>=2.21.0->tensorboard<2.16,>=2.15->tensorflow==2.15.1->tensorflow[and-cuda]==2.15.1) (2.5.0)
+Requirement already satisfied: certifi>=2017.4.17 in ./venv/lib/python3.11/site-packages (from requests<3,>=2.21.0->tensorboard<2.16,>=2.15->tensorflow==2.15.1->tensorflow[and-cuda]==2.15.1) (2025.11.12)
+Requirement already satisfied: pyasn1>=0.1.3 in ./venv/lib/python3.11/site-packages (from rsa<5,>=3.1.4->google-auth<3,>=1.6.3->tensorboard<2.16,>=2.15->tensorflow==2.15.1->tensorflow[and-cuda]==2.15.1) (0.6.1)
+Requirement already satisfied: wheel<1.0,>=0.23.0 in ./venv/lib/python3.11/site-packages (from astunparse>=1.6.0->tensorflow==2.15.1->tensorflow[and-cuda]==2.15.1) (0.45.1)
+Requirement already satisfied: oauthlib>=3.0.0 in ./venv/lib/python3.11/site-packages (from requests-oauthlib>=0.7.0->google-auth-oauthlib<2,>=0.5->tensorboard<2.16,>=2.15->tensorflow==2.15.1->tensorflow[and-cuda]==2.15.1) (3.3.1)
+Requirement already satisfied: markupsafe>=2.1.1 in ./venv/lib/python3.11/site-packages (from werkzeug>=1.0.1->tensorboard<2.16,>=2.15->tensorflow==2.15.1->tensorflow[and-cuda]==2.15.1) (3.0.3)
+Downloading nvidia_cublas_cu12-12.2.5.6-py3-none-manylinux1_x86_64.whl (417.8 MB)
+Requirement already satisfied: tensorflow==2.15.1 in ./venv/lib/python3.11/site-packages (from tensorflow[and-gpu]==2.15.1) (2.15.1)
+Requirement already satisfied: absl-py>=1.0.0 in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-gpu]==2.15.1) (2.3.1)
+Requirement already satisfied: astunparse>=1.6.0 in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-gpu]==2.15.1) (1.6.3)
+Requirement already satisfied: flatbuffers>=23.5.26 in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-gpu]==2.15.1) (25.9.23)
+Requirement already satisfied: gast!=0.5.0,!=0.5.1,!=0.5.2,>=0.2.1 in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-gpu]==2.15.1) (0.7.0)
+Requirement already satisfied: google-pasta>=0.1.1 in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-gpu]==2.15.1) (0.2.0)
+Requirement already satisfied: h5py>=2.9.0 in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-gpu]==2.15.1) (3.15.1)
+Requirement already satisfied: libclang>=13.0.0 in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-gpu]==2.15.1) (18.1.1)
+Requirement already satisfied: ml-dtypes~=0.3.1 in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-gpu]==2.15.1) (0.3.2)
+Requirement already satisfied: numpy<2.0.0,>=1.23.5 in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-gpu]==2.15.1) (1.26.4)
+Requirement already satisfied: opt-einsum>=2.3.2 in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-gpu]==2.15.1) (3.4.0)
+Requirement already satisfied: packaging in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-gpu]==2.15.1) (25.0)
+Requirement already satisfied: protobuf!=4.21.0,!=4.21.1,!=4.21.2,!=4.21.3,!=4.21.4,!=4.21.5,<5.0.0dev,>=3.20.3 in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-gpu]==2.15.1) (4.25.8)
+Requirement already satisfied: setuptools in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-gpu]==2.15.1) (66.1.1)
+Requirement already satisfied: six>=1.12.0 in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-gpu]==2.15.1) (1.17.0)
+Requirement already satisfied: termcolor>=1.1.0 in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-gpu]==2.15.1) (3.2.0)
+Requirement already satisfied: typing-extensions>=3.6.6 in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-gpu]==2.15.1) (4.15.0)
+Requirement already satisfied: wrapt<1.15,>=1.11.0 in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-gpu]==2.15.1) (1.14.2)
+Requirement already satisfied: tensorflow-io-gcs-filesystem>=0.23.1 in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-gpu]==2.15.1) (0.37.1)
+Requirement already satisfied: grpcio<2.0,>=1.24.3 in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-gpu]==2.15.1) (1.76.0)
+Requirement already satisfied: tensorboard<2.16,>=2.15 in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-gpu]==2.15.1) (2.15.2)
+Requirement already satisfied: tensorflow-estimator<2.16,>=2.15.0 in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-gpu]==2.15.1) (2.15.0)
+Requirement already satisfied: keras<2.16,>=2.15.0 in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-gpu]==2.15.1) (2.15.0)
+Requirement already satisfied: google-auth<3,>=1.6.3 in ./venv/lib/python3.11/site-packages (from tensorboard<2.16,>=2.15->tensorflow==2.15.1->tensorflow[and-gpu]==2.15.1) (2.41.1)
+Requirement already satisfied: google-auth-oauthlib<2,>=0.5 in ./venv/lib/python3.11/site-packages (from tensorboard<2.16,>=2.15->tensorflow==2.15.1->tensorflow[and-gpu]==2.15.1) (1.2.3)
+Requirement already satisfied: markdown>=2.6.8 in ./venv/lib/python3.11/site-packages (from tensorboard<2.16,>=2.15->tensorflow==2.15.1->tensorflow[and-gpu]==2.15.1) (3.10)
+Requirement already satisfied: requests<3,>=2.21.0 in ./venv/lib/python3.11/site-packages (from tensorboard<2.16,>=2.15->tensorflow==2.15.1->tensorflow[and-gpu]==2.15.1) (2.32.5)
+Requirement already satisfied: tensorboard-data-server<0.8.0,>=0.7.0 in ./venv/lib/python3.11/site-packages (from tensorboard<2.16,>=2.15->tensorflow==2.15.1->tensorflow[and-gpu]==2.15.1) (0.7.2)
+Requirement already satisfied: werkzeug>=1.0.1 in ./venv/lib/python3.11/site-packages (from tensorboard<2.16,>=2.15->tensorflow==2.15.1->tensorflow[and-gpu]==2.15.1) (3.1.4)
+Requirement already satisfied: cachetools<7.0,>=2.0.0 in ./venv/lib/python3.11/site-packages (from google-auth<3,>=1.6.3->tensorboard<2.16,>=2.15->tensorflow==2.15.1->tensorflow[and-gpu]==2.15.1) (6.2.2)
+Requirement already satisfied: pyasn1-modules>=0.2.1 in ./venv/lib/python3.11/site-packages (from google-auth<3,>=1.6.3->tensorboard<2.16,>=2.15->tensorflow==2.15.1->tensorflow[and-gpu]==2.15.1) (0.4.2)
+Requirement already satisfied: rsa<5,>=3.1.4 in ./venv/lib/python3.11/site-packages (from google-auth<3,>=1.6.3->tensorboard<2.16,>=2.15->tensorflow==2.15.1->tensorflow[and-gpu]==2.15.1) (4.9.1)
+Requirement already satisfied: requests-oauthlib>=0.7.0 in ./venv/lib/python3.11/site-packages (from google-auth-oauthlib<2,>=0.5->tensorboard<2.16,>=2.15->tensorflow==2.15.1->tensorflow[and-gpu]==2.15.1) (2.0.0)
+Requirement already satisfied: charset_normalizer<4,>=2 in ./venv/lib/python3.11/site-packages (from requests<3,>=2.21.0->tensorboard<2.16,>=2.15->tensorflow==2.15.1->tensorflow[and-gpu]==2.15.1) (3.4.4)
+Requirement already satisfied: idna<4,>=2.5 in ./venv/lib/python3.11/site-packages (from requests<3,>=2.21.0->tensorboard<2.16,>=2.15->tensorflow==2.15.1->tensorflow[and-gpu]==2.15.1) (3.11)
+Requirement already satisfied: urllib3<3,>=1.21.1 in ./venv/lib/python3.11/site-packages (from requests<3,>=2.21.0->tensorboard<2.16,>=2.15->tensorflow==2.15.1->tensorflow[and-gpu]==2.15.1) (2.5.0)
+Requirement already satisfied: certifi>=2017.4.17 in ./venv/lib/python3.11/site-packages (from requests<3,>=2.21.0->tensorboard<2.16,>=2.15->tensorflow==2.15.1->tensorflow[and-gpu]==2.15.1) (2025.11.12)
+Requirement already satisfied: pyasn1>=0.1.3 in ./venv/lib/python3.11/site-packages (from rsa<5,>=3.1.4->google-auth<3,>=1.6.3->tensorboard<2.16,>=2.15->tensorflow==2.15.1->tensorflow[and-gpu]==2.15.1) (0.6.1)
+Requirement already satisfied: wheel<1.0,>=0.23.0 in ./venv/lib/python3.11/site-packages (from astunparse>=1.6.0->tensorflow==2.15.1->tensorflow[and-gpu]==2.15.1) (0.45.1)
+Requirement already satisfied: oauthlib>=3.0.0 in ./venv/lib/python3.11/site-packages (from requests-oauthlib>=0.7.0->google-auth-oauthlib<2,>=0.5->tensorboard<2.16,>=2.15->tensorflow==2.15.1->tensorflow[and-gpu]==2.15.1) (3.3.1)
+Requirement already satisfied: markupsafe>=2.1.1 in ./venv/lib/python3.11/site-packages (from werkzeug>=1.0.1->tensorboard<2.16,>=2.15->tensorflow==2.15.1->tensorflow[and-gpu]==2.15.1) (3.0.3)
+Requirement already satisfied: tensorflow==2.15.1 in ./venv/lib/python3.11/site-packages (from tensorflow[and-cuda]==2.15.1) (2.15.1)
+Requirement already satisfied: absl-py>=1.0.0 in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-cuda]==2.15.1) (2.3.1)
+Requirement already satisfied: astunparse>=1.6.0 in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-cuda]==2.15.1) (1.6.3)
+Requirement already satisfied: flatbuffers>=23.5.26 in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-cuda]==2.15.1) (25.9.23)
+Requirement already satisfied: gast!=0.5.0,!=0.5.1,!=0.5.2,>=0.2.1 in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-cuda]==2.15.1) (0.7.0)
+Requirement already satisfied: google-pasta>=0.1.1 in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-cuda]==2.15.1) (0.2.0)
+Requirement already satisfied: h5py>=2.9.0 in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-cuda]==2.15.1) (3.15.1)
+Requirement already satisfied: libclang>=13.0.0 in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-cuda]==2.15.1) (18.1.1)
+Requirement already satisfied: ml-dtypes~=0.3.1 in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-cuda]==2.15.1) (0.3.2)
+Requirement already satisfied: numpy<2.0.0,>=1.23.5 in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-cuda]==2.15.1) (1.26.4)
+Requirement already satisfied: opt-einsum>=2.3.2 in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-cuda]==2.15.1) (3.4.0)
+Requirement already satisfied: packaging in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-cuda]==2.15.1) (25.0)
+Requirement already satisfied: protobuf!=4.21.0,!=4.21.1,!=4.21.2,!=4.21.3,!=4.21.4,!=4.21.5,<5.0.0dev,>=3.20.3 in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-cuda]==2.15.1) (4.25.8)
+Requirement already satisfied: setuptools in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-cuda]==2.15.1) (66.1.1)
+Requirement already satisfied: six>=1.12.0 in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-cuda]==2.15.1) (1.17.0)
+Requirement already satisfied: termcolor>=1.1.0 in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-cuda]==2.15.1) (3.2.0)
+Requirement already satisfied: typing-extensions>=3.6.6 in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-cuda]==2.15.1) (4.15.0)
+Requirement already satisfied: wrapt<1.15,>=1.11.0 in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-cuda]==2.15.1) (1.14.2)
+Requirement already satisfied: tensorflow-io-gcs-filesystem>=0.23.1 in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-cuda]==2.15.1) (0.37.1)
+Requirement already satisfied: grpcio<2.0,>=1.24.3 in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-cuda]==2.15.1) (1.76.0)
+Requirement already satisfied: tensorboard<2.16,>=2.15 in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-cuda]==2.15.1) (2.15.2)
+Requirement already satisfied: tensorflow-estimator<2.16,>=2.15.0 in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-cuda]==2.15.1) (2.15.0)
+Requirement already satisfied: keras<2.16,>=2.15.0 in ./venv/lib/python3.11/site-packages (from tensorflow==2.15.1->tensorflow[and-cuda]==2.15.1) (2.15.0)
+Collecting nvidia-cublas-cu12==12.2.5.6 (from tensorflow[and-cuda]==2.15.1)
+  Downloading nvidia_cublas_cu12-12.2.5.6-py3-none-manylinux1_x86_64.whl.metadata (1.5 kB)
+Collecting nvidia-cuda-cupti-cu12==12.2.142 (from tensorflow[and-cuda]==2.15.1)
+  Downloading nvidia_cuda_cupti_cu12-12.2.142-py3-none-manylinux1_x86_64.whl.metadata (1.6 kB)
+Collecting nvidia-cuda-nvcc-cu12==12.2.140 (from tensorflow[and-cuda]==2.15.1)
+  Downloading nvidia_cuda_nvcc_cu12-12.2.140-py3-none-manylinux1_x86_64.whl.metadata (1.5 kB)
+Collecting nvidia-cuda-nvrtc-cu12==12.2.140 (from tensorflow[and-cuda]==2.15.1)
+  Downloading nvidia_cuda_nvrtc_cu12-12.2.140-py3-none-manylinux1_x86_64.whl.metadata (1.5 kB)
+Collecting nvidia-cuda-runtime-cu12==12.2.140 (from tensorflow[and-cuda]==2.15.1)
+  Downloading nvidia_cuda_runtime_cu12-12.2.140-py3-none-manylinux1_x86_64.whl.metadata (1.5 kB)
+Collecting nvidia-cudnn-cu12==8.9.4.25 (from tensorflow[and-cuda]==2.15.1)
+  Downloading nvidia_cudnn_cu12-8.9.4.25-py3-none-manylinux1_x86_64.whl.metadata (1.6 kB)
+Collecting nvidia-cufft-cu12==11.0.8.103 (from tensorflow[and-cuda]==2.15.1)
+  Downloading nvidia_cufft_cu12-11.0.8.103-py3-none-manylinux1_x86_64.whl.metadata (1.5 kB)
+Collecting nvidia-curand-cu12==10.3.3.141 (from tensorflow[and-cuda]==2.15.1)
+  Downloading nvidia_curand_cu12-10.3.3.141-py3-none-manylinux1_x86_64.whl.metadata (1.5 kB)
+Collecting nvidia-cusolver-cu12==11.5.2.141 (from tensorflow[and-cuda]==2.15.1)
+  Downloading nvidia_cusolver_cu12-11.5.2.141-py3-none-manylinux1_x86_64.whl.metadata (1.6 kB)
+Collecting nvidia-cusparse-cu12==12.1.2.141 (from tensorflow[and-cuda]==2.15.1)
+  Downloading nvidia_cusparse_cu12-12.1.2.141-py3-none-manylinux1_x86_64.whl.metadata (1.6 kB)
+Collecting nvidia-nccl-cu12==2.16.5 (from tensorflow[and-cuda]==2.15.1)
+  Downloading nvidia_nccl_cu12-2.16.5-py3-none-manylinux1_x86_64.whl.metadata (1.8 kB)
+Collecting nvidia-nvjitlink-cu12==12.2.140 (from tensorflow[and-cuda]==2.15.1)
+  Downloading nvidia_nvjitlink_cu12-12.2.140-py3-none-manylinux1_x86_64.whl.metadata (1.5 kB)
+Requirement already satisfied: google-auth<3,>=1.6.3 in ./venv/lib/python3.11/site-packages (from tensorboard<2.16,>=2.15->tensorflow==2.15.1->tensorflow[and-cuda]==2.15.1) (2.41.1)
+Requirement already satisfied: google-auth-oauthlib<2,>=0.5 in ./venv/lib/python3.11/site-packages (from tensorboard<2.16,>=2.15->tensorflow==2.15.1->tensorflow[and-cuda]==2.15.1) (1.2.3)
+Requirement already satisfied: markdown>=2.6.8 in ./venv/lib/python3.11/site-packages (from tensorboard<2.16,>=2.15->tensorflow==2.15.1->tensorflow[and-cuda]==2.15.1) (3.10)
+Requirement already satisfied: requests<3,>=2.21.0 in ./venv/lib/python3.11/site-packages (from tensorboard<2.16,>=2.15->tensorflow==2.15.1->tensorflow[and-cuda]==2.15.1) (2.32.5)
+Requirement already satisfied: tensorboard-data-server<0.8.0,>=0.7.0 in ./venv/lib/python3.11/site-packages (from tensorboard<2.16,>=2.15->tensorflow==2.15.1->tensorflow[and-cuda]==2.15.1) (0.7.2)
+Requirement already satisfied: werkzeug>=1.0.1 in ./venv/lib/python3.11/site-packages (from tensorboard<2.16,>=2.15->tensorflow==2.15.1->tensorflow[and-cuda]==2.15.1) (3.1.4)
+Requirement already satisfied: cachetools<7.0,>=2.0.0 in ./venv/lib/python3.11/site-packages (from google-auth<3,>=1.6.3->tensorboard<2.16,>=2.15->tensorflow==2.15.1->tensorflow[and-cuda]==2.15.1) (6.2.2)
+Requirement already satisfied: pyasn1-modules>=0.2.1 in ./venv/lib/python3.11/site-packages (from google-auth<3,>=1.6.3->tensorboard<2.16,>=2.15->tensorflow==2.15.1->tensorflow[and-cuda]==2.15.1) (0.4.2)
+Requirement already satisfied: rsa<5,>=3.1.4 in ./venv/lib/python3.11/site-packages (from google-auth<3,>=1.6.3->tensorboard<2.16,>=2.15->tensorflow==2.15.1->tensorflow[and-cuda]==2.15.1) (4.9.1)
+Requirement already satisfied: requests-oauthlib>=0.7.0 in ./venv/lib/python3.11/site-packages (from google-auth-oauthlib<2,>=0.5->tensorboard<2.16,>=2.15->tensorflow==2.15.1->tensorflow[and-cuda]==2.15.1) (2.0.0)
+Requirement already satisfied: charset_normalizer<4,>=2 in ./venv/lib/python3.11/site-packages (from requests<3,>=2.21.0->tensorboard<2.16,>=2.15->tensorflow==2.15.1->tensorflow[and-cuda]==2.15.1) (3.4.4)
+Requirement already satisfied: idna<4,>=2.5 in ./venv/lib/python3.11/site-packages (from requests<3,>=2.21.0->tensorboard<2.16,>=2.15->tensorflow==2.15.1->tensorflow[and-cuda]==2.15.1) (3.11)
+Requirement already satisfied: urllib3<3,>=1.21.1 in ./venv/lib/python3.11/site-packages (from requests<3,>=2.21.0->tensorboard<2.16,>=2.15->tensorflow==2.15.1->tensorflow[and-cuda]==2.15.1) (2.5.0)
+Requirement already satisfied: certifi>=2017.4.17 in ./venv/lib/python3.11/site-packages (from requests<3,>=2.21.0->tensorboard<2.16,>=2.15->tensorflow==2.15.1->tensorflow[and-cuda]==2.15.1) (2025.11.12)
+Requirement already satisfied: pyasn1>=0.1.3 in ./venv/lib/python3.11/site-packages (from rsa<5,>=3.1.4->google-auth<3,>=1.6.3->tensorboard<2.16,>=2.15->tensorflow==2.15.1->tensorflow[and-cuda]==2.15.1) (0.6.1)
+Requirement already satisfied: wheel<1.0,>=0.23.0 in ./venv/lib/python3.11/site-packages (from astunparse>=1.6.0->tensorflow==2.15.1->tensorflow[and-cuda]==2.15.1) (0.45.1)
+Requirement already satisfied: oauthlib>=3.0.0 in ./venv/lib/python3.11/site-packages (from requests-oauthlib>=0.7.0->google-auth-oauthlib<2,>=0.5->tensorboard<2.16,>=2.15->tensorflow==2.15.1->tensorflow[and-cuda]==2.15.1) (3.3.1)
+Requirement already satisfied: markupsafe>=2.1.1 in ./venv/lib/python3.11/site-packages (from werkzeug>=1.0.1->tensorboard<2.16,>=2.15->tensorflow==2.15.1->tensorflow[and-cuda]==2.15.1) (3.0.3)
+Downloading nvidia_cublas_cu12-12.2.5.6-py3-none-manylinux1_x86_64.whl (417.8 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 417.8/417.8 MB 51.6 MB/s  0:00:07
+Downloading nvidia_cuda_cupti_cu12-12.2.142-py3-none-manylinux1_x86_64.whl (13.9 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 13.9/13.9 MB 44.4 MB/s  0:00:00
+Downloading nvidia_cuda_nvcc_cu12-12.2.140-py3-none-manylinux1_x86_64.whl (21.3 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 21.3/21.3 MB 46.6 MB/s  0:00:00
+Downloading nvidia_cuda_nvrtc_cu12-12.2.140-py3-none-manylinux1_x86_64.whl (23.4 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 23.4/23.4 MB 45.7 MB/s  0:00:00
+Downloading nvidia_cuda_runtime_cu12-12.2.140-py3-none-manylinux1_x86_64.whl (845 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 845.8/845.8 kB 57.7 MB/s  0:00:00
+Downloading nvidia_cudnn_cu12-8.9.4.25-py3-none-manylinux1_x86_64.whl (720.1 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 417.8/417.8 MB 48.4 MB/s  0:00:10
+Downloading nvidia_cuda_cupti_cu12-12.2.142-py3-none-manylinux1_x86_64.whl (13.9 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 13.9/13.9 MB 50.0 MB/s  0:00:00
+Downloading nvidia_cuda_nvcc_cu12-12.2.140-py3-none-manylinux1_x86_64.whl (21.3 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 21.3/21.3 MB 49.2 MB/s  0:00:00
+Downloading nvidia_cuda_nvrtc_cu12-12.2.140-py3-none-manylinux1_x86_64.whl (23.4 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 23.4/23.4 MB 41.7 MB/s  0:00:00
+Downloading nvidia_cuda_runtime_cu12-12.2.140-py3-none-manylinux1_x86_64.whl (845 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 845.8/845.8 kB 51.4 MB/s  0:00:00
+Downloading nvidia_cudnn_cu12-8.9.4.25-py3-none-manylinux1_x86_64.whl (720.1 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 720.1/720.1 MB 41.8 MB/s  0:00:13
+Downloading nvidia_cufft_cu12-11.0.8.103-py3-none-manylinux1_x86_64.whl (98.6 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 98.6/98.6 MB 54.4 MB/s  0:00:01
+Downloading nvidia_curand_cu12-10.3.3.141-py3-none-manylinux1_x86_64.whl (56.5 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 56.5/56.5 MB 75.0 MB/s  0:00:00
+Downloading nvidia_cusolver_cu12-11.5.2.141-py3-none-manylinux1_x86_64.whl (124.9 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 720.1/720.1 MB 53.8 MB/s  0:00:12
+Downloading nvidia_cufft_cu12-11.0.8.103-py3-none-manylinux1_x86_64.whl (98.6 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 124.9/124.9 MB 48.2 MB/s  0:00:02
+Downloading nvidia_cusparse_cu12-12.1.2.141-py3-none-manylinux1_x86_64.whl (195.3 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 98.6/98.6 MB 37.5 MB/s  0:00:02
+Downloading nvidia_curand_cu12-10.3.3.141-py3-none-manylinux1_x86_64.whl (56.5 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 56.5/56.5 MB 33.8 MB/s  0:00:01
+Downloading nvidia_cusolver_cu12-11.5.2.141-py3-none-manylinux1_x86_64.whl (124.9 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 195.3/195.3 MB 38.0 MB/s  0:00:05
+Downloading nvidia_nccl_cu12-2.16.5-py3-none-manylinux1_x86_64.whl (188.7 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 124.9/124.9 MB 38.8 MB/s  0:00:03
+Downloading nvidia_cusparse_cu12-12.1.2.141-py3-none-manylinux1_x86_64.whl (195.3 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 195.3/195.3 MB 46.2 MB/s  0:00:04
+Downloading nvidia_nccl_cu12-2.16.5-py3-none-manylinux1_x86_64.whl (188.7 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 188.7/188.7 MB 37.8 MB/s  0:00:04
+Downloading nvidia_nvjitlink_cu12-12.2.140-py3-none-manylinux1_x86_64.whl (20.2 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 20.2/20.2 MB 44.9 MB/s  0:00:00
+Installing collected packages: nvidia-nvjitlink-cu12, nvidia-nccl-cu12, nvidia-curand-cu12, nvidia-cufft-cu12, nvidia-cuda-runtime-cu12, nvidia-cuda-nvrtc-cu12, nvidia-cuda-nvcc-cu12, nvidia-cuda-cupti-cu12, nvidia-cublas-cu12, nvidia-cusparse-cu12, nvidia-cudnn-cu12, nvidia-cusolver-cu12
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 188.7/188.7 MB 70.2 MB/s  0:00:02
+Downloading nvidia_nvjitlink_cu12-12.2.140-py3-none-manylinux1_x86_64.whl (20.2 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 20.2/20.2 MB 87.5 MB/s  0:00:00
+Installing collected packages: nvidia-nvjitlink-cu12, nvidia-nccl-cu12, nvidia-curand-cu12, nvidia-cufft-cu12, nvidia-cuda-runtime-cu12, nvidia-cuda-nvrtc-cu12, nvidia-cuda-nvcc-cu12, nvidia-cuda-cupti-cu12, nvidia-cublas-cu12, nvidia-cusparse-cu12, nvidia-cudnn-cu12, nvidia-cusolver-cu12
+
+Successfully installed nvidia-cublas-cu12-12.2.5.6 nvidia-cuda-cupti-cu12-12.2.142 nvidia-cuda-nvcc-cu12-12.2.140 nvidia-cuda-nvrtc-cu12-12.2.140 nvidia-cuda-runtime-cu12-12.2.140 nvidia-cudnn-cu12-8.9.4.25 nvidia-cufft-cu12-11.0.8.103 nvidia-curand-cu12-10.3.3.141 nvidia-cusolver-cu12-11.5.2.141 nvidia-cusparse-cu12-12.1.2.141 nvidia-nccl-cu12-2.16.5 nvidia-nvjitlink-cu12-12.2.140
+Collecting pandas
+  Downloading pandas-2.3.3-cp311-cp311-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl.metadata (91 kB)
+Requirement already satisfied: numpy>=1.23.2 in ./venv/lib/python3.11/site-packages (from pandas) (1.26.4)
+Collecting python-dateutil>=2.8.2 (from pandas)
+  Downloading python_dateutil-2.9.0.post0-py2.py3-none-any.whl.metadata (8.4 kB)
+Collecting pytz>=2020.1 (from pandas)
+  Downloading pytz-2025.2-py2.py3-none-any.whl.metadata (22 kB)
+Collecting tzdata>=2022.7 (from pandas)
+  Downloading tzdata-2025.2-py2.py3-none-any.whl.metadata (1.4 kB)
+Requirement already satisfied: six>=1.5 in ./venv/lib/python3.11/site-packages (from python-dateutil>=2.8.2->pandas) (1.17.0)
+Downloading pandas-2.3.3-cp311-cp311-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl (12.8 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 12.8/12.8 MB 29.6 MB/s  0:00:00
+Downloading python_dateutil-2.9.0.post0-py2.py3-none-any.whl (229 kB)
+Downloading pytz-2025.2-py2.py3-none-any.whl (509 kB)
+Downloading tzdata-2025.2-py2.py3-none-any.whl (347 kB)
+Installing collected packages: pytz, tzdata, python-dateutil, pandas
+
+Successfully installed nvidia-cublas-cu12-12.2.5.6 nvidia-cuda-cupti-cu12-12.2.142 nvidia-cuda-nvcc-cu12-12.2.140 nvidia-cuda-nvrtc-cu12-12.2.140 nvidia-cuda-runtime-cu12-12.2.140 nvidia-cudnn-cu12-8.9.4.25 nvidia-cufft-cu12-11.0.8.103 nvidia-curand-cu12-10.3.3.141 nvidia-cusolver-cu12-11.5.2.141 nvidia-cusparse-cu12-12.1.2.141 nvidia-nccl-cu12-2.16.5 nvidia-nvjitlink-cu12-12.2.140
+Collecting pandas
+  Downloading pandas-2.3.3-cp311-cp311-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl.metadata (91 kB)
+Requirement already satisfied: numpy>=1.23.2 in ./venv/lib/python3.11/site-packages (from pandas) (1.26.4)
+Collecting python-dateutil>=2.8.2 (from pandas)
+  Downloading python_dateutil-2.9.0.post0-py2.py3-none-any.whl.metadata (8.4 kB)
+Collecting pytz>=2020.1 (from pandas)
+  Downloading pytz-2025.2-py2.py3-none-any.whl.metadata (22 kB)
+Collecting tzdata>=2022.7 (from pandas)
+  Downloading tzdata-2025.2-py2.py3-none-any.whl.metadata (1.4 kB)
+Requirement already satisfied: six>=1.5 in ./venv/lib/python3.11/site-packages (from python-dateutil>=2.8.2->pandas) (1.17.0)
+Downloading pandas-2.3.3-cp311-cp311-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl (12.8 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 12.8/12.8 MB 75.1 MB/s  0:00:00
+Downloading python_dateutil-2.9.0.post0-py2.py3-none-any.whl (229 kB)
+Downloading pytz-2025.2-py2.py3-none-any.whl (509 kB)
+Downloading tzdata-2025.2-py2.py3-none-any.whl (347 kB)
+Installing collected packages: pytz, tzdata, python-dateutil, pandas
+
+Successfully installed pandas-2.3.3 python-dateutil-2.9.0.post0 pytz-2025.2 tzdata-2025.2
+[PhysicalDevice(name='/physical_device:GPU:0', device_type='GPU')]
+absl-py==2.3.1
+astunparse==1.6.3
+cachetools==6.2.2
+certifi==2025.11.12
+charset-normalizer==3.4.4
+flatbuffers==25.9.23
+gast==0.7.0
+google-auth==2.41.1
+google-auth-oauthlib==1.2.3
+google-pasta==0.2.0
+grpcio==1.76.0
+h5py==3.15.1
+idna==3.11
+keras==2.15.0
+libclang==18.1.1
+Markdown==3.10
+MarkupSafe==3.0.3
+ml-dtypes==0.3.2
+numpy==1.26.4
+nvidia-cublas-cu12==12.2.5.6
+nvidia-cuda-cupti-cu12==12.2.142
+nvidia-cuda-nvcc-cu12==12.2.140
+nvidia-cuda-nvrtc-cu12==12.2.140
+nvidia-cuda-runtime-cu12==12.2.140
+nvidia-cudnn-cu12==8.9.4.25
+nvidia-cufft-cu12==11.0.8.103
+nvidia-curand-cu12==10.3.3.141
+nvidia-cusolver-cu12==11.5.2.141
+nvidia-cusparse-cu12==12.1.2.141
+nvidia-nccl-cu12==2.16.5
+nvidia-nvjitlink-cu12==12.2.140
+oauthlib==3.3.1
+opt_einsum==3.4.0
+packaging==25.0
+pandas==2.3.3
+protobuf==4.25.8
+pyasn1==0.6.1
+pyasn1_modules==0.4.2
+python-dateutil==2.9.0.post0
+pytz==2025.2
+requests==2.32.5
+requests-oauthlib==2.0.0
+rsa==4.9.1
+six==1.17.0
+tensorboard==2.15.2
+tensorboard-data-server==0.7.2
+tensorflow==2.15.1
+tensorflow-estimator==2.15.0
+tensorflow-io-gcs-filesystem==0.37.1
+termcolor==3.2.0
+typing_extensions==4.15.0
+tzdata==2025.2
+urllib3==2.5.0
+Werkzeug==3.1.4
+wrapt==1.14.2
+
+Successfully installed pandas-2.3.3 python-dateutil-2.9.0.post0 pytz-2025.2 tzdata-2025.2
+[PhysicalDevice(name='/physical_device:GPU:0', device_type='GPU')]
+absl-py==2.3.1
+astunparse==1.6.3
+cachetools==6.2.2
+certifi==2025.11.12
+charset-normalizer==3.4.4
+flatbuffers==25.9.23
+gast==0.7.0
+google-auth==2.41.1
+google-auth-oauthlib==1.2.3
+google-pasta==0.2.0
+grpcio==1.76.0
+h5py==3.15.1
+idna==3.11
+keras==2.15.0
+libclang==18.1.1
+Markdown==3.10
+MarkupSafe==3.0.3
+ml-dtypes==0.3.2
+numpy==1.26.4
+nvidia-cublas-cu12==12.2.5.6
+nvidia-cuda-cupti-cu12==12.2.142
+nvidia-cuda-nvcc-cu12==12.2.140
+nvidia-cuda-nvrtc-cu12==12.2.140
+nvidia-cuda-runtime-cu12==12.2.140
+nvidia-cudnn-cu12==8.9.4.25
+nvidia-cufft-cu12==11.0.8.103
+nvidia-curand-cu12==10.3.3.141
+nvidia-cusolver-cu12==11.5.2.141
+nvidia-cusparse-cu12==12.1.2.141
+nvidia-nccl-cu12==2.16.5
+nvidia-nvjitlink-cu12==12.2.140
+oauthlib==3.3.1
+opt_einsum==3.4.0
+packaging==25.0
+pandas==2.3.3
+protobuf==4.25.8
+pyasn1==0.6.1
+pyasn1_modules==0.4.2
+python-dateutil==2.9.0.post0
+pytz==2025.2
+requests==2.32.5
+requests-oauthlib==2.0.0
+rsa==4.9.1
+six==1.17.0
+tensorboard==2.15.2
+tensorboard-data-server==0.7.2
+tensorflow==2.15.1
+tensorflow-estimator==2.15.0
+tensorflow-io-gcs-filesystem==0.37.1
+termcolor==3.2.0
+typing_extensions==4.15.0
+tzdata==2025.2
+urllib3==2.5.0
+Werkzeug==3.1.4
+wrapt==1.14.2
+All nodes finished setup.
+SHELL=/bin/bash
+SLURM_JOB_USER=rrdmatos
+SLURM_TASKS_PER_NODE=1(x2)
+SLURM_JOB_UID=2015
+SLURM_EXPORT_ENV=ALL,S_TYPE=ctl,PY_BATCH_SIZE=100,PY_MODEL=EfficientNetB0
+SLURM_TASK_PID=2859460
+SLURM_JOB_GPUS=0
+SLURM_LOCALID=0
+SLURM_SUBMIT_DIR=/home/users/rrdmatos/perf/tensorflow
+HOSTNAME=poti3
+LANGUAGE=en_US:en
+SLURMD_NODENAME=poti3
+SLURM_JOB_START_TIME=1764442652
+SLURM_NODE_ALIASES=(null)
+SLURM_CLUSTER_NAME=(null)
+SLURM_JOB_END_TIME=1764453452
+SLURM_CPUS_ON_NODE=16
+SLURM_JOB_CPUS_PER_NODE=16(x2)
+SLURM_GPUS_ON_NODE=1
+PWD=/home/users/rrdmatos/perf/tensorflow
+SLURM_GTIDS=0
+LOGNAME=rrdmatos
+XDG_SESSION_TYPE=tty
+SLURM_JOB_PARTITION=poti
+PY_BATCH_SIZE=100
+ROCR_VISIBLE_DEVICES=0
+SLURM_JOB_NUM_NODES=2
+SLURM_JOBID=736764
+SLURM_JOB_QOS=normal
+GUIX_DAEMON_SOCKET=guix://192.168.30.23
+MOTD_SHOWN=pam
+HOME=/home/users/rrdmatos
+LANG=en_US.UTF-8
+LS_COLORS=rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=00:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.avif=01;35:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:*~=00;90:*#=00;90:*.bak=00;90:*.old=00;90:*.orig=00;90:*.part=00;90:*.rej=00;90:*.swp=00;90:*.tmp=00;90:*.dpkg-dist=00;90:*.dpkg-old=00;90:*.ucf-dist=00;90:*.ucf-new=00;90:*.ucf-old=00;90:*.rpmnew=00;90:*.rpmorig=00;90:*.rpmsave=00;90:
+SLURM_PROCID=0
+SCRATCH=/scratch/rrdmatos
+TMPDIR=/tmp
+SLURM_NTASKS=2
+SLURM_TOPOLOGY_ADDR=poti3
+SLURM_GPUS_PER_TASK=1
+SSH_CONNECTION=104.28.226.239 32265 143.54.85.54 22
+PY_MODEL=EfficientNetB0
+ZE_AFFINITY_MASK=0
+SLURM_TOPOLOGY_ADDR_PATTERN=node
+CUDA_VISIBLE_DEVICES=0
+XDG_SESSION_CLASS=user
+SLURM_SCRIPT_CONTEXT=prolog_task
+SLURM_WORKING_CLUSTER=(null):192.168.30.2:6817:9984:109
+TERM=xterm-256color
+USER=rrdmatos
+SLURM_NODELIST=poti[3-4]
+ENVIRONMENT=BATCH
+GPU_DEVICE_ORDINAL=0
+SLURM_JOB_ACCOUNT=gppd
+SLURM_PRIO_PROCESS=0
+SLURM_NPROCS=2
+SHLVL=3
+SLURM_NNODES=2
+GUIX_LOCPATH=/var/guix/profiles/per-user/root/guix-profile/lib/locale
+XDG_SESSION_ID=4294967295
+SLURM_SUBMIT_HOST=gppd-hpc
+GUIX_PROFILE=/home/users/rrdmatos/.guix-profile
+XDG_RUNTIME_DIR=/run/user/2015
+SLURM_JOB_ID=736764
+SLURM_NODEID=0
+SSH_CLIENT=104.28.226.239 32265 22
+SLURM_CONF=/usr/local/etc/slurm.conf
+PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games:/usr/local/go/bin
+SLURM_JOB_NAME=train_EfficientNetB0_ctl_100_2
+S_TYPE=ctl
+SLURM_NTASKS_PER_NODE=1
+DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/2015/bus
+MAIL=/var/mail/rrdmatos
+SSH_TTY=/dev/pts/58
+INTEL_LICENSE_FILE=/home/intel/licenses/l_WS6DLWTX.lic
+SLURM_JOB_GID=501
+SLURM_GET_USER_ENV=1
+LIST="poti3:29500","poti4:29500"
+OLDPWD=/home/users/rrdmatos
+SLURM_JOB_NODELIST=poti[3-4]
+_=/usr/bin/env
+SHELL=/bin/bash
+SLURM_STEP_NUM_TASKS=2
+SLURM_JOB_USER=rrdmatos
+SLURM_TASKS_PER_NODE=1(x2)
+SLURM_JOB_UID=2015
+SLURM_STEP_GPUS=0
+SLURM_EXPORT_ENV=ALL,S_TYPE=ctl,PY_BATCH_SIZE=100,PY_MODEL=EfficientNetB0
+SLURM_CPU_BIND=quiet,none
+SLURM_TASK_PID=2859704
+SLURM_JOB_GPUS=0
+SLURM_LOCALID=0
+SLURM_SUBMIT_DIR=/home/users/rrdmatos/perf/tensorflow
+SLURM_CPU_BIND_VERBOSE=quiet
+HOSTNAME=poti3
+LANGUAGE=en_US:en
+SLURMD_NODENAME=poti3
+SLURM_JOB_START_TIME=1764442652
+SLURM_STEP_NODELIST=poti[3-4]
+SLURM_NODE_ALIASES=(null)
+SLURM_CLUSTER_NAME=(null)
+SLURM_JOB_END_TIME=1764453452
+SLURM_CPUS_ON_NODE=16
+SLURM_UMASK=0022
+SLURM_JOB_CPUS_PER_NODE=16(x2)
+SLURM_GPUS_ON_NODE=1
+PWD=/scratch/rrdmatos
+SLURM_GTIDS=0
+LOGNAME=rrdmatos
+XDG_SESSION_TYPE=tty
+SLURM_JOB_PARTITION=poti
+PY_BATCH_SIZE=100
+ROCR_VISIBLE_DEVICES=0
+SLURM_JOB_NUM_NODES=2
+SRUN_DEBUG=3
+SLURM_STEPID=1
+SLURM_CPU_BIND_LIST=
+SLURM_JOBID=736764
+SLURM_LAUNCH_NODE_IPADDR=192.168.30.49
+SLURM_JOB_QOS=normal
+GUIX_DAEMON_SOCKET=guix://192.168.30.23
+MOTD_SHOWN=pam
+HOME=/home/users/rrdmatos/perf/tensorflow
+LANG=en_US.UTF-8
+SLURM_CPU_BIND_TYPE=none
+LS_COLORS=rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=00:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.avif=01;35:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:*~=00;90:*#=00;90:*.bak=00;90:*.old=00;90:*.orig=00;90:*.part=00;90:*.rej=00;90:*.swp=00;90:*.tmp=00;90:*.dpkg-dist=00;90:*.dpkg-old=00;90:*.ucf-dist=00;90:*.ucf-new=00;90:*.ucf-old=00;90:*.rpmnew=00;90:*.rpmorig=00;90:*.rpmsave=00;90:
+SLURMD_DEBUG=2
+SLURM_PROCID=0
+VIRTUAL_ENV=/scratch/rrdmatos/venv
+SCRATCH=/scratch/rrdmatos/
+TMPDIR=/tmp
+TF_CONFIG={
+    "cluster": {
+        "worker": ["poti3:29500","poti4:29500"]
+    },
+    "task": {
+        "type": "worker",
+        "index": 0
+    }
+}
+SLURM_NTASKS=2
+SLURM_TOPOLOGY_ADDR=poti3
+SSH_CONNECTION=104.28.226.239 32265 143.54.85.54 22
+SLURM_GPUS_PER_TASK=1
+PY_MODEL=EfficientNetB0
+SLURM_DISTRIBUTION=cyclic
+ZE_AFFINITY_MASK=0
+CUDA_VISIBLE_DEVICES=0
+SLURM_TOPOLOGY_ADDR_PATTERN=node
+SLURM_SRUN_COMM_HOST=192.168.30.49
+XDG_SESSION_CLASS=user
+SLURM_SCRIPT_CONTEXT=prolog_task
+SLURM_WORKING_CLUSTER=(null):192.168.30.2:6817:9984:109
+TERM=xterm-256color
+USER=rrdmatos
+SLURM_NODELIST=poti[3-4]
+ENVIRONMENT=BATCH
+GPU_DEVICE_ORDINAL=0
+SLURM_SRUN_COMM_PORT=61585
+SLURM_STEP_ID=1
+SLURM_JOB_ACCOUNT=gppd
+SLURM_PRIO_PROCESS=0
+SLURM_NPROCS=2
+SHLVL=4
+SLURM_NNODES=2
+GUIX_LOCPATH=/var/guix/profiles/per-user/root/guix-profile/lib/locale
+XDG_SESSION_ID=4294967295
+VIRTUAL_ENV_PROMPT=(venv) 
+SLURM_SUBMIT_HOST=gppd-hpc
+GUIX_PROFILE=/home/users/rrdmatos/perf/tensorflow/.config/guix/current
+SLURM_JOB_CPUS_PER_NODE_PACK_GROUP_0=16(x2)
+XDG_RUNTIME_DIR=/run/user/2015
+SLURM_JOB_ID=736764
+SLURM_NODEID=0
+PS1=(venv) 
+SLURM_STEP_NUM_NODES=2
+SSH_CLIENT=104.28.226.239 32265 22
+SLURM_STEP_TASKS_PER_NODE=1(x2)
+SLURM_CONF=/usr/local/etc/slurm.conf
+PATH=/scratch/rrdmatos/venv/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games:/usr/local/go/bin:/usr/local/go/bin:/usr/local/cuda/bin
+SLURM_JOB_NAME=train_EfficientNetB0_ctl_100_2
+S_TYPE=ctl
+SLURM_NTASKS_PER_NODE=1
+DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/2015/bus
+TO_RUN=train-ctl.py
+MAIL=/var/mail/rrdmatos
+SSH_TTY=/dev/pts/58
+INTEL_LICENSE_FILE=/home/intel/licenses/l_WS6DLWTX.lic
+SLURM_STEP_LAUNCHER_PORT=61585
+SLURM_GET_USER_ENV=1
+SLURM_JOB_GID=501
+LIST="poti3:29500","poti4:29500"
+OLDPWD=/home/users/rrdmatos/perf/tensorflow
+SLURM_JOB_NODELIST=poti[3-4]
+_=/usr/bin/env
+Host: poti3 | Rank (PROCID): 0 | TF_CONFIG: {
+    "cluster": {
+        "worker": ["poti3:29500","poti4:29500"]
+    },
+    "task": {
+        "type": "worker",
+        "index": 0
+    }
+}
+train-ctl.py,EfficientNetB0\n
+SHELL=/bin/bash
+SLURM_STEP_NUM_TASKS=2
+SLURM_JOB_USER=rrdmatos
+SLURM_TASKS_PER_NODE=1(x2)
+SLURM_JOB_UID=2015
+SLURM_STEP_GPUS=0
+SLURM_EXPORT_ENV=ALL,S_TYPE=ctl,PY_BATCH_SIZE=100,PY_MODEL=EfficientNetB0
+SLURM_CPU_BIND=quiet,none
+SLURM_TASK_PID=3871159
+SLURM_JOB_GPUS=0
+SLURM_LOCALID=0
+SLURM_SUBMIT_DIR=/home/users/rrdmatos/perf/tensorflow
+SLURM_CPU_BIND_VERBOSE=quiet
+HOSTNAME=poti3
+LANGUAGE=en_US:en
+SLURMD_NODENAME=poti4
+SLURM_JOB_START_TIME=1764442652
+SLURM_STEP_NODELIST=poti[3-4]
+SLURM_NODE_ALIASES=(null)
+SLURM_CLUSTER_NAME=(null)
+SLURM_JOB_END_TIME=1764453452
+SLURM_CPUS_ON_NODE=16
+SLURM_UMASK=0022
+SLURM_JOB_CPUS_PER_NODE=16(x2)
+SLURM_GPUS_ON_NODE=1
+PWD=/scratch/rrdmatos
+SLURM_GTIDS=1
+LOGNAME=rrdmatos
+XDG_SESSION_TYPE=tty
+SLURM_JOB_PARTITION=poti
+PY_BATCH_SIZE=100
+ROCR_VISIBLE_DEVICES=0
+SLURM_JOB_NUM_NODES=2
+SRUN_DEBUG=3
+SLURM_STEPID=1
+SLURM_CPU_BIND_LIST=
+SLURM_JOBID=736764
+SLURM_LAUNCH_NODE_IPADDR=192.168.30.49
+SLURM_JOB_QOS=normal
+GUIX_DAEMON_SOCKET=guix://192.168.30.23
+MOTD_SHOWN=pam
+HOME=/home/users/rrdmatos/perf/tensorflow
+LANG=en_US.UTF-8
+SLURM_CPU_BIND_TYPE=none
+LS_COLORS=rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=00:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.avif=01;35:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:*~=00;90:*#=00;90:*.bak=00;90:*.old=00;90:*.orig=00;90:*.part=00;90:*.rej=00;90:*.swp=00;90:*.tmp=00;90:*.dpkg-dist=00;90:*.dpkg-old=00;90:*.ucf-dist=00;90:*.ucf-new=00;90:*.ucf-old=00;90:*.rpmnew=00;90:*.rpmorig=00;90:*.rpmsave=00;90:
+SLURMD_DEBUG=2
+SLURM_PROCID=1
+VIRTUAL_ENV=/scratch/rrdmatos/venv
+SCRATCH=/scratch/rrdmatos/
+TMPDIR=/tmp
+TF_CONFIG={
+    "cluster": {
+        "worker": ["poti3:29500","poti4:29500"]
+    },
+    "task": {
+        "type": "worker",
+        "index": 1
+    }
+}
+SLURM_NTASKS=2
+SLURM_TOPOLOGY_ADDR=poti4
+SSH_CONNECTION=104.28.226.239 32265 143.54.85.54 22
+SLURM_GPUS_PER_TASK=1
+PY_MODEL=EfficientNetB0
+SLURM_DISTRIBUTION=cyclic
+ZE_AFFINITY_MASK=0
+CUDA_VISIBLE_DEVICES=0
+SLURM_TOPOLOGY_ADDR_PATTERN=node
+SLURM_SRUN_COMM_HOST=192.168.30.49
+XDG_SESSION_CLASS=user
+SLURM_SCRIPT_CONTEXT=prolog_task
+SLURM_WORKING_CLUSTER=(null):192.168.30.2:6817:9984:109
+TERM=xterm-256color
+USER=rrdmatos
+SLURM_NODELIST=poti[3-4]
+ENVIRONMENT=BATCH
+GPU_DEVICE_ORDINAL=0
+SLURM_SRUN_COMM_PORT=61585
+SLURM_STEP_ID=1
+SLURM_JOB_ACCOUNT=gppd
+SLURM_PRIO_PROCESS=0
+SLURM_NPROCS=2
+SHLVL=4
+SLURM_NNODES=2
+GUIX_LOCPATH=/var/guix/profiles/per-user/root/guix-profile/lib/locale
+XDG_SESSION_ID=4294967295
+VIRTUAL_ENV_PROMPT=(venv) 
+SLURM_SUBMIT_HOST=gppd-hpc
+GUIX_PROFILE=/home/users/rrdmatos/perf/tensorflow/.config/guix/current
+SLURM_JOB_CPUS_PER_NODE_PACK_GROUP_0=16(x2)
+XDG_RUNTIME_DIR=/run/user/2015
+SLURM_JOB_ID=736764
+SLURM_NODEID=1
+PS1=(venv) 
+SLURM_STEP_NUM_NODES=2
+SSH_CLIENT=104.28.226.239 32265 22
+SLURM_STEP_TASKS_PER_NODE=1(x2)
+SLURM_CONF=/usr/local/etc/slurm.conf
+PATH=/scratch/rrdmatos/venv/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games:/usr/local/go/bin:/usr/local/go/bin:/usr/local/cuda/bin
+SLURM_JOB_NAME=train_EfficientNetB0_ctl_100_2
+S_TYPE=ctl
+SLURM_NTASKS_PER_NODE=1
+DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/2015/bus
+TO_RUN=train-ctl.py
+MAIL=/var/mail/rrdmatos
+SSH_TTY=/dev/pts/58
+INTEL_LICENSE_FILE=/home/intel/licenses/l_WS6DLWTX.lic
+SLURM_STEP_LAUNCHER_PORT=61585
+SLURM_GET_USER_ENV=1
+SLURM_JOB_GID=501
+LIST="poti3:29500","poti4:29500"
+OLDPWD=/home/users/rrdmatos/perf/tensorflow
+SLURM_JOB_NODELIST=poti[3-4]
+_=/usr/bin/env
+Host: poti4 | Rank (PROCID): 1 | TF_CONFIG: {
+    "cluster": {
+        "worker": ["poti3:29500","poti4:29500"]
+    },
+    "task": {
+        "type": "worker",
+        "index": 1
+    }
+}
+train-ctl.py,EfficientNetB0\n
+Worker ID: 0
+GPU Detectada.
+/device:GPU:0
+SEED number: 1
+
+Carregando o dataset Tiny ImageNet...
+Found 100000 files belonging to 200 classes.
+Worker ID: 1
+GPU Detectada.
+/device:GPU:0
+SEED number: 1
+
+Carregando o dataset Tiny ImageNet...
+Found 100000 files belonging to 200 classes.
+Número total de workers (réplicas): 2
+Batch size global (total): 200
+
+Gradient accumulation steps: 4
+Effective batch size: 800
+Modelo selecionado: EfficientNetB0
+Iniciando o treinamento distribuído...
+Starting custom training loop...
+Número total de workers (réplicas): 2
+Batch size global (total): 200
+
+Gradient accumulation steps: 4
+Effective batch size: 800
+Modelo selecionado: EfficientNetB0
+Iniciando o treinamento distribuído...
+Starting custom training loop...
+  1/500 [..............................] - ETA: 1:50:02 - loss: 5.3640 - accuracy: 0.0050  2/500 [..............................] - ETA: 2:54 - loss: 5.3615 - accuracy: 0.0050     3/500 [..............................] - ETA: 2:54 - loss: 5.3624 - accuracy: 0.0050  4/500 [..............................] - ETA: 12:09 - loss: 5.3654 - accuracy: 0.0047  5/500 [..............................] - ETA: 9:51 - loss: 5.3548 - accuracy: 0.0044   6/500 [..............................] - ETA: 8:26 - loss: 5.3637 - accuracy: 0.0040  1/500 [..............................] - ETA: 1:50:02 - loss: 5.3640 - accuracy: 0.0050  2/500 [..............................] - ETA: 2:54 - loss: 5.3615 - accuracy: 0.0050     3/500 [..............................] - ETA: 2:54 - loss: 5.3624 - accuracy: 0.0050  4/500 [..............................] - ETA: 12:09 - loss: 5.3654 - accuracy: 0.0047  5/500 [..............................] - ETA: 9:51 - loss: 5.3548 - accuracy: 0.0044   6/500 [..............................] - ETA: 8:26 - loss: 5.3637 - accuracy: 0.0040  7/500 [..............................] - ETA: 7:30 - loss: 5.3793 - accuracy: 0.0038  8/500 [..............................] - ETA: 7:08 - loss: 5.3988 - accuracy: 0.0035  9/500 [..............................] - ETA: 6:36 - loss: 5.4192 - accuracy: 0.0033 10/500 [..............................] - ETA: 6:10 - loss: 5.4398 - accuracy: 0.0031 11/500 [..............................] - ETA: 5:50 - loss: 5.4618 - accuracy: 0.0030 12/500 [..............................] - ETA: 5:44 - loss: 5.4830 - accuracy: 0.0028  7/500 [..............................] - ETA: 7:30 - loss: 5.3793 - accuracy: 0.0038  8/500 [..............................] - ETA: 7:08 - loss: 5.3988 - accuracy: 0.0035  9/500 [..............................] - ETA: 6:36 - loss: 5.4192 - accuracy: 0.0033 10/500 [..............................] - ETA: 6:10 - loss: 5.4398 - accuracy: 0.0031 11/500 [..............................] - ETA: 5:50 - loss: 5.4618 - accuracy: 0.0030 12/500 [..............................] - ETA: 5:44 - loss: 5.4830 - accuracy: 0.0028 13/500 [..............................] - ETA: 5:29 - loss: 5.5033 - accuracy: 0.0027 14/500 [..............................] - ETA: 5:16 - loss: 5.5253 - accuracy: 0.0026 15/500 [..............................] - ETA: 5:05 - loss: 5.5472 - accuracy: 0.0025 16/500 [..............................] - ETA: 5:04 - loss: 5.5688 - accuracy: 0.0024 17/500 [>.............................] - ETA: 4:55 - loss: 5.5878 - accuracy: 0.0023 18/500 [>.............................] - ETA: 4:48 - loss: 5.6058 - accuracy: 0.0022 13/500 [..............................] - ETA: 5:29 - loss: 5.5033 - accuracy: 0.0027 14/500 [..............................] - ETA: 5:16 - loss: 5.5253 - accuracy: 0.0026 15/500 [..............................] - ETA: 5:05 - loss: 5.5472 - accuracy: 0.0025 16/500 [..............................] - ETA: 5:04 - loss: 5.5688 - accuracy: 0.0024 17/500 [>.............................] - ETA: 4:55 - loss: 5.5878 - accuracy: 0.0023 18/500 [>.............................] - ETA: 4:48 - loss: 5.6058 - accuracy: 0.0022 19/500 [>.............................] - ETA: 4:40 - loss: 5.6245 - accuracy: 0.0021 20/500 [>.............................] - ETA: 4:41 - loss: 5.6432 - accuracy: 0.0021 21/500 [>.............................] - ETA: 4:34 - loss: 5.6612 - accuracy: 0.0020 22/500 [>.............................] - ETA: 4:29 - loss: 5.6788 - accuracy: 0.0019 23/500 [>.............................] - ETA: 4:24 - loss: 5.6960 - accuracy: 0.0019 24/500 [>.............................] - ETA: 4:24 - loss: 5.7126 - accuracy: 0.0018 19/500 [>.............................] - ETA: 4:40 - loss: 5.6245 - accuracy: 0.0021 20/500 [>.............................] - ETA: 4:41 - loss: 5.6432 - accuracy: 0.0021 21/500 [>.............................] - ETA: 4:34 - loss: 5.6612 - accuracy: 0.0020 22/500 [>.............................] - ETA: 4:29 - loss: 5.6788 - accuracy: 0.0019 23/500 [>.............................] - ETA: 4:24 - loss: 5.6960 - accuracy: 0.0019 24/500 [>.............................] - ETA: 4:24 - loss: 5.7126 - accuracy: 0.0018 25/500 [>.............................] - ETA: 4:20 - loss: 5.7279 - accuracy: 0.0018 26/500 [>.............................] - ETA: 4:16 - loss: 5.7427 - accuracy: 0.0017 27/500 [>.............................] - ETA: 4:12 - loss: 5.7568 - accuracy: 0.0017 28/500 [>.............................] - ETA: 4:12 - loss: 5.7704 - accuracy: 0.0017 29/500 [>.............................] - ETA: 4:09 - loss: 5.7832 - accuracy: 0.0016 30/500 [>.............................] - ETA: 4:05 - loss: 5.7951 - accuracy: 0.0016 25/500 [>.............................] - ETA: 4:20 - loss: 5.7279 - accuracy: 0.0018 26/500 [>.............................] - ETA: 4:16 - loss: 5.7427 - accuracy: 0.0017 27/500 [>.............................] - ETA: 4:12 - loss: 5.7568 - accuracy: 0.0017 28/500 [>.............................] - ETA: 4:12 - loss: 5.7704 - accuracy: 0.0017 29/500 [>.............................] - ETA: 4:09 - loss: 5.7832 - accuracy: 0.0016 30/500 [>.............................] - ETA: 4:05 - loss: 5.7951 - accuracy: 0.0016 31/500 [>.............................] - ETA: 4:02 - loss: 5.8065 - accuracy: 0.0015 32/500 [>.............................] - ETA: 4:03 - loss: 5.8173 - accuracy: 0.0015 33/500 [>.............................] - ETA: 4:00 - loss: 5.8274 - accuracy: 0.0015 34/500 [=>............................] - ETA: 3:58 - loss: 5.8373 - accuracy: 0.0014 35/500 [=>............................] - ETA: 3:55 - loss: 5.8468 - accuracy: 0.0014 36/500 [=>............................] - ETA: 3:56 - loss: 5.8561 - accura 31/500 [>.............................] - ETA: 4:02 - loss: 5.8065 - accuracy: 0.0015 32/500 [>.............................] - ETA: 4:03 - loss: 5.8173 - accuracy: 0.0015 33/500 [>.............................] - ETA: 4:00 - loss: 5.8274 - accuracy: 0.0015 34/500 [=>............................] - ETA: 3:58 - loss: 5.8373 - accuracy: 0.0014 35/500 [=>............................] - ETA: 3:55 - loss: 5.8468 - accuracy: 0.0014 36/500 [=>............................] - ETA: 3:56 - loss: 5.8561 - accuracy: 0.0014 37/500 [=>............................] - ETA: 3:54 - loss: 5.8645 - accuracy: 0.0014 38/500 [=>............................] - ETA: 3:51 - loss: 5.8725 - accuracy: 0.0013 39/500 [=>............................] - ETA: 3:49 - loss: 5.8802 - accuracy: 0.0013 40/500 [=>............................] - ETA: 3:50 - loss: 5.8875 - accuracy: 0.0013 41/500 [=>............................] - ETA: 3:48 - loss: 5.8944 - accuracy: 0.0013 42/500 [=>............................] - ETA: 3:45 - loss: 5cy: 0.0014 37/500 [=>............................] - ETA: 3:54 - loss: 5.8645 - accuracy: 0.0014 38/500 [=>............................] - ETA: 3:51 - loss: 5.8725 - accuracy: 0.0013 39/500 [=>............................] - ETA: 3:49 - loss: 5.8802 - accuracy: 0.0013 40/500 [=>............................] - ETA: 3:50 - loss: 5.8875 - accuracy: 0.0013 41/500 [=>............................] - ETA: 3:48 - loss: 5.8944 - accuracy: 0.0013 42/500 [=>............................] - ETA: 3:45 - loss: 5.9009 - accuracy: 0.0012 43/500 [=>............................] - ETA: 3:43 - loss: 5.9071 - accuracy: 0.0012 44/500 [=>............................] - ETA: 3:44 - loss: 5.9130 - accuracy: 0.0012 45/500 [=>............................] - ETA: 3:42 - loss: 5.9184 - accuracy: 0.0012 46/500 [=>............................] - ETA: 3:41 - loss: 5.9236 - accuracy: 0.0012 47/500 [=>............................] - ETA: 3:39 - loss: 5.9284 - accuracy: 0.0012 48/500 [=>............................] - ETA: .9009 - accuracy: 0.0012 43/500 [=>............................] - ETA: 3:43 - loss: 5.9071 - accuracy: 0.0012 44/500 [=>............................] - ETA: 3:44 - loss: 5.9130 - accuracy: 0.0012 45/500 [=>............................] - ETA: 3:42 - loss: 5.9184 - accuracy: 0.0012 46/500 [=>............................] - ETA: 3:41 - loss: 5.9236 - accuracy: 0.0012 47/500 [=>............................] - ETA: 3:39 - loss: 5.9284 - accuracy: 0.0012 48/500 [=>............................] - ETA: 3:40 - loss: 5.9330 - accuracy: 0.0011 49/500 [=>............................] - ETA: 3:38 - loss: 5.9373 - accuracy: 0.0011 50/500 [==>...........................] - ETA: 3:36 - loss: 5.9412 - accuracy: 0.0011 51/500 [==>...........................] - ETA: 3:35 - loss: 5.9449 - accuracy: 0.0011 52/500 [==>...........................] - ETA: 3:35 - loss: 5.9484 - accuracy: 0.0011 53/500 [==>...........................] - ETA: 3:34 - loss: 5.9516 - accuracy: 0.0011 54/500 [==>......................3:40 - loss: 5.9330 - accuracy: 0.0011 49/500 [=>............................] - ETA: 3:38 - loss: 5.9373 - accuracy: 0.0011 50/500 [==>...........................] - ETA: 3:36 - loss: 5.9412 - accuracy: 0.0011 51/500 [==>...........................] - ETA: 3:35 - loss: 5.9449 - accuracy: 0.0011 52/500 [==>...........................] - ETA: 3:35 - loss: 5.9484 - accuracy: 0.0011 53/500 [==>...........................] - ETA: 3:34 - loss: 5.9516 - accuracy: 0.0011 54/500 [==>...........................] - ETA: 3:32 - loss: 5.9546 - accuracy: 0.0010 55/500 [==>...........................] - ETA: 3:31 - loss: 5.9573 - accuracy: 0.0010 56/500 [==>...........................] - ETA: 3:31 - loss: 5.9599 - accuracy: 0.0010 57/500 [==>...........................] - ETA: 3:30 - loss: 5.9622 - accuracy: 9.9886e-04 58/500 [==>...........................] - ETA: 3:28 - loss: 5.9643 - accuracy: 9.8610e-04 59/500 [==>...........................] - ETA: 3:27 - loss: 5.9662 - accuracy: 9.7370e-04.....] - ETA: 3:32 - loss: 5.9546 - accuracy: 0.0010 55/500 [==>...........................] - ETA: 3:31 - loss: 5.9573 - accuracy: 0.0010 56/500 [==>...........................] - ETA: 3:31 - loss: 5.9599 - accuracy: 0.0010 57/500 [==>...........................] - ETA: 3:30 - loss: 5.9622 - accuracy: 9.9886e-04 58/500 [==>...........................] - ETA: 3:28 - loss: 5.9643 - accuracy: 9.8610e-04 59/500 [==>...........................] - ETA: 3:27 - loss: 5.9662 - accuracy: 9.7370e-04 60/500 [==>...........................] - ETA: 3:28 - loss: 5.9680 - accuracy: 9.6163e-04 61/500 [==>...........................] - ETA: 3:26 - loss: 5.9695 - accuracy: 9.4990e-04 62/500 [==>...........................] - ETA: 3:25 - loss: 5.9709 - accuracy: 9.3848e-04 63/500 [==>...........................] - ETA: 3:24 - loss: 5.9722 - accuracy: 9.2736e-04 64/500 [==>...........................] - ETA: 3:24 - loss: 5.9733 - accuracy: 9.1654e-04 65/500 [==>...........................] - ETA: 3:23 - loss: 5.9742 - accuracy: 9.0599e-04 60/500 [==>...........................] - ETA: 3:28 - loss: 5.9680 - accuracy: 9.6163e-04 61/500 [==>...........................] - ETA: 3:26 - loss: 5.9695 - accuracy: 9.4990e-04 62/500 [==>...........................] - ETA: 3:25 - loss: 5.9709 - accuracy: 9.3848e-04 63/500 [==>...........................] - ETA: 3:24 - loss: 5.9722 - accuracy: 9.2736e-04 64/500 [==>...........................] - ETA: 3:24 - loss: 5.9733 - accuracy: 9.1654e-04 65/500 [==>...........................] - ETA: 3:23 - loss: 5.9742 - accuracy: 9.0599e-04 66/500 [==>...........................] - ETA: 3:22 - loss: 5.9751 - accuracy: 8.9570e-04 67/500 [===>..........................] - ETA: 3:20 - loss: 5.9758 - accuracy: 8.8568e-04 68/500 [===>..........................] - ETA: 3:21 - loss: 5.9764 - accuracy: 8.7590e-04 69/500 [===>..........................] - ETA: 3:20 - loss: 5.9768 - accuracy: 8.6635e-04 70/500 [===>..........................] - ETA: 3:19 - loss: 5.9772 - accuracy: 8.5704e-04 71/500 [===>..........................] - ETA: 3:17  66/500 [==>...........................] - ETA: 3:22 - loss: 5.9751 - accuracy: 8.9570e-04 67/500 [===>..........................] - ETA: 3:20 - loss: 5.9758 - accuracy: 8.8568e-04 68/500 [===>..........................] - ETA: 3:21 - loss: 5.9764 - accuracy: 8.7590e-04 69/500 [===>..........................] - ETA: 3:20 - loss: 5.9768 - accuracy: 8.6635e-04 70/500 [===>..........................] - ETA: 3:19 - loss: 5.9772 - accuracy: 8.5704e-04 71/500 [===>..........................] - ETA: 3:17 - loss: 5.9774 - accuracy: 8.4794e-04 72/500 [===>..........................] - ETA: 3:18 - loss: 5.9776 - accuracy: 8.3906e-04 73/500 [===>..........................] - ETA: 3:17 - loss: 5.9776 - accuracy: 8.3038e-04 74/500 [===>..........................] - ETA: 3:16 - loss: 5.9776 - accuracy: 8.2190e-04 75/500 [===>..........................] - ETA: 3:15 - loss: 5.9775 - accuracy: 8.1360e-04 76/500 [===>..........................] - ETA: 3:15 - loss: 5.9773 - accuracy: 8.0550e-04- loss: 5.9774 - accuracy: 8.4794e-04 72/500 [===>..........................] - ETA: 3:18 - loss: 5.9776 - accuracy: 8.3906e-04 73/500 [===>..........................] - ETA: 3:17 - loss: 5.9776 - accuracy: 8.3038e-04 74/500 [===>..........................] - ETA: 3:16 - loss: 5.9776 - accuracy: 8.2190e-04 75/500 [===>..........................] - ETA: 3:15 - loss: 5.9775 - accuracy: 8.1360e-04 76/500 [===>..........................] - ETA: 3:15 - loss: 5.9773 - accuracy: 8.0550e-04 77/500 [===>..........................] - ETA: 3:14 - loss: 5.9770 - accuracy: 7.9757e-04 78/500 [===>..........................] - ETA: 3:13 - loss: 5.9766 - accuracy: 7.8981e-04 79/500 [===>..........................] - ETA: 3:12 - loss: 5.9761 - accuracy: 7.8221e-04 80/500 [===>..........................] - ETA: 3:12 - loss: 5.9756 - accuracy: 7.7478e-04 81/500 [===>..........................] - ETA: 3:11 - loss: 5.9751 - accuracy: 7.6750e-04 82/500 [===>..........................] - ETA: 3:10 - loss: 5.9745 - accuracy: 7.6037e-04 77/500 [===>..........................] - ETA: 3:14 - loss: 5.9770 - accuracy: 7.9757e-04 78/500 [===>..........................] - ETA: 3:13 - loss: 5.9766 - accuracy: 7.8981e-04 79/500 [===>..........................] - ETA: 3:12 - loss: 5.9761 - accuracy: 7.8221e-04 80/500 [===>..........................] - ETA: 3:12 - loss: 5.9756 - accuracy: 7.7478e-04 81/500 [===>..........................] - ETA: 3:11 - loss: 5.9751 - accuracy: 7.6750e-04 82/500 [===>..........................] - ETA: 3:10 - loss: 5.9745 - accuracy: 7.6037e-04 83/500 [===>..........................] - ETA: 3:09 - loss: 5.9738 - accuracy: 7.5339e-04 84/500 [====>.........................] - ETA: 3:10 - loss: 5.9731 - accuracy: 7.4654e-04 85/500 [====>.........................] - ETA: 3:09 - loss: 5.9724 - accuracy: 7.3984e-04 86/500 [====>.........................] - ETA: 3:08 - loss: 5.9715 - accuracy: 7.3326e-04 87/500 [====>.........................] - ETA: 3:07 - loss: 5.9707 - accuracy: 7.2681e-04 88/500 [====>.........................] - ETA:  83/500 [===>..........................] - ETA: 3:09 - loss: 5.9738 - accuracy: 7.5339e-04 84/500 [====>.........................] - ETA: 3:10 - loss: 5.9731 - accuracy: 7.4654e-04 85/500 [====>.........................] - ETA: 3:09 - loss: 5.9724 - accuracy: 7.3984e-04 86/500 [====>.........................] - ETA: 3:08 - loss: 5.9715 - accuracy: 7.3326e-04 87/500 [====>.........................] - ETA: 3:07 - loss: 5.9707 - accuracy: 7.2681e-04 88/500 [====>.........................] - ETA: 3:07 - loss: 5.9699 - accuracy: 7.2049e-04 89/500 [====>.........................] - ETA: 3:06 - loss: 5.9690 - accuracy: 7.1429e-04 90/500 [====>.........................] - ETA: 3:05 - loss: 5.9680 - accuracy: 7.0821e-04 91/500 [====>.........................] - ETA: 3:04 - loss: 5.9671 - accuracy: 7.0224e-04 92/500 [====>.........................] - ETA: 3:04 - loss: 5.9660 - accuracy: 6.9637e-04 93/500 [====>.........................] - ETA: 3:03 - loss: 5.9650 - accuracy: 6.9062e-043:07 - loss: 5.9699 - accuracy: 7.2049e-04 89/500 [====>.........................] - ETA: 3:06 - loss: 5.9690 - accuracy: 7.1429e-04 90/500 [====>.........................] - ETA: 3:05 - loss: 5.9680 - accuracy: 7.0821e-04 91/500 [====>.........................] - ETA: 3:04 - loss: 5.9671 - accuracy: 7.0224e-04 92/500 [====>.........................] - ETA: 3:04 - loss: 5.9660 - accuracy: 6.9637e-04 93/500 [====>.........................] - ETA: 3:03 - loss: 5.9650 - accuracy: 6.9062e-04 94/500 [====>.........................] - ETA: 3:03 - loss: 5.9639 - accuracy: 6.8497e-04 95/500 [====>.........................] - ETA: 3:02 - loss: 5.9628 - accuracy: 6.7942e-04 96/500 [====>.........................] - ETA: 3:02 - loss: 5.9616 - accuracy: 6.7397e-04 97/500 [====>.........................] - ETA: 3:01 - loss: 5.9605 - accuracy: 6.6862e-04 98/500 [====>.........................] - ETA: 3:00 - loss: 5.9593 - accuracy: 6.6336e-04 99/500 [====>.........................] - ETA: 2:59 - loss: 5.9581 - accuracy: 6.5819e-04 94/500 [====>.........................] - ETA: 3:03 - loss: 5.9639 - accuracy: 6.8497e-04 95/500 [====>.........................] - ETA: 3:02 - loss: 5.9628 - accuracy: 6.7942e-04 96/500 [====>.........................] - ETA: 3:02 - loss: 5.9616 - accuracy: 6.7397e-04 97/500 [====>.........................] - ETA: 3:01 - loss: 5.9605 - accuracy: 6.6862e-04 98/500 [====>.........................] - ETA: 3:00 - loss: 5.9593 - accuracy: 6.6336e-04 99/500 [====>.........................] - ETA: 2:59 - loss: 5.9581 - accuracy: 6.5819e-04100/500 [=====>........................] - ETA: 3:00 - loss: 5.9569 - accuracy: 6.5311e-04101/500 [=====>........................] - ETA: 2:59 - loss: 5.9556 - accuracy: 6.4811e-04102/500 [=====>........................] - ETA: 2:58 - loss: 5.9544 - accuracy: 6.4320e-04103/500 [=====>........................] - ETA: 2:57 - loss: 5.9531 - accuracy: 6.3837e-04104/500 [=====>........................] - ETA: 2:57 - loss: 5.9519 - accuracy: 6.3362e-04105/500 [=====>........................] - 100/500 [=====>........................] - ETA: 3:00 - loss: 5.9569 - accuracy: 6.5311e-04101/500 [=====>........................] - ETA: 2:59 - loss: 5.9556 - accuracy: 6.4811e-04102/500 [=====>........................] - ETA: 2:58 - loss: 5.9544 - accuracy: 6.4320e-04103/500 [=====>........................] - ETA: 2:57 - loss: 5.9531 - accuracy: 6.3837e-04104/500 [=====>........................] - ETA: 2:57 - loss: 5.9519 - accuracy: 6.3362e-04105/500 [=====>........................] - ETA: 2:57 - loss: 5.9506 - accuracy: 6.2894e-04106/500 [=====>........................] - ETA: 2:56 - loss: 5.9493 - accuracy: 6.2434e-04107/500 [=====>........................] - ETA: 2:55 - loss: 5.9480 - accuracy: 6.1982e-04108/500 [=====>........................] - ETA: 2:55 - loss: 5.9466 - accuracy: 6.1537e-04109/500 [=====>........................] - ETA: 2:55 - loss: 5.9453 - accuracy: 6.1098e-04110/500 [=====>........................] - ETA: 2:54 - loss: 5.9440 - accuracy: 6.0667e-04ETA: 2:57 - loss: 5.9506 - accuracy: 6.2894e-04106/500 [=====>........................] - ETA: 2:56 - loss: 5.9493 - accuracy: 6.2434e-04107/500 [=====>........................] - ETA: 2:55 - loss: 5.9480 - accuracy: 6.1982e-04108/500 [=====>........................] - ETA: 2:55 - loss: 5.9466 - accuracy: 6.1537e-04109/500 [=====>........................] - ETA: 2:55 - loss: 5.9453 - accuracy: 6.1098e-04110/500 [=====>........................] - ETA: 2:54 - loss: 5.9440 - accuracy: 6.0667e-04111/500 [=====>........................] - ETA: 2:53 - loss: 5.9426 - accuracy: 6.0242e-04112/500 [=====>........................] - ETA: 2:53 - loss: 5.9413 - accuracy: 5.9824e-04113/500 [=====>........................] - ETA: 2:52 - loss: 5.9399 - accuracy: 5.9412e-04114/500 [=====>........................] - ETA: 2:52 - loss: 5.9386 - accuracy: 5.9006e-04115/500 [=====>........................] - ETA: 2:51 - loss: 5.9373 - accuracy: 5.8606e-04116/500 [=====>........................] - ETA: 2:51 - loss: 5.9359 - accuracy: 5.8213e-04111/500 [=====>........................] - ETA: 2:53 - loss: 5.9426 - accuracy: 6.0242e-04112/500 [=====>........................] - ETA: 2:53 - loss: 5.9413 - accuracy: 5.9824e-04113/500 [=====>........................] - ETA: 2:52 - loss: 5.9399 - accuracy: 5.9412e-04114/500 [=====>........................] - ETA: 2:52 - loss: 5.9386 - accuracy: 5.9006e-04115/500 [=====>........................] - ETA: 2:51 - loss: 5.9373 - accuracy: 5.8606e-04116/500 [=====>........................] - ETA: 2:51 - loss: 5.9359 - accuracy: 5.8213e-04117/500 [======>.......................] - ETA: 2:50 - loss: 5.9346 - accuracy: 5.7825e-04118/500 [======>.......................] - ETA: 2:49 - loss: 5.9332 - accuracy: 5.7442e-04119/500 [======>.......................] - ETA: 2:49 - loss: 5.9319 - accuracy: 5.7066e-04120/500 [======>.......................] - ETA: 2:49 - loss: 5.9306 - accuracy: 5.6694e-04121/500 [======>.......................] - ETA: 2:48 - loss: 5.9292 - accuracy: 5.6328e-04122/500 [======>......................117/500 [======>.......................] - ETA: 2:50 - loss: 5.9346 - accuracy: 5.7825e-04118/500 [======>.......................] - ETA: 2:49 - loss: 5.9332 - accuracy: 5.7442e-04119/500 [======>.......................] - ETA: 2:49 - loss: 5.9319 - accuracy: 5.7066e-04120/500 [======>.......................] - ETA: 2:49 - loss: 5.9306 - accuracy: 5.6694e-04121/500 [======>.......................] - ETA: 2:48 - loss: 5.9292 - accuracy: 5.6328e-04122/500 [======>.......................] - ETA: 2:47 - loss: 5.9279 - accuracy: 5.5967e-04123/500 [======>.......................] - ETA: 2:47 - loss: 5.9265 - accuracy: 5.5611e-04124/500 [======>.......................] - ETA: 2:47 - loss: 5.9252 - accuracy: 5.5260e-04125/500 [======>.......................] - ETA: 2:46 - loss: 5.9239 - accuracy: 5.4914e-04126/500 [======>.......................] - ETA: 2:45 - loss: 5.9225 - accuracy: 5.4573e-04127/500 [======>.......................] - ETA: 2:45 - loss: 5.9212 - accuracy: 5.4236e-04.] - ETA: 2:47 - loss: 5.9279 - accuracy: 5.5967e-04123/500 [======>.......................] - ETA: 2:47 - loss: 5.9265 - accuracy: 5.5611e-04124/500 [======>.......................] - ETA: 2:47 - loss: 5.9252 - accuracy: 5.5260e-04125/500 [======>.......................] - ETA: 2:46 - loss: 5.9239 - accuracy: 5.4914e-04126/500 [======>.......................] - ETA: 2:45 - loss: 5.9225 - accuracy: 5.4573e-04127/500 [======>.......................] - ETA: 2:45 - loss: 5.9212 - accuracy: 5.4236e-04128/500 [======>.......................] - ETA: 2:45 - loss: 5.9199 - accuracy: 5.3904e-04129/500 [======>.......................] - ETA: 2:44 - loss: 5.9186 - accuracy: 5.3576e-04130/500 [======>.......................] - ETA: 2:43 - loss: 5.9173 - accuracy: 5.3253e-04131/500 [======>.......................] - ETA: 2:42 - loss: 5.9160 - accuracy: 5.2934e-04132/500 [======>.......................] - ETA: 2:42 - loss: 5.9147 - accuracy: 5.2619e-04133/500 [======>.......................] - ETA: 2:42 - loss: 5.9134 - accuracy: 5.2308e-04128/500 [======>.......................] - ETA: 2:45 - loss: 5.9199 - accuracy: 5.3904e-04129/500 [======>.......................] - ETA: 2:44 - loss: 5.9186 - accuracy: 5.3576e-04130/500 [======>.......................] - ETA: 2:43 - loss: 5.9173 - accuracy: 5.3253e-04131/500 [======>.......................] - ETA: 2:42 - loss: 5.9160 - accuracy: 5.2934e-04132/500 [======>.......................] - ETA: 2:42 - loss: 5.9147 - accuracy: 5.2619e-04133/500 [======>.......................] - ETA: 2:42 - loss: 5.9134 - accuracy: 5.2308e-04134/500 [=======>......................] - ETA: 2:41 - loss: 5.9122 - accuracy: 5.2001e-04135/500 [=======>......................] - ETA: 2:40 - loss: 5.9109 - accuracy: 5.1698e-04136/500 [=======>......................] - ETA: 2:40 - loss: 5.9097 - accuracy: 5.1399e-04137/500 [=======>......................] - ETA: 2:40 - loss: 5.9085 - accuracy: 5.1104e-04138/500 [=======>......................] - ETA: 2:39 - loss: 5.9073 - accuracy: 5.0813e-04139/500 [=======>................134/500 [=======>......................] - ETA: 2:41 - loss: 5.9122 - accuracy: 5.2001e-04135/500 [=======>......................] - ETA: 2:40 - loss: 5.9109 - accuracy: 5.1698e-04136/500 [=======>......................] - ETA: 2:40 - loss: 5.9097 - accuracy: 5.1399e-04137/500 [=======>......................] - ETA: 2:40 - loss: 5.9085 - accuracy: 5.1104e-04138/500 [=======>......................] - ETA: 2:39 - loss: 5.9073 - accuracy: 5.0813e-04139/500 [=======>......................] - ETA: 2:38 - loss: 5.9061 - accuracy: 5.0525e-04140/500 [=======>......................] - ETA: 2:38 - loss: 5.9049 - accuracy: 5.0240e-04141/500 [=======>......................] - ETA: 2:38 - loss: 5.9037 - accuracy: 4.9959e-04142/500 [=======>......................] - ETA: 2:37 - loss: 5.9025 - accuracy: 4.9682e-04143/500 [=======>......................] - ETA: 2:36 - loss: 5.9014 - accuracy: 4.9408e-04144/500 [=======>......................] - ETA: 2:36 - loss: 5.9003 - accuracy: 4.9137e-04......] - ETA: 2:38 - loss: 5.9061 - accuracy: 5.0525e-04140/500 [=======>......................] - ETA: 2:38 - loss: 5.9049 - accuracy: 5.0240e-04141/500 [=======>......................] - ETA: 2:38 - loss: 5.9037 - accuracy: 4.9959e-04142/500 [=======>......................] - ETA: 2:37 - loss: 5.9025 - accuracy: 4.9682e-04143/500 [=======>......................] - ETA: 2:36 - loss: 5.9014 - accuracy: 4.9408e-04144/500 [=======>......................] - ETA: 2:36 - loss: 5.9003 - accuracy: 4.9137e-04145/500 [=======>......................] - ETA: 2:36 - loss: 5.8991 - accuracy: 4.8870e-04146/500 [=======>......................] - ETA: 2:35 - loss: 5.8980 - accuracy: 4.8605e-04147/500 [=======>......................] - ETA: 2:34 - loss: 5.8969 - accuracy: 4.8344e-04148/500 [=======>......................] - ETA: 2:34 - loss: 5.8959 - accuracy: 4.8086e-04149/500 [=======>......................] - ETA: 2:34 - loss: 5.8948 - accuracy: 4.7831e-04150/500 [========>.....................] - ETA: 2:33 - loss: 5.8938 - accuracy: 4.7578e-04145/500 [=======>......................] - ETA: 2:36 - loss: 5.8991 - accuracy: 4.8870e-04146/500 [=======>......................] - ETA: 2:35 - loss: 5.8980 - accuracy: 4.8605e-04147/500 [=======>......................] - ETA: 2:34 - loss: 5.8969 - accuracy: 4.8344e-04148/500 [=======>......................] - ETA: 2:34 - loss: 5.8959 - accuracy: 4.8086e-04149/500 [=======>......................] - ETA: 2:34 - loss: 5.8948 - accuracy: 4.7831e-04150/500 [========>.....................] - ETA: 2:33 - loss: 5.8938 - accuracy: 4.7578e-04151/500 [========>.....................] - ETA: 2:32 - loss: 5.8927 - accuracy: 4.7351e-04152/500 [========>.....................] - ETA: 2:32 - loss: 5.8915 - accuracy: 4.7126e-04153/500 [========>.....................] - ETA: 2:32 - loss: 5.8904 - accuracy: 4.6925e-04154/500 [========>.....................] - ETA: 2:31 - loss: 5.8892 - accuracy: 4.6726e-04155/500 [========>.....................] - ETA: 2:31 - loss: 5.8881 - accuracy: 4.6528e-04156/500 [========>..........151/500 [========>.....................] - ETA: 2:32 - loss: 5.8927 - accuracy: 4.7351e-04152/500 [========>.....................] - ETA: 2:32 - loss: 5.8915 - accuracy: 4.7126e-04153/500 [========>.....................] - ETA: 2:32 - loss: 5.8904 - accuracy: 4.6925e-04154/500 [========>.....................] - ETA: 2:31 - loss: 5.8892 - accuracy: 4.6726e-04155/500 [========>.....................] - ETA: 2:31 - loss: 5.8881 - accuracy: 4.6528e-04156/500 [========>.....................] - ETA: 2:30 - loss: 5.8870 - accuracy: 4.6333e-04157/500 [========>.....................] - ETA: 2:30 - loss: 5.8860 - accuracy: 4.6139e-04158/500 [========>.....................] - ETA: 2:29 - loss: 5.8849 - accuracy: 4.5947e-04159/500 [========>.....................] - ETA: 2:29 - loss: 5.8839 - accuracy: 4.5757e-04160/500 [========>.....................] - ETA: 2:29 - loss: 5.8829 - accuracy: 4.5569e-04161/500 [========>.....................] - ETA: 2:28 - loss: 5.8819 - accuracy: 4.5382e-04...........] - ETA: 2:30 - loss: 5.8870 - accuracy: 4.6333e-04157/500 [========>.....................] - ETA: 2:30 - loss: 5.8860 - accuracy: 4.6139e-04158/500 [========>.....................] - ETA: 2:29 - loss: 5.8849 - accuracy: 4.5947e-04159/500 [========>.....................] - ETA: 2:29 - loss: 5.8839 - accuracy: 4.5757e-04160/500 [========>.....................] - ETA: 2:29 - loss: 5.8829 - accuracy: 4.5569e-04161/500 [========>.....................] - ETA: 2:28 - loss: 5.8819 - accuracy: 4.5382e-04162/500 [========>.....................] - ETA: 2:27 - loss: 5.8809 - accuracy: 4.5197e-04163/500 [========>.....................] - ETA: 2:27 - loss: 5.8799 - accuracy: 4.5014e-04164/500 [========>.....................] - ETA: 2:27 - loss: 5.8790 - accuracy: 4.4833e-04165/500 [========>.....................] - ETA: 2:26 - loss: 5.8781 - accuracy: 4.4653e-04166/500 [========>.....................] - ETA: 2:25 - loss: 5.8772 - accuracy: 4.4474e-04167/500 [=========>....................] - ETA: 2:25 - loss: 5.8764 - accuracy: 4.429162/500 [========>.....................] - ETA: 2:27 - loss: 5.8809 - accuracy: 4.5197e-04163/500 [========>.....................] - ETA: 2:27 - loss: 5.8799 - accuracy: 4.5014e-04164/500 [========>.....................] - ETA: 2:27 - loss: 5.8790 - accuracy: 4.4833e-04165/500 [========>.....................] - ETA: 2:26 - loss: 5.8781 - accuracy: 4.4653e-04166/500 [========>.....................] - ETA: 2:25 - loss: 5.8772 - accuracy: 4.4474e-04167/500 [=========>....................] - ETA: 2:25 - loss: 5.8764 - accuracy: 4.4298e-04168/500 [=========>....................] - ETA: 2:25 - loss: 5.8755 - accuracy: 4.4123e-04169/500 [=========>....................] - ETA: 2:24 - loss: 5.8747 - accuracy: 4.3949e-04170/500 [=========>....................] - ETA: 2:23 - loss: 5.8739 - accuracy: 4.3777e-04171/500 [=========>....................] - ETA: 2:23 - loss: 5.8731 - accuracy: 4.3607e-04172/500 [=========>....................] - ETA: 2:23 - loss: 5.8724 - accuracy: 4.3438e-04173/500 [=========>....8e-04168/500 [=========>....................] - ETA: 2:25 - loss: 5.8755 - accuracy: 4.4123e-04169/500 [=========>....................] - ETA: 2:24 - loss: 5.8747 - accuracy: 4.3949e-04170/500 [=========>....................] - ETA: 2:23 - loss: 5.8739 - accuracy: 4.3777e-04171/500 [=========>....................] - ETA: 2:23 - loss: 5.8731 - accuracy: 4.3607e-04172/500 [=========>....................] - ETA: 2:23 - loss: 5.8724 - accuracy: 4.3438e-04173/500 [=========>....................] - ETA: 2:22 - loss: 5.8716 - accuracy: 4.3270e-04174/500 [=========>....................] - ETA: 2:22 - loss: 5.8709 - accuracy: 4.3104e-04175/500 [=========>....................] - ETA: 2:21 - loss: 5.8702 - accuracy: 4.2939e-04176/500 [=========>....................] - ETA: 2:21 - loss: 5.8695 - accuracy: 4.2776e-04177/500 [=========>....................] - ETA: 2:20 - loss: 5.8688 - accuracy: 4.2614e-04178/500 [=========>....................] - ETA: 2:20 - loss: 5.8681 - accuracy: 4.2454e-04................] - ETA: 2:22 - loss: 5.8716 - accuracy: 4.3270e-04174/500 [=========>....................] - ETA: 2:22 - loss: 5.8709 - accuracy: 4.3104e-04175/500 [=========>....................] - ETA: 2:21 - loss: 5.8702 - accuracy: 4.2939e-04176/500 [=========>....................] - ETA: 2:21 - loss: 5.8695 - accuracy: 4.2776e-04177/500 [=========>....................] - ETA: 2:20 - loss: 5.8688 - accuracy: 4.2614e-04178/500 [=========>....................] - ETA: 2:20 - loss: 5.8681 - accuracy: 4.2454e-04179/500 [=========>....................] - ETA: 2:19 - loss: 5.8675 - accuracy: 4.2294e-04180/500 [=========>....................] - ETA: 2:19 - loss: 5.8669 - accuracy: 4.2137e-04181/500 [=========>....................] - ETA: 2:18 - loss: 5.8663 - accuracy: 4.1980e-04182/500 [=========>....................] - ETA: 2:18 - loss: 5.8657 - accuracy: 4.1825e-04183/500 [=========>....................] - ETA: 2:17 - loss: 5.8651 - accuracy: 4.1671e-04184/500 [==========>...................] - ETA: 2:17 - loss: 5.8645 - accuracy: 179/500 [=========>....................] - ETA: 2:19 - loss: 5.8675 - accuracy: 4.2294e-04180/500 [=========>....................] - ETA: 2:19 - loss: 5.8669 - accuracy: 4.2137e-04181/500 [=========>....................] - ETA: 2:18 - loss: 5.8663 - accuracy: 4.1980e-04182/500 [=========>....................] - ETA: 2:18 - loss: 5.8657 - accuracy: 4.1825e-04183/500 [=========>....................] - ETA: 2:17 - loss: 5.8651 - accuracy: 4.1671e-04184/500 [==========>...................] - ETA: 2:17 - loss: 5.8645 - accuracy: 4.1518e-04185/500 [==========>...................] - ETA: 2:17 - loss: 5.8640 - accuracy: 4.1367e-04186/500 [==========>...................] - ETA: 2:16 - loss: 5.8634 - accuracy: 4.1217e-04187/500 [==========>...................] - ETA: 2:15 - loss: 5.8629 - accuracy: 4.1068e-04188/500 [==========>...................] - ETA: 2:15 - loss: 5.8624 - accuracy: 4.0920e-04189/500 [==========>...................] - ETA: 2:15 - loss: 5.8618 - accuracy: 4.0774e-04190/500 [=========4.1518e-04185/500 [==========>...................] - ETA: 2:17 - loss: 5.8640 - accuracy: 4.1367e-04186/500 [==========>...................] - ETA: 2:16 - loss: 5.8634 - accuracy: 4.1217e-04187/500 [==========>...................] - ETA: 2:15 - loss: 5.8629 - accuracy: 4.1068e-04188/500 [==========>...................] - ETA: 2:15 - loss: 5.8624 - accuracy: 4.0920e-04189/500 [==========>...................] - ETA: 2:15 - loss: 5.8618 - accuracy: 4.0774e-04190/500 [==========>...................] - ETA: 2:14 - loss: 5.8613 - accuracy: 4.0628e-04191/500 [==========>...................] - ETA: 2:14 - loss: 5.8608 - accuracy: 4.0484e-04192/500 [==========>...................] - ETA: 2:13 - loss: 5.8603 - accuracy: 4.0341e-04193/500 [==========>...................] - ETA: 2:13 - loss: 5.8599 - accuracy: 4.0199e-04194/500 [==========>...................] - ETA: 2:12 - loss: 5.8594 - accuracy: 4.0058e-04195/500 [==========>...................] - ETA: 2:12 - loss: 5.8589 - accuracy: 3.9919e-04=>...................] - ETA: 2:14 - loss: 5.8613 - accuracy: 4.0628e-04191/500 [==========>...................] - ETA: 2:14 - loss: 5.8608 - accuracy: 4.0484e-04192/500 [==========>...................] - ETA: 2:13 - loss: 5.8603 - accuracy: 4.0341e-04193/500 [==========>...................] - ETA: 2:13 - loss: 5.8599 - accuracy: 4.0199e-04194/500 [==========>...................] - ETA: 2:12 - loss: 5.8594 - accuracy: 4.0058e-04195/500 [==========>...................] - ETA: 2:12 - loss: 5.8589 - accuracy: 3.9919e-04196/500 [==========>...................] - ETA: 2:12 - loss: 5.8585 - accuracy: 3.9780e-04197/500 [==========>...................] - ETA: 2:11 - loss: 5.8580 - accuracy: 3.9643e-04198/500 [==========>...................] - ETA: 2:10 - loss: 5.8575 - accuracy: 3.9506e-04196/500 [==========>...................] - ETA: 2:12 - loss: 5.8585 - accuracy: 3.9780e-04197/500 [==========>...................] - ETA: 2:11 - loss: 5.8580 - accuracy: 3.9643e-04198/500 [==========>...................] - ETA: 2:10 - loss: 5.8575 - accuracy: 3.9506e-04
