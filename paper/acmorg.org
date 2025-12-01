@@ -712,7 +712,7 @@ and more communication is needed. We can also see that the ResNet50
 shows a higher time then the EfficientNetB0 in this cases. This
 happens because all the parameters needed to be synchronized after
 every batch, and the ResNet50 is almost 5 times bigger than the
-EfficientNetB0. The second one is that the *ctl* showed a considerable
+EfficientNetB0. The second one is that the ctl showed a considerable
 smaller communication overhead even for small batch sizes. The ctl
 showed *OOM* errors when running with the batch size 100 for training
 the EfficientNetB0 model.

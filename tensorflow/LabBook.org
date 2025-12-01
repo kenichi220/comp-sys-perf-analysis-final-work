@@ -792,6 +792,253 @@ meu_estilo()
 #+RESULTS:
 [[file:/tmp/babel-syZuVj/figureDHaYfk.png]]
 
+*** Resultados por batch
+#+begin_src R :results output file graphics  :file (org-babel-temp-file "figure" ".pdf") :exports results :width 8 :height 4 :session *R*
+
+data_plot |> #filter(grepl("*50*", model)) |>
+  group_by(id, type, model, batch) |>
+  mutate(
+    tempo_treino = sum(tempo, na.rm = TRUE) / 60,
+  ) |>
+  ungroup() |>
+  mutate(batch = as.integer(batch)) -> data_treino
+
+data_treino |> group_by(id, type, model, batch) |>
+  summarize(
+    tempo_treino = sum(tempo)/60
+  ) |> ungroup() -> data_points
+
+
+data_treino |>
+  group_by(type, model, batch) |>
+  summarize(
+    N = n(),
+    mean_treino = mean(tempo_treino, na.rm = TRUE),
+    sd_treino = sd(tempo_treino),
+    se_treino = 3 * sd(tempo_treino) / sqrt(N),
+  ) |>
+  ungroup() |>
+  mutate(
+    lower_bound = mean_treino - se_treino,
+    upper_bound = mean_treino + se_treino
+  ) -> data_treino.plot
+
+data_treino.plot |>
+  ggplot(aes(x = as.factor(batch), y = mean_treino,
+             color=model,
+             fill=model)) +
+
+
+  ## geom_line(aes(y = mean_treino, group = model), # <--- Mapeie a linha para a média
+  ##         linewidth = 0.3
+  ##       , alpha = 1) +
+
+  geom_col(  # Set the transparency (alpha) to 0.3 for a faint look
+    position = position_dodge(width = 0.9)
+  ) +
+
+
+  geom_jitter(
+    data = data_points,
+    aes(x = as.factor(batch), y = tempo_treino), # Mapeamento X/Y do dado bruto
+    # Adicione color=model NO AES() para que o dodge funcione
+    # Você já tem fill=model e color=model no mapeamento global.
+    # Se você quiser uma cor neutra para os pontos:
+    color = "gray30", # Cor fixa fora do aes()
+    alpha = 0.3,
+    size = 1.5,
+    # Use a mesma posição de desvio EXATA
+    position = position_jitterdodge(dodge.width = 0.9,
+        jitter.width = 0.35)
+  ) +
+  ## geom_line(linewidth = 1, alpha = 0) +
+
+
+  geom_errorbar(aes( ymin = lower_bound, ymax = upper_bound),
+                width=.8, alpha=.7,
+                position = position_dodge(width = 0.9),
+                color="black") +
+
+  facet_grid( ~ type) +
+  labs(
+    y = "Training Time [Minutes]",
+    x = "Nodes"
+  ) +
+  scale_fill_manual(values = c("red", "blue")) +
+  scale_color_manual(values = c("red", "blue")) +
+
+  meu_estilo()
+#+end_src
+
+#+RESULTS:
+[[file:/tmp/babel-IGtNc7/figureAM27lO.pdf]]
+
+
+*** Resultados por número de nodos
+#+begin_src R :results output file graphics  :file (org-babel-temp-file "figure" ".pdf") :exports results :width 8 :height 4 :session *R*
+
+data_plot |> #filter(grepl("*50*", model)) |>
+  group_by(id, type, model, nodes) |>
+  mutate(
+    tempo_treino = sum(tempo, na.rm = TRUE) / 60,
+  ) |>
+  ungroup() |>
+  mutate(batch = as.integer(batch)) -> data_treino
+
+data_treino |> group_by(id, type, model, nodes) |>
+  summarize(
+    tempo_treino = sum(tempo)/60
+  ) |> ungroup() -> data_points
+
+
+data_treino |>
+  group_by(type, model, nodes) |>
+  summarize(
+    N = n(),
+    mean_treino = mean(tempo_treino, na.rm = TRUE),
+    sd_treino = sd(tempo_treino),
+    se_treino = 3 * sd(tempo_treino) / sqrt(N),
+  ) |>
+  ungroup() |>
+  mutate(
+    lower_bound = mean_treino - se_treino,
+    upper_bound = mean_treino + se_treino
+  ) -> data_treino.plot
+
+data_treino.plot |>
+  ggplot(aes(x = as.factor(nodes), y = mean_treino,
+             color=model,
+             fill=model)) +
+
+
+  ## geom_line(aes(y = mean_treino, group = model), # <--- Mapeie a linha para a média
+  ##         linewidth = 0.3
+  ##       , alpha = 1) +
+
+  geom_col(  # Set the transparency (alpha) to 0.3 for a faint look
+    position = position_dodge(width = 0.9)
+  ) +
+
+
+  geom_jitter(
+    data = data_points,
+    aes(x = as.factor(nodes), y = tempo_treino), # Mapeamento X/Y do dado bruto
+    # Adicione color=model NO AES() para que o dodge funcione
+    # Você já tem fill=model e color=model no mapeamento global.
+    # Se você quiser uma cor neutra para os pontos:
+    color = "gray30", # Cor fixa fora do aes()
+    alpha = 0.3,
+    size = 1.5,
+    # Use a mesma posição de desvio EXATA
+    position = position_jitterdodge(dodge.width = 0.9,
+        jitter.width = 0.35)
+  ) +
+  ## geom_line(linewidth = 1, alpha = 0) +
+
+
+  geom_errorbar(aes( ymin = lower_bound, ymax = upper_bound),
+                width=.8, alpha=.7,
+                position = position_dodge(width = 0.9),
+                color="black") +
+
+  facet_grid( ~ type) +
+  labs(
+    y = "Training Time [Minutes]",
+    x = "Nodes"
+  ) +
+  scale_fill_manual(values = c("red", "blue")) +
+  scale_color_manual(values = c("red", "blue")) +
+
+  meu_estilo()
+#+end_src
+
+
+
+*** Aglomerado final dos dados
+#+begin_src R :results output file graphics  :file (org-babel-temp-file "figure" ".pdf") :exports results :width 8 :height 4 :session *R*
+
+data_plot |> #filter(grepl("*B0*", model)) |>
+  group_by(id, type, model, batch, nodes) |>
+  mutate(
+    tempo_treino = sum(tempo, na.rm = TRUE) / 60,
+  ) |>
+  ungroup() |>
+  mutate(batch = as.integer(batch)) -> data_treino
+
+data_treino |> group_by(id, type, model, batch, nodes) |>
+  summarize(
+    tempo_treino = sum(tempo)/60
+  ) |> ungroup() -> data_points
+
+
+data_treino |>
+  group_by(type, model, batch, nodes) |>
+  summarize(
+    N = n(),
+    mean_treino = mean(tempo_treino, na.rm = TRUE),
+    sd_treino = sd(tempo_treino),
+    se_treino = 3 * sd(tempo_treino) / sqrt(N),
+  ) |>
+  ungroup() |>
+  mutate(
+    lower_bound = mean_treino - se_treino,
+    upper_bound = mean_treino + se_treino
+  ) -> data_treino.plot
+
+data_treino.plot |>
+  ggplot(aes(x = as.factor(nodes), y = mean_treino,
+             color=model,
+             fill=model)) +
+
+
+  ## geom_line(aes(y = mean_treino, group = model), # <--- Mapeie a linha para a média
+  ##         linewidth = 0.3
+  ##       , alpha = 1) +
+
+  geom_col(  # Set the transparency (alpha) to 0.3 for a faint look
+    position = position_dodge(width = 0.9)
+  ) +
+
+
+  geom_jitter(
+    data = data_points,
+    aes(x = as.factor(nodes), y = tempo_treino), # Mapeamento X/Y do dado bruto
+    # Adicione color=model NO AES() para que o dodge funcione
+    # Você já tem fill=model e color=model no mapeamento global.
+    # Se você quiser uma cor neutra para os pontos:
+    color = "gray30", # Cor fixa fora do aes()
+    alpha = 0.3,
+    size = 1.5,
+    # Use a mesma posição de desvio EXATA
+    position = position_jitterdodge(dodge.width = 0.9,
+        jitter.width = 0.35)
+  ) +
+  ## geom_line(linewidth = 1, alpha = 0) +
+
+
+  geom_errorbar(aes( ymin = lower_bound, ymax = upper_bound),
+                width=.8, alpha=.7,
+                position = position_dodge(width = 0.9),
+                color="black") +
+
+  facet_grid(batch ~ type) +
+  labs(
+    y = "Training Time [Minutes]",
+    x = "Nodes"
+  ) +
+  scale_fill_manual(values = c("red", "blue")) +
+  scale_color_manual(values = c("red", "blue")) +
+
+  meu_estilo()
+#+end_src
+
+#+RESULTS:
+: `summarise()` has grouped output by 'id', 'type', 'model', 'batch'. You can override using the `.groups`
+: argument.
+: `summarise()` has grouped output by 'type', 'model', 'batch'. You can override using the `.groups`
+: argument.
+
+
 ** Creating a model
 
 *** Create a separated dataset for each Model-Type combination

@@ -75,10 +75,10 @@
 
   \begin{center}
       \vspace*{2cm}
-      { \color{titlecolor} \textbf{Intrusiveness and Scalability of OMPT-Based Tracing Tools for Task-based OpenMP Applications}}\\[10px]
-      {\footnotesize \color{namecolor} \textbf{Rayan Raddatz de Matos}, Lucas Mello Schnorr}\\
-      {\tiny \{rayan.raddatz@inf.ufrgs.br, schnorr@inf.ufrgs.br\}}\\[2cm]
-      {\footnotesize SSCAD -- Bonito, MS -- October, 2025}
+      { \color{titlecolor} \textbf{Performance Evaluation of Tensorflow Parallel Strategies for Deep Learning Training on HPC Clusters}}\\[10px]
+      {\footnotesize \color{namecolor} Kenichi Brumati, Marcelo Cardoso Oliveira Gulart, Rayan Raddatz de Matos}\\[2cm]
+%      {\tiny \{rayan.raddatz@inf.ufrgs.br, schnorr@inf.ufrgs.br\}}\\[2cm]
+      {\footnotesize INF01146 --  Comp. Sys. Perf. Analysis -- 2025/2}
   \end{center}
 
 \end{frame}
@@ -88,658 +88,848 @@
 #    SLIDES
 # ===================================================
 
+# Slide 1:Guix
+
 ** Agenda
+#+begin_export latex
+\tableofcontents
+#+end_export
+
+
+* Recapitulação
+
+** Mudanças desde a última etapa
+
+- Focamos apenas no TensorFlow
+\vfill \pause
+- Adicionamos outro modelo menor (EfficientNetB0)
+\vfill \pause
+- Focamos em entender o tempo de treino e descartamos métricas
+  secundárias
+\vfill \pause
+- Mudamos o dataset para o TinyImageNet-200
+\vfill \pause
+- Mudamos o hardware (downgrade)
+
+
+** Resultados anteriores
+<colocar grafico antigo aqui>
+
+** Fenômeno Observado
+    - Degradação de performance (aumento do tempo por época) ao adicionar novos workers.
+** Causa Técnica
+    - O treinamento distribuído síncrono exige que todos os nós
+      atualizem os pesos simultaneamente.
+      \vfill
+    - A operação de AllReduce (soma de gradientes) trafega dados pela
+      rede a cada batch, assim, a latência de comunicação superou o ganho do paralelismo
+
+# Slide 3 : explicação CTL
+
+* Custom Training Loop
+** Estratégia
+    - Utilização de um Custom Training Loop.
+** Técnica Aplicada
+    - Implementação de acumulação de gradientes.
+      \vfill
+    - Sincronização a cada 4 batches.
+** Impacto no Desempenho
+    - Aumenta o batch size efetivo antes de disparar a sincronização.
+      \vfill
+    - Melhora a razão Computação/Comunicação, reduzindo o tráfego de
+      rede e destravando o escalonamento.
+
+* Reproducibilidade e Ambiente de Testes
+** Limitação do GNU Guix
+    - A base oficial distribui estritamente Software Livre.
+      \vfill
+    - Incompatibilidade com drivers proprietários essenciais (NVIDIA CUDA Toolkit e cuDNN).
+** Restrição de Infraestrutura
+    - Impossibilidade de adicionar canais não-oficiais (nonguix) no ambiente PCAD.
+** Solução Adotada
+    - Uso de *Python Virtual Environment* (venv).
+      \vfill
+    - Isolamento de versões via pip garante reprodutibilidade sem violar restrições de licenciamento de drivers de GPU.
+
+** Hardware
+
+\small
+Anteriormente estávamos utilizando máquinas da partição Tupi, por razões de *alta
+concorrência* mudamos para a partição Poti.
+
+- Hardware anterior: Intel(R) Core(TM) i9-14900KF e *NVIDIA GeForce RTX 4090*
+- Hardware UTILIZADO: Intel(R) Core(TM) i7-14700KF e *NVIDIA GeForce
+  RTX 4070*
+
+Tivemos alguns problemas como a configuração da rede da *poti4* e
+quedas repentinas da *poti2* que atrasaram os experimentos.
+
+
+* Projeto Experimental
+
+** Tipos de treinamento
+Executamos dois tipos de treinamento:
+- "sync" -> Sincronismo total com =model.fit()=
 \vfill
-- Task-based OpenMP Applications
+- "ctl"  -> Sincronismo a cada 4 batches com Custom Training Loop
+
+
+** Modelo
+
+Escolhemos além do *ResNet50* com *~25.6M* parâmetros um modelo menor:
+*EfficientNetB0* com *~5.3M* parâmetros.
+
+
+** Outros fatores
+
+- *Batch size:* 32, 64, 100
+
+- *Quantidade de nodos:* 1, 2 e 3
+
+
+
+** Replicações
+
+- 2x2x3x3 = *36 configurações*
 \vfill
-- OMPT-Based Tracing Tools
+- Cada uma foi *replicada 5 vezes*.
 \vfill
-- Intrusiveness and Scalability
-\vfill
-* \small Intrusiveness and Scalability of OMPT-Based Tracing Tools for Task-based OpenMP Applications
-* \small \color{mblack} Intrusiveness and Scalability of OMPT-Based Tracing Tools for \color{R} Task-based OpenMP Applications
-** Task-based parallelism
-
-*** A screenshot                                            :BMCOL:B_example:
-    :PROPERTIES:
-    :BEAMER_col: 0.5
-    :END:
-
-#+ATTR_LaTeX: :width 1.05\textwidth
-[[file:dag1.pdf]]
-
-*** A block                                           :BMCOL:
-    :PROPERTIES:
-    :BEAMER_col: 0.5
-    :END:
+- Total de *180* execuções!
 
 
-*Programmer:* Define the tasks and its parameters.
+* Resultados
 
-\vspace{15px}
-*Runtime system:* Schedule tasks to the computational cores.
+** Load data                                               :ignore:noexport:
 
-
-
-** Task-based parallelism
-*** DAG
-    :PROPERTIES:
-    :BEAMER_col: 0.4
-    :END:
-
-\small Can be viewed as a TDG (Task Dependency Graph)
-
-\vspace{15px}
-
-
-** OpenMP
-*** What is                                                         :BMCOL:
-    :PROPERTIES:
-    :BEAMER_col: 0.6
-    :END:
-- Shared-memory multiprocessing programming interface.
-\vspace{10px}
-- Since 3.0 supports tasks.
-\vspace{10px}
-- New features for tasks with newer versions.
-
-
-
-*** Logo                                                  :BMCOL:B_example:
-    :PROPERTIES:
-    :BEAMER_col: 0.4
-    :END:
-
-[[file:imgs/openmp.png]]
-
-
-** OpenMP
-
-#+ATTR_LaTeX: :width 0.6\textwidth
-[[file:imgs/tasks.pdf]]
-
-
-** Dynamic scheduling
- :PROPERTIES:
- :BEAMER_FRAME_OPTIONS: plain
-   :END:
-
-- Application behavior is not simple to understand.
-\hfill \pause
-- Need for tracing tools capable of capture tasks life cycle.
-
-
-
-* \small \color{mblack} Intrusiveness and Scalability of \color{R} OMPT-Based Tracing Tools  \color{mblack} for Task-based OpenMP Applications
-
-** OMPT (OpenMP Tools)
-
-*** TEXT
-:PROPERTIES:
-    :BEAMER_col: 0.5
-    :END:
-
-Introduced in OpenMP 5.
-
-\vspace{10px}
-User-defined callbacks when OpenMP events occurs.
-
-*** IMG
-:PROPERTIES:
-    :BEAMER_col: 0.5
-    :END:
-[[file:imgs/OMPT.pdf]]
-
-** Tracing
-
-- Additional code to trace application behavior.
-#+latex: \pause
-- Changes the application environment and *introduce overhead.*
-
-** Tracing Tools
-
-*** Our                                                   :BMCOL:B_example:
-    :PROPERTIES:
-    :BEAMER_col: 0.5
-    :END:
-**** Our tools
-- Void
-- Printf
-- OOT
-
-
-*** A block                                           :BMCOL:
-    :PROPERTIES:
-    :BEAMER_col: 0.5
-    :END:
-
-****  Popular tools
-    - Score-P
-    - TiKKi
-    - Extrae
-
-
-** Void
-
-[[file:imgs/void.pdf]]
-
-** Printf
-
-[[file:imgs/printf.pdf]]
-
-** OOT
-
-[[file:imgs/oot.pdf]]
-
-* \small \color{R} Intrusiveness and Scalability \color{mblack} of OMPT-Based Tracing Tools for Task-based OpenMP Applications
-
-* Methodology
-** Benchmark
-
-*** The applications
-    :PROPERTIES:
-    :BEAMER_col: 0.6
-    :END:
-- QR Factorization
-
-\vspace{10px}
-- Gauss-Seidel
-\vspace{10px}
-- Cholesky Factorization
-
-
-*** Image here
-    :PROPERTIES:
-    :BEAMER_col: 0.4
-    :END:
-
-** Application parameters
-
-\footnotesize
-#+ATTR_LATEX: :booktabs t
-| *Application*            | *Problem* | *Block*                | *Tasks Created*          |
-| <l>                    | <l>     | <l>                  | <l>                    |
-|------------------------+---------+----------------------+------------------------|
-| QR factorization       | 2048    | 64, 128, 192, 258    | 11440, 1496, 385, 204  |
-| Cholesky factorization | 2000    | 50, 80, 100, 200     | 11480, 2925, 1540, 220 |
-| Gauss-Seidel method    | 10000   | 250, 500, 1000, 2000 | 16000, 4000, 1000, 250 |
-
-** Hardware configuration
-
-\footnotesize
-#+ATTR_LATEX: :booktabs t
-| *Nome*  |                             *CPU*                              | *RAM*         |
-|  <l>  |                             <l>                              | <l>         |
-|-------+--------------------------------------------------------------+-------------|
-|  Cei  | 2 x Intel(R) Xeon(R) Silver 4116, 2.10 GHz, 48 ths, 24 cores | 96 GB DDR4  |
-| Hype  | 2 x Intel(R) Xeon(R) E5-2650 v3, 2.30 GHz, 40 ths, 20 cores  | 128 GB DDR4 |
-| Draco | 2 x Intel(R) Xeon(R) E5-2640 v2, 2.00 GHz, 32 ths, 16 cores  | 64 GB DDR3  |
-
-** Experiments
-
-- Full factorial (application, block, # threads, etc...)
-\hfill \pause
-- 10 executions for each combination
-\hfill \pause
-- Metric: Intrusion time (overhead).
-
-
-* Results
-
-** Estilo                                                         :noexport:
+*** Load combinations and run ID
 #+begin_src R :results output :session *R* :exports both
+options(crayon.enabled=FALSE)
+suppressMessages(library(fs))
+suppressMessages(library(tidyverse))
+suppressMessages(library(janitor))
+suppressMessages(library(dplyr))
+suppressMessages(library(lubridate))
+
+BASE="data/final/"
+tibble(PATH = dir_ls(BASE, regexp = "out$", recurse=TRUE))  |>
+  ## filter(!str_detect(CSV, ":")) |>
+  ## filter(!str_detect(CSV, "ep")) |>
+  ## mutate(DATA = map(CSV, read_csv, progress=FALSE, show_col_types = FALSE)) |>
+  separate(PATH, into=paste0("XX", 1:3), sep="/") |>
+  separate(XX3, into=paste0("YY", 1:6), sep="_") |>
+  ## mutate(type=XX4) |> #|>
+  mutate(YY6 = gsub("\\.out", "", YY6)) |>
+  ## mutate(machine = gsub("\\-.*", "", machine)) |>
+  ## rowid_to_column("id") |>
+  select(id=YY6, model=YY2, batch=YY4, type=YY3, nodes=YY5) -> configs
+
+configs
+#+end_src
+
+#+RESULTS:
+#+begin_example
+# A tibble: 214 × 5
+   id     model          batch type  nodes
+   <chr>  <chr>          <chr> <chr> <chr>
+ 1 735831 EfficientNetB0 100   ctl   1
+ 2 735908 EfficientNetB0 100   ctl   1
+ 3 735920 EfficientNetB0 100   ctl   1
+ 4 735970 EfficientNetB0 100   ctl   1
+ 5 736028 EfficientNetB0 100   ctl   1
+ 6 736718 EfficientNetB0 100   ctl   1
+ 7 736719 EfficientNetB0 100   ctl   1
+ 8 736720 EfficientNetB0 100   ctl   1
+ 9 736721 EfficientNetB0 100   ctl   1
+10 736727 EfficientNetB0 100   ctl   1
+# ℹ 204 more rows
+# ℹ Use `print(n = ...)` to see more rows
+#+end_example
+
+*** Get the data and join with the run
+#+begin_src R :results output :session *R* :exports both
+BASE="data/final/logs/"
+tibble(CSV = dir_ls(BASE, regexp = "csv$", recurse=TRUE)) |>
+  ## filter(!str_detect(CSV, ":")) |>
+  ## filter(!str_detect(CSV, "ep")) |>
+  mutate(DATA = map(CSV, read_csv, progress=FALSE, show_col_types = FALSE)) |>
+  separate(CSV, into=paste0("XX", 1:7), sep="/") |>
+  separate(XX4, into=paste0("YY", 1:2), sep="_")  |>
+  select(id=YY2, DATA) |>
+  mutate(
+    DATA = map(DATA, function(x) {
+      if (is.data.frame(x)) {
+        return(x %>% mutate(epoca = as.character(epoca),
+                            tempo = as.character(tempo)))
+      } else {
+        return(x)
+      }
+    })
+  ) |>
+  unnest(DATA) -> results
+
+results
+#+end_src
+
+#+RESULTS:
+#+begin_example
+# A tibble: 804 × 3
+   id     epoca tempo
+   <chr>  <chr> <chr>
+ 1 735818 0     298.360699892044
+ 2 735818 1     275.497747659683
+ 3 735818 2     274.337224721909
+ 4 735818 3     274.618661165237
+ 5 735818 4     273.248296737671
+ 6 735824 0     337.033883571625
+ 7 735824 1     317.953343868256
+ 8 735824 2     318.067031621933
+ 9 735824 3     317.879886865616
+10 735824 4     317.93927025795
+# ℹ 794 more rows
+# ℹ Use `print(n = ...)` to see more rows
+#+end_example
+
+*** Join the data
+
+#+begin_src R :results output :session *R* :exports both
+df <- configs |>
+  left_join(results, by="id")
+
+df
+#+end_src
+
+#+RESULTS:
+#+begin_example
+# A tibble: 837 × 7
+   id     model          batch type  nodes epoca tempo
+   <chr>  <chr>          <chr> <chr> <chr> <chr> <chr>
+ 1 735831 EfficientNetB0 100   ctl   1     <NA>  <NA>
+ 2 735908 EfficientNetB0 100   ctl   1     0     350.095215320587
+ 3 735920 EfficientNetB0 100   ctl   1     0     344.294260263443
+ 4 735920 EfficientNetB0 100   ctl   1     1     333.430016517639
+ 5 735970 EfficientNetB0 100   ctl   1     0     344.588366985321
+ 6 736028 EfficientNetB0 100   ctl   1     <NA>  <NA>
+ 7 736718 EfficientNetB0 100   ctl   1     0     344.885010719299
+ 8 736719 EfficientNetB0 100   ctl   1     0     345.933742523193
+ 9 736719 EfficientNetB0 100   ctl   1     1     334.544350147247
+10 736720 EfficientNetB0 100   ctl   1     0     344.251515865326
+# ℹ 827 more rows
+# ℹ Use `print(n = ...)` to see more rows
+#+end_example
+
+*** Runs with error
+#+begin_src R :results output :session *R* :exports both
+df |> group_by(nodes, type, model, batch, id) |>
+  summarize(N=n(), .groups="keep") |>
+  arrange(N) |>
+  filter(N < 5 | N > 5) |> print() |>
+  select(-N) -> errors
+
+errors |> print(n=100)
+
+do.call("rbind", replicate(5, errors, simplify = FALSE)) |>
+  write_csv("errors_rerun.csv", progress=FALSE)
+#+end_src
+
+#+RESULTS:
+#+begin_example
+# A tibble: 62 × 6
+# Groups:   nodes, type, model, batch, id [62]
+   nodes type  model          batch id         N
+   <chr> <chr> <chr>          <chr> <chr>  <int>
+ 1 1     ctl   EfficientNetB0 100   735831     1
+ 2 1     ctl   EfficientNetB0 100   735908     1
+ 3 1     ctl   EfficientNetB0 100   735970     1
+ 4 1     ctl   EfficientNetB0 100   736028     1
+ 5 1     ctl   EfficientNetB0 100   736718     1
+ 6 1     ctl   EfficientNetB0 100   736721     1
+ 7 1     ctl   EfficientNetB0 100   736727     1
+ 8 1     ctl   EfficientNetB0 100   736728     1
+ 9 1     ctl   EfficientNetB0 100   736729     1
+10 1     ctl   EfficientNetB0 100   736730     1
+# ℹ 52 more rows
+# ℹ Use `print(n = ...)` to see more rows
+# A tibble: 62 × 5
+# Groups:   nodes, type, model, batch, id [62]
+   nodes type  model          batch id
+   <chr> <chr> <chr>          <chr> <chr>
+ 1 1     ctl   EfficientNetB0 100   735831
+ 2 1     ctl   EfficientNetB0 100   735908
+ 3 1     ctl   EfficientNetB0 100   735970
+ 4 1     ctl   EfficientNetB0 100   736028
+ 5 1     ctl   EfficientNetB0 100   736718
+ 6 1     ctl   EfficientNetB0 100   736721
+ 7 1     ctl   EfficientNetB0 100   736727
+ 8 1     ctl   EfficientNetB0 100   736728
+ 9 1     ctl   EfficientNetB0 100   736729
+10 1     ctl   EfficientNetB0 100   736730
+11 1     ctl   EfficientNetB0 100   736731
+12 1     ctl   EfficientNetB0 100   736737
+13 1     ctl   EfficientNetB0 100   736738
+14 1     ctl   EfficientNetB0 100   736739
+15 1     ctl   EfficientNetB0 100   736740
+16 1     ctl   EfficientNetB0 100   736741
+17 1     ctl   EfficientNetB0 100   736747
+18 1     ctl   EfficientNetB0 100   736748
+19 1     ctl   EfficientNetB0 100   736749
+20 1     ctl   EfficientNetB0 100   736751
+21 1     ctl   EfficientNetB0 100   736757
+22 1     ctl   EfficientNetB0 100   736760
+23 1     ctl   EfficientNetB0 100   736767
+24 2     ctl   EfficientNetB0 100   735857
+25 2     ctl   EfficientNetB0 100   735864
+26 2     ctl   EfficientNetB0 100   735916
+27 2     ctl   EfficientNetB0 100   735969
+28 2     ctl   EfficientNetB0 100   736013
+29 2     ctl   EfficientNetB0 100   736722
+30 2     ctl   EfficientNetB0 100   736723
+31 2     ctl   EfficientNetB0 100   736724
+32 2     ctl   EfficientNetB0 100   736725
+33 2     ctl   EfficientNetB0 100   736726
+34 2     ctl   EfficientNetB0 100   736732
+35 2     ctl   EfficientNetB0 100   736734
+36 2     ctl   EfficientNetB0 100   736735
+37 2     ctl   EfficientNetB0 100   736736
+38 2     ctl   EfficientNetB0 100   736742
+39 2     ctl   EfficientNetB0 100   736743
+40 2     ctl   EfficientNetB0 100   736745
+41 2     ctl   EfficientNetB0 100   736746
+42 2     ctl   EfficientNetB0 100   736752
+43 2     ctl   EfficientNetB0 100   736753
+44 2     ctl   EfficientNetB0 100   736754
+45 2     ctl   EfficientNetB0 100   736755
+46 2     ctl   EfficientNetB0 100   736762
+47 2     ctl   EfficientNetB0 100   736763
+48 2     ctl   EfficientNetB0 100   736764
+49 2     ctl   EfficientNetB0 100   736766
+50 3     ctl   EfficientNetB0 100   735847
+51 3     ctl   EfficientNetB0 100   735865
+52 1     ctl   EfficientNetB0 100   735920
+53 1     ctl   EfficientNetB0 100   736719
+54 1     ctl   EfficientNetB0 100   736720
+55 1     ctl   EfficientNetB0 100   736750
+56 1     ctl   EfficientNetB0 100   736761
+57 2     ctl   EfficientNetB0 100   736733
+58 2     ctl   EfficientNetB0 100   736744
+59 1     ctl   EfficientNetB0 100   736758
+60 1     ctl   EfficientNetB0 100   736759
+61 2     ctl   EfficientNetB0 100   736756
+62 2     ctl   EfficientNetB0 100   736765
+#+end_example
+
+*** Remove runs with error
+#+begin_src R :results output :session *R* :exports both
+df.clean <- df |> filter(!is.na(epoca)) |>
+  group_by(nodes, type, model, batch, id) |>
+  filter(n() == 5) |>
+  ungroup()
+
+
+df.clean
+#+end_src
+
+#+RESULTS:
+#+begin_example
+# A tibble: 760 × 7
+   id     model          batch type  nodes epoca tempo
+   <chr>  <chr>          <chr> <chr> <chr> <chr> <chr>
+ 1 735858 EfficientNetB0 32    ctl   1     0     333.319829463959
+ 2 735858 EfficientNetB0 32    ctl   1     1     312.819135427475
+ 3 735858 EfficientNetB0 32    ctl   1     2     319.11979341507
+ 4 735858 EfficientNetB0 32    ctl   1     3     319.29111123085
+ 5 735858 EfficientNetB0 32    ctl   1     4     314.691659450531
+ 6 735895 EfficientNetB0 32    ctl   1     0     326.055331468582
+ 7 735895 EfficientNetB0 32    ctl   1     1     312.437191724777
+ 8 735895 EfficientNetB0 32    ctl   1     2     312.249012231827
+ 9 735895 EfficientNetB0 32    ctl   1     3     313.085581064224
+10 735895 EfficientNetB0 32    ctl   1     4     312.25504565239
+# ℹ 750 more rows
+# ℹ Use `print(n = ...)` to see more rows
+#+end_example
+
+*** Graphs style
+#+begin_src R :results output :session *R* :exports both
+
 meu_estilo <- function() {
-    list(
-        theme_bw(base_size = 22),
-        theme(
-            legend.title = element_blank(),
-            plot.margin = unit(c(0, 0, 0, 0), "cm"),
-            legend.spacing = unit(1, "mm"),
-            legend.position = "right",
-            legend.justification = "left",
-            legend.box.spacing = unit(0, "pt"),
-            legend.box.margin = margin(0, 0, 0, 0),
-            axis.text.x = element_text(angle=45, vjust=1, hjust=1)
-        ))
+  list(
+    theme_bw(base_size = 20),
+    theme(
+      legend.title = element_blank(),
+      plot.margin = unit(c(0, 0, 0, 0), "cm"),
+      legend.spacing = unit(1, "mm"),
+      legend.position = "top",
+      legend.justification = "left",
+      legend.box.spacing = unit(0, "pt"),
+      legend.box.margin = margin(0, 0, 0, 0),
+      axis.text.x = element_text(angle=45, vjust=1, hjust=1)
+    ))
 }
 #+end_src
 
 #+RESULTS:
 
-** Load Data                                                      :noexport:
-#+begin_src R :results output :session *R* :exports both
-options(crayon.enabled=FALSE)
-suppressMessages(library(fs))
-suppressMessages(library(tidyverse))
-BASE <- "data/"
-tibble(CSV = dir_ls(BASE, regexp = "csv$", recurse=TRUE)) |>
-    mutate(DATA = map(CSV, read_csv, show_col_types=FALSE, progress=FALSE)) |>
-    filter(!grepl("rastro", CSV)) |>
-    separate(CSV, into=paste0("XX", 1:2), sep="/") |>
-    separate(XX2, into=paste0("YY", 1:2), sep="-") |>
-    select(host = YY1, app = YY2, DATA) |>
-    mutate(app = gsub("\\.csv", "", app)) |>
-    unnest(DATA) |>
-    group_by(host, app, type, problemsize, subproblemsize, threads, tasks) -> df
 
-
-df |>
-    summarize(comp.mean = mean(comptime),
-              comp.sd = sd(comptime),
-              comp.se = 3*comp.sd/sqrt(n()),
-              app.mean = mean(apptime),
-              app.sd = sd(apptime),
-              app.se = 3*app.sd/sqrt(n()),
-              .groups="keep") -> df.stats
-
-df.stats |>
-    ## Let's disregard application time.
-    select(-contains("app.")) -> df.stats.base
-df.stats.base |>
-    ## Select the "empty" as the reference
-    filter(type == "empty") |>
-    ungroup(type) |> select(-type) |>
-    rename_with(~ paste0("empty.", .), comp.mean:comp.se) -> df.stats.empty
-
-df.stats.base |>
-    ## Remove the "empty", our reference
-    filter(type != "empty") |>
-    ## Associate with the reference
-    ungroup(type, tasks) |>
-    left_join(df.stats.empty, by = join_by(host, app, problemsize, subproblemsize, threads)) |>
-    ## Compute distances (the overhead)
-    mutate(diff.mean = comp.mean - empty.comp.mean,
-           diff.se = sqrt(comp.se^2 + empty.comp.se^2)) -> df.stats.diff
-
-#+end_src
 
 #+RESULTS:
+: Error: object 'data_treino' not found
 
+*** Plot results
 
-#+begin_src R :results output :session *R* :exports both
-df.stats.diff |> names()
-#+end_src
-
-#+RESULTS:
-:  [1] "host"            "app"             "type"            "problemsize"     "subproblemsize"
-:  [6] "threads"         "tasks.x"         "comp.mean"       "comp.sd"         "comp.se"
-: [11] "tasks.y"         "empty.comp.mean" "empty.comp.sd"   "empty.comp.se"   "diff.mean"
-: [16] "diff.se"
-
-** Intrusion overview (QR)
-
-#+begin_src R :results output graphics file :file (org-babel-temp-file "figure" ".pdf") :exports results :width 10 :height 4 :session *R*
-df.stats.diff |>
-  filter(app == "qr") |>
-
-  ungroup(threads, subproblemsize) |>
-  group_by(type, .add=TRUE) |>
-  summarize(diff.mean.super = mean(diff.mean),
-            diff.se.super = sqrt(1/n() * sum(diff.se^2)),
-            .groups="keep") |>
-  print() |>
+Filtering the data for the graphs
+#+begin_src R :results output :session *R* :exports none
+df.clean |> filter(!is.na(epoca)) |> #group_by(model, batch, type, nodes, epoca_) |>
 
   mutate(
-    primeira_categoria = levels(as.factor(type))[1],
-
-    diff.mean.super = if_else(type == "void", diff.mean.super, NA_real_),
-
-    diff.se.super = if_else(type == "void",
-                            diff.se.super,
-                            NA_real_)
+    # 'epoca' must be numeric for plotting
+    epoca = as.numeric(epoca),
+    # 'tempo' must be numeric for plotting
+    tempo = as.numeric(tempo),
+    # Create a unique identifier for each configuration/run (e.g., combining ID and Configs)
+    # Replace 'config_column_1' and 'config_column_2' with your actual column names.
+    config_run = paste(model, batch, type, nodes, sep = "_")
   ) |>
+  group_by(id) |>
+  mutate(tempo_treino = sum(tempo)) |>
+  ungroup() -> data_plot
 
-  ggplot(aes(
-    fill = host,
-    x = type, y = diff.mean.super,
-    ymin = diff.mean.super - diff.se.super,
-    ymax = diff.mean.super + diff.se.super)) +
-  geom_col(position="dodge") +
-  geom_errorbar(width=.8, alpha=.7, position="dodge") +
-  meu_estilo() +
-  facet_wrap(~app) +
-
-  scale_x_discrete(drop = FALSE) +
-  coord_cartesian(ylim=c(-0.015, 0.075)) +
-
-  ##  coord_cartesian(ylim=c(0, 0.15)) +
-  ylab("Intrusion time [seconds]") +
-  xlab("Tracer") +
-  theme(legend.position="top")
+data_plot
 #+end_src
 
 #+RESULTS:
-[[file:/tmp/babel-5rcVgU/figure0b7k8A.png]]
+#+begin_example
+# A tibble: 760 × 9
+   id     model          batch type  nodes epoca tempo config_run              tempo_treino
+   <chr>  <chr>          <chr> <chr> <chr> <dbl> <dbl> <chr>                          <dbl>
+ 1 735858 EfficientNetB0 32    ctl   1         0  333. EfficientNetB0_32_ctl_1        1599.
+ 2 735858 EfficientNetB0 32    ctl   1         1  313. EfficientNetB0_32_ctl_1        1599.
+ 3 735858 EfficientNetB0 32    ctl   1         2  319. EfficientNetB0_32_ctl_1        1599.
+ 4 735858 EfficientNetB0 32    ctl   1         3  319. EfficientNetB0_32_ctl_1        1599.
+ 5 735858 EfficientNetB0 32    ctl   1         4  315. EfficientNetB0_32_ctl_1        1599.
+ 6 735895 EfficientNetB0 32    ctl   1         0  326. EfficientNetB0_32_ctl_1        1576.
+ 7 735895 EfficientNetB0 32    ctl   1         1  312. EfficientNetB0_32_ctl_1        1576.
+ 8 735895 EfficientNetB0 32    ctl   1         2  312. EfficientNetB0_32_ctl_1        1576.
+ 9 735895 EfficientNetB0 32    ctl   1         3  313. EfficientNetB0_32_ctl_1        1576.
+10 735895 EfficientNetB0 32    ctl   1         4  312. EfficientNetB0_32_ctl_1        1576.
+# ℹ 750 more rows
+# ℹ Use `print(n = ...)` to see more rows
+#+end_example
 
-** Intrusion overview (QR)
+da criação de um modelo linear
 
-#+begin_src R :results output graphics file :file (org-babel-temp-file "figure" ".pdf") :exports results :width 10 :height 4 :session *R*
-df.stats.diff |>
-  filter(app == "qr") |>
 
-  ungroup(threads, subproblemsize) |>
-  group_by(type, .add=TRUE) |>
-  summarize(diff.mean.super = mean(diff.mean),
-            diff.se.super = sqrt(1/n() * sum(diff.se^2)),
-            .groups="keep") |>
-  print() |>
+** Resultados por batch
+#+begin_src R :results output file graphics  :file (org-babel-temp-file "figure" ".pdf") :exports results :width 8 :height 4 :session *R*
 
+data_plot |> #filter(grepl("*50*", model)) |>
+  group_by(id, type, model, batch) |>
   mutate(
-    primeira_categoria = levels(as.factor(type))[1],
-
-    diff.mean.super = if_else(type == "void" | type == "printf", diff.mean.super, NA_real_),
-
-    diff.se.super = if_else(type == "void" | type == "printf",
-                            diff.se.super,
-                            NA_real_)
+    tempo_treino = sum(tempo, na.rm = TRUE) / 60,
   ) |>
+  ungroup() |>
+  mutate(batch = as.integer(batch)) -> data_treino
 
-  ggplot(aes(
-    fill = host,
-    x = type, y = diff.mean.super,
-    ymin = diff.mean.super - diff.se.super,
-    ymax = diff.mean.super + diff.se.super)) +
-  geom_col(position="dodge") +
-  geom_errorbar(width=.8, alpha=.7, position="dodge") +
-  meu_estilo() +
-  facet_wrap(~app) +
+data_treino |> group_by(id, type, model, batch) |>
+  summarize(
+    tempo_treino = sum(tempo)/60
+  ) |> ungroup() -> data_points
 
-  scale_x_discrete(drop = FALSE) +
-  coord_cartesian(ylim=c(-0.015, 0.075)) +
 
-  ##  coord_cartesian(ylim=c(0, 0.15)) +
-  ylab("Intrusion time [seconds]") +
-  xlab("Tracer") +
-  theme(legend.position="top")
-#+end_src
-
-#+RESULTS:
-[[file:/tmp/babel-5rcVgU/figure0b7k8A.png]]
-
-** Intrusion overview (QR)
-
-#+begin_src R :results output graphics file :file (org-babel-temp-file "figure" ".pdf") :exports results :width 10 :height 4 :session *R*
-df.stats.diff |>
-  filter(app == "qr") |>
-
-  ungroup(threads, subproblemsize) |>
-  group_by(type, .add=TRUE) |>
-  summarize(diff.mean.super = mean(diff.mean),
-            diff.se.super = sqrt(1/n() * sum(diff.se^2)),
-            .groups="keep") |>
-  print() |>
-
+data_treino |>
+  group_by(type, model, batch) |>
+  summarize(
+    N = n(),
+    mean_treino = mean(tempo_treino, na.rm = TRUE),
+    sd_treino = sd(tempo_treino),
+    se_treino = 3 * sd(tempo_treino) / sqrt(N),
+  ) |>
+  ungroup() |>
   mutate(
-    primeira_categoria = levels(as.factor(type))[1],
+    lower_bound = mean_treino - se_treino,
+    upper_bound = mean_treino + se_treino
+  ) -> data_treino.plot
 
-    diff.mean.super = if_else(type == "void" | type == "printf" | type == "oot", diff.mean.super, NA_real_),
+data_treino.plot |>
+  ggplot(aes(x = as.factor(batch), y = mean_treino,
+             color=model,
+             fill=model)) +
 
-    diff.se.super = if_else(type == "void" | type == "printf"  | type == "oot",
-                            diff.se.super,
-                            NA_real_)
+
+  ## geom_line(aes(y = mean_treino, group = model), # <--- Mapeie a linha para a média
+  ##         linewidth = 0.3
+  ##       , alpha = 1) +
+
+  geom_col(  # Set the transparency (alpha) to 0.3 for a faint look
+    position = position_dodge(width = 0.9)
+  ) +
+
+
+  geom_jitter(
+    data = data_points,
+    aes(x = as.factor(batch), y = tempo_treino), # Mapeamento X/Y do dado bruto
+    # Adicione color=model NO AES() para que o dodge funcione
+    # Você já tem fill=model e color=model no mapeamento global.
+    # Se você quiser uma cor neutra para os pontos:
+    color = "gray30", # Cor fixa fora do aes()
+    alpha = 0.3,
+    size = 1.5,
+    # Use a mesma posição de desvio EXATA
+    position = position_jitterdodge(dodge.width = 0.9,
+        jitter.width = 0.35)
+  ) +
+  ## geom_line(linewidth = 1, alpha = 0) +
+
+
+  geom_errorbar(aes( ymin = lower_bound, ymax = upper_bound),
+                width=.8, alpha=.7,
+                position = position_dodge(width = 0.9),
+                color="black") +
+
+  facet_grid( ~ type) +
+  labs(
+    y = "Training Time [Minutes]",
+    x = "Batch Size"
+  ) +
+  scale_fill_manual(values = c("firebrick2", "#2D72AD")) +
+  scale_color_manual(values = c("firebrick2", "#2D72AD")) +
+
+  meu_estilo()
+#+end_src
+
+#+RESULTS:
+[[file:/tmp/babel-IGtNc7/figureAM27lO.pdf]]
+
+
+** Resultados por número de nodos
+#+begin_src R :results output file graphics  :file (org-babel-temp-file "figure" ".pdf") :exports results :width 8 :height 4 :session *R*
+
+data_plot |> #filter(grepl("*50*", model)) |>
+  group_by(id, type, model, nodes) |>
+  mutate(
+    tempo_treino = sum(tempo, na.rm = TRUE) / 60,
   ) |>
+  ungroup() |>
+  mutate(batch = as.integer(batch)) -> data_treino
 
-  ggplot(aes(
-    fill = host,
-    x = type, y = diff.mean.super,
-    ymin = diff.mean.super - diff.se.super,
-    ymax = diff.mean.super + diff.se.super)) +
-  geom_col(position="dodge") +
-  geom_errorbar(width=.8, alpha=.7, position="dodge") +
-  meu_estilo() +
-  facet_wrap(~app) +
+data_treino |> group_by(id, type, model, nodes) |>
+  summarize(
+    tempo_treino = sum(tempo)/60
+  ) |> ungroup() -> data_points
 
-  scale_x_discrete(drop = FALSE) +
-  coord_cartesian(ylim=c(-0.015, 0.075)) +
 
-  ##  coord_cartesian(ylim=c(0, 0.15)) +
-  ylab("Intrusion time [seconds]") +
-  xlab("Tracer") +
-  theme(legend.position="top")
+data_treino |>
+  group_by(type, model, nodes) |>
+  summarize(
+    N = n(),
+    mean_treino = mean(tempo_treino, na.rm = TRUE),
+    sd_treino = sd(tempo_treino),
+    se_treino = 3 * sd(tempo_treino) / sqrt(N),
+  ) |>
+  ungroup() |>
+  mutate(
+    lower_bound = mean_treino - se_treino,
+    upper_bound = mean_treino + se_treino
+  ) -> data_treino.plot
+
+data_treino.plot |>
+  ggplot(aes(x = as.factor(nodes), y = mean_treino,
+             color=model,
+             fill=model)) +
+
+
+  ## geom_line(aes(y = mean_treino, group = model), # <--- Mapeie a linha para a média
+  ##         linewidth = 0.3
+  ##       , alpha = 1) +
+
+  geom_col(  # Set the transparency (alpha) to 0.3 for a faint look
+    position = position_dodge(width = 0.9)
+  ) +
+
+
+  geom_jitter(
+    data = data_points,
+    aes(x = as.factor(nodes), y = tempo_treino), # Mapeamento X/Y do dado bruto
+    # Adicione color=model NO AES() para que o dodge funcione
+    # Você já tem fill=model e color=model no mapeamento global.
+    # Se você quiser uma cor neutra para os pontos:
+    color = "gray30", # Cor fixa fora do aes()
+    alpha = 0.3,
+    size = 1.5,
+    # Use a mesma posição de desvio EXATA
+    position = position_jitterdodge(dodge.width = 0.9,
+        jitter.width = 0.35)
+  ) +
+  ## geom_line(linewidth = 1, alpha = 0) +
+
+
+  geom_errorbar(aes( ymin = lower_bound, ymax = upper_bound),
+                width=.8, alpha=.7,
+                position = position_dodge(width = 0.9),
+                color="black") +
+
+  facet_grid( ~ type) +
+  labs(
+    y = "Training Time [Minutes]",
+    x = "Nodes"
+  ) +
+  scale_fill_manual(values = c("firebrick2", "#2D72AD")) +
+  scale_color_manual(values = c("firebrick2", "#2D72AD")) +
+
+  meu_estilo()
+#+end_src
+
+
+
+** Aglomerado final dos dados
+#+begin_src R :results output file graphics  :file (org-babel-temp-file "figure" ".pdf") :exports results :width 8 :height 4 :session *R*
+
+data_plot |> #filter(grepl("*B0*", model)) |>
+  group_by(id, type, model, batch, nodes) |>
+  mutate(
+    tempo_treino = sum(tempo, na.rm = TRUE) / 60,
+    tempo_treino_sec = sum(tempo, na.rm = TRUE)
+  ) |>
+  ungroup() |>
+  mutate(batch = as.integer(batch)) -> data_treino
+
+data_treino |> group_by(id, type, model, batch, nodes) |>
+  summarize(
+    tempo_treino = sum(tempo)/60
+  ) |> ungroup() -> data_points
+
+
+data_treino |>
+  group_by(type, model, batch, nodes) |>
+  summarize(
+    N = n(),
+    mean_treino_sec = mean(tempo_treino_sec, na.rm = TRUE),
+    mean_treino = mean(tempo_treino, na.rm = TRUE),
+    sd_treino = sd(tempo_treino),
+    se_treino = 3 * sd(tempo_treino) / sqrt(N),
+  ) |>
+  ungroup() |>
+  mutate(
+    lower_bound = mean_treino - se_treino,
+    upper_bound = mean_treino + se_treino
+  ) -> data_treino.plot
+
+data_treino.plot |>
+  ggplot(aes(x = as.factor(nodes), y = mean_treino,
+             color=model,
+             fill=model)) +
+
+
+  ## geom_line(aes(y = mean_treino, group = model), # <--- Mapeie a linha para a média
+  ##         linewidth = 0.3
+  ##       , alpha = 1) +
+
+  geom_col(  # Set the transparency (alpha) to 0.3 for a faint look
+    position = position_dodge(width = 0.9)
+  ) +
+
+
+  geom_jitter(
+    data = data_points,
+    aes(x = as.factor(nodes), y = tempo_treino), # Mapeamento X/Y do dado bruto
+    # Adicione color=model NO AES() para que o dodge funcione
+    # Você já tem fill=model e color=model no mapeamento global.
+    # Se você quiser uma cor neutra para os pontos:
+    color = "gray30", # Cor fixa fora do aes()
+    alpha = 0.3,
+    size = 1.5,
+    # Use a mesma posição de desvio EXATA
+    position = position_jitterdodge(dodge.width = 0.9,
+        jitter.width = 0.35)
+  ) +
+  ## geom_line(linewidth = 1, alpha = 0) +
+
+
+  geom_errorbar(aes( ymin = lower_bound, ymax = upper_bound),
+                width=.8, alpha=.7,
+                position = position_dodge(width = 0.9),
+                color="black") +
+
+  facet_grid(batch ~ type) +
+  labs(
+    y = "Training Time [Minutes]",
+    x = "Nodes"
+  ) +
+  scale_fill_manual(values = c("firebrick2", "#2D72AD")) +
+  scale_color_manual(values = c("firebrick2", "#2D72AD")) +
+
+  meu_estilo()
 #+end_src
 
 #+RESULTS:
-[[file:/tmp/babel-5rcVgU/figure0b7k8A.png]]
+[[file:/tmp/babel-IGtNc7/figure2Z9Fjr.pdf]]
 
 
+* Modelo Linear
+
+#+begin_src R :results output :session *R* :exports none
+data_treino |> group_by(id, batch, type, nodes, model) |>
+  summarise(tempo_treino = sum(tempo)) |>
+  mutate(nodes = as.integer(nodes)) |>
+  mutate(batch = as.numeric(batch)) |>
+#  filter(grepl("*50*", model)) |>
+#  filter(type == "sync") |>
+  filter(nodes >= 2)-> data.fit
 
 
-** Intrusion overview (QR)
-#+begin_src R :results output graphics file :file (org-babel-temp-file "figure" ".pdf") :exports results :width 10 :height 4 :session *R*
-df.stats.diff |>
-  filter(app == "qr") |>
-
-  ungroup(threads, subproblemsize) |>
-  group_by(type, .add=TRUE) |>
-  summarize(diff.mean.super = mean(diff.mean),
-            diff.se.super = sqrt(1/n() * sum(diff.se^2)),
-            .groups="keep") |>
-  print() |>
-
-  ggplot(aes(
-    fill = host,
-    x = type, y = diff.mean.super,
-    ymin = diff.mean.super - diff.se.super,
-    ymax = diff.mean.super + diff.se.super)) +
-  geom_col(position="dodge") +
-  geom_errorbar(width=.8, alpha=.7, position="dodge") +
-  meu_estilo() +
-  facet_wrap(~app) +
-
-  scale_x_discrete(drop = FALSE) +
-  coord_cartesian(ylim=c(-0.015, 0.075)) +
-  ##  coord_cartesian(ylim=c(0, 0.15)) +
-  ylab("Intrusion time [seconds]") +
-  xlab("Tracer") +
-  theme(legend.position="top")
+data.fit
 #+end_src
 
 #+RESULTS:
-[[file:/tmp/babel-5rcVgU/figureoBuXQe.png]]
+#+begin_example
+`summarise()` has grouped output by 'id', 'batch', 'type', 'nodes'. You can override using the `.groups`
+argument.
+# A tibble: 97 × 6
+# Groups:   id, batch, type, nodes [97]
+   id     batch type  nodes model          tempo_treino
+   <chr>  <dbl> <chr> <int> <chr>                 <dbl>
+ 1 735816    32 sync      3 EfficientNetB0        2123.
+ 2 735817   100 sync      3 EfficientNetB0        1094.
+ 3 735818    32 ctl       2 EfficientNetB0        1396.
+ 4 735820    64 sync      2 EfficientNetB0        1764.
+ 5 735822    32 sync      3 ResNet50              7935.
+ 6 735825   100 sync      3 ResNet50              2960.
+ 7 735827    64 ctl       3 ResNet50              1828.
+ 8 735830   100 sync      2 EfficientNetB0        1467.
+ 9 735837    32 ctl       2 ResNet50              3686.
+10 735839    64 ctl       3 EfficientNetB0         827.
+# ℹ 87 more rows
+# ℹ Use `print(n = ...)` to see more rows
+#+end_example
 
-** Intrusion overview (QR)
-#+begin_src R :results output graphics file :file (org-babel-temp-file "figure" ".pdf") :exports results :width 10 :height 5 :session *R*
-df.stats.diff |>
-  filter(app == "qr") |>
+** Nosso modelo linear
 
-  ungroup(threads) |>
-  group_by(type, .add=TRUE) |>
-  summarize(diff.mean.super = mean(diff.mean),
-            diff.se.super = sqrt(1/n() * sum(diff.se^2)),
-            .groups="keep") |>
-  print() |>
+#+begin_src R :results output file graphics :file (org-babel-temp-file "figure" ".pdf") :exports results :width 8 :height 4 :session *R*
+library(ggplot2)
+library(dplyr)
+library(tidyr)
 
-  ggplot(aes(
-    fill = host,
-    x = type, y = diff.mean.super,
-    ymin = diff.mean.super - diff.se.super,
-    ymax = diff.mean.super + diff.se.super)) +
-  geom_col(position="dodge", width=.5) +
-  geom_errorbar(width=.4, alpha=.7, position="dodge") +
-  meu_estilo() +
-  facet_wrap(~subproblemsize) +
+grid_predicao <- expand.grid(
+  batch = seq(from = 32, to = 100, length.out = 100),
+  nodes = unique(data.fit$nodes),
+  model = unique(data.fit$model),
+  type  = unique(data.fit$type)
+)
 
-  scale_x_discrete(drop = FALSE) +
-  coord_cartesian(ylim=c(-0.015, 0.075)) +
-  ##  coord_cartesian(ylim=c(0, 0.15)) +
-  ylab("Intrusion time [seconds]") +
-  xlab("Tracer") +
-  theme(legend.position="top")
+grid_predicao$tempo_predito <- NA
+
+combinacoes <- data.fit |> distinct(model, type)
+
+for(i in 1:nrow(combinacoes)) {
+
+  m_atual <- combinacoes$model[i]
+  t_atual <- combinacoes$type[i]
+
+  dados_grupo <- data.fit |> filter(model == m_atual, type == t_atual)
+
+  if(nrow(dados_grupo) < 3) next
+
+  # Modelo linear baseado on tamanho do batch
+  modelo <- lm(tempo_treino ~ batch + as.factor(nodes), data = dados_grupo)
+
+  idx_grid <- grid_predicao$model == m_atual & grid_predicao$type == t_atual
+
+  grid_predicao$tempo_predito[idx_grid] <- predict(modelo, newdata = grid_predicao[idx_grid, ])
+}
+
+grid_predicao <- grid_predicao |> filter(!is.na(tempo_predito))
+
+ggplot() +
+  geom_point(data = data.fit, aes(x = batch, y = tempo_treino, color = as.factor(nodes)), alpha = 0.6) +
+
+  geom_line(data = grid_predicao, aes(x = batch, y = tempo_predito, color = as.factor(nodes)), size = 1) +
+
+  facet_grid(type ~ model) +
+
+  labs(
+    x = "Batch Size",
+    y = "Training Time [Seconds]",
+    color = "Nodos"
+  ) +
+
+  scale_fill_manual(values = c("firebrick2", "#2D72AD")) +
+  scale_color_manual(values = c("firebrick2", "#2D72AD")) +
+  meu_estilo()
 #+end_src
 
 #+RESULTS:
-[[file:/tmp/babel-s1Y10N/figureKvtOuw.pdf]]
+[[file:/tmp/babel-IGtNc7/figurerQlCyN.png]]
 
-** COMMENT Intrusão Geral
-#+begin_src R :results output graphics file :file (org-babel-temp-file "figure" ".pdf") :exports results :width 10 :height 4 :session *R*
-df.stats.diff |> #filter(app=="gauss") |>
-    ungroup(threads, subproblemsize) |>
-    group_by(type, .add=TRUE) |>
-    summarize(diff.mean.super = mean(diff.mean),
-              diff.se.super = sqrt(1/n() * sum(diff.se^2)),
-              .groups="keep") |>
-    print() |>
-    ggplot(aes(
-        fill = host,
-        x = type, y = diff.mean.super,
-        ymin = diff.mean.super - diff.se.super,
-        ymax = diff.mean.super + diff.se.super)) +
-    geom_col(position="dodge") +
-    geom_errorbar(width=.8, alpha=.7, position="dodge") +
-    meu_estilo() +
-    facet_wrap(~app) +
-    ##  coord_cartesian(ylim=c(0, 0.15)) +
-    ylab("Intrusion time [seconds]") +
-    xlab("Tracer") +
-    theme(legend.position="top")
+** Nosso modelo quadrático
+
+#+begin_src R :results output file graphics :file (org-babel-temp-file "figure" ".pdf") :exports results :width 8 :height 4 :session *R*
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+
+grid_predicao <- expand.grid(
+  batch = seq(from = 32, to = 100, length.out = 100),
+  nodes = unique(data.fit$nodes),
+  model = unique(data.fit$model),
+  type  = unique(data.fit$type)
+)
+
+grid_predicao$tempo_predito <- NA
+
+combinacoes <- data.fit |> distinct(model, type)
+
+for(i in 1:nrow(combinacoes)) {
+
+  m_atual <- combinacoes$model[i]
+  t_atual <- combinacoes$type[i]
+
+  dados_grupo <- data.fit |> filter(model == m_atual, type == t_atual)
+
+  if(nrow(dados_grupo) < 3) next
+
+  # Modelo quadratico baseado on tamanho do batch
+  modelo <- lm(tempo_treino ~ batch + as.factor(nodes) + I(batch^2), data = dados_grupo)
+
+  idx_grid <- grid_predicao$model == m_atual & grid_predicao$type == t_atual
+
+  grid_predicao$tempo_predito[idx_grid] <- predict(modelo, newdata = grid_predicao[idx_grid, ])
+}
+
+grid_predicao <- grid_predicao |> filter(!is.na(tempo_predito))
+
+ggplot() +
+  geom_point(data = data.fit, aes(x = batch, y = tempo_treino, color = as.factor(nodes)), alpha = 0.6) +
+
+  geom_line(data = grid_predicao, aes(x = batch, y = tempo_predito, color = as.factor(nodes)), size = 1) +
+
+  facet_grid(type ~ model) +
+
+  labs(
+    x = "Batch Size",
+    y = "Training Time [Seconds]",
+    color = "Nodos"
+  ) +
+
+  scale_fill_manual(values = c("firebrick2", "#2D72AD")) +
+  scale_color_manual(values = c("firebrick2", "#2D72AD")) +
+  meu_estilo()
 #+end_src
 
 #+RESULTS:
-[[file:/tmp/babel-5rcVgU/figureF2xzjv.png]]
+[[file:/tmp/babel-IGtNc7/figurerQlCyN.png]]
 
 
-** Scalability: Void
-#+begin_src R :results output graphics file :file (org-babel-temp-file "figure" ".pdf") :exports results :width 10 :height 4 :session *R*
-df.stats.diff |>
-    filter(app == "qr" & type == "void") |>
-    ggplot(aes(
-        color = host,
-        x = threads, y = diff.mean,
-        ymin = diff.mean - diff.se,
-        ymax = diff.mean + diff.se)) +
-    geom_point(position="dodge") +
-    geom_errorbar(width=.8, alpha=.7, position="dodge") +
-    meu_estilo() +
-    facet_grid(.~subproblemsize) +
-    coord_cartesian(ylim=c(0, 0.15)) +
-    xlab("Number of threads [count]") +
-    ylab("Intrusion time [seconds]") +
-    theme(legend.position="top")
-#+end_src
+* Conclusão
+** Conclusão
 
-#+RESULTS:
-[[file:/tmp/babel-s0Dg8C/figureSUgVHD.pdf]]
+- O tamanho do modelo assim como a rede é um fator crítico para o
+  treino distribuído síncrono.
+\vfill
+- Mesmo com uma rede de baixo throughput é possível obter ganhos
+  através de uma boa configuração do ambiente e do modelo.
 
-** Scalability: Printf
-#+begin_src R :results output graphics file :file (org-babel-temp-file "figure" ".pdf") :exports results :width 10 :height 4 :session *R*
-df.stats.diff |>
-    filter(app == "qr" & type == "printf") |>
-    ggplot(aes(
-        color = host,
-        x = threads, y = diff.mean,
-        ymin = diff.mean - diff.se,
-        ymax = diff.mean + diff.se)) +
-    geom_point(position="dodge") +
-    geom_errorbar(width=.8, alpha=.7, position="dodge") +
-    meu_estilo() +
-    facet_grid(.~subproblemsize) +
-    coord_cartesian(ylim=c(0, 0.15)) +
-    xlab("Number of threads [count]") +
-    ylab("Intrusion time [seconds]") +
-    theme(legend.position="top")
-#+end_src
+** Trabalhos futuros
 
-#+RESULTS:
-[[file:/tmp/babel-s0Dg8C/figureSUgVHD.pdf]]
-
-** Scalability: OOT
-#+begin_src R :results output graphics file :file (org-babel-temp-file "figure" ".pdf") :exports results :width 10 :height 4 :session *R*
-df.stats.diff |>
-    filter(app == "qr" & type == "oot") |>
-    ggplot(aes(
-        color = host,
-        x = threads, y = diff.mean,
-        ymin = diff.mean - diff.se,
-        ymax = diff.mean + diff.se)) +
-    geom_point(position="dodge") +
-    geom_errorbar(width=.8, alpha=.7, position="dodge") +
-    meu_estilo() +
-    facet_grid(.~subproblemsize) +
-    coord_cartesian(ylim=c(0, 0.15)) +
-    xlab("Number of threads [count]") +
-    ylab("Intrusion time [seconds]") +
-    theme(legend.position="top")
-#+end_src
-
-#+RESULTS:
-[[file:/tmp/babel-s0Dg8C/figureSUgVHD.pdf]]
-
-** Scalability: Score-P
-#+begin_src R :results output graphics file :file (org-babel-temp-file "figure" ".pdf") :exports results :width 10 :height 4 :session *R*
-df.stats.diff |>
-    filter(app == "qr" & type == "scorep") |>
-    ggplot(aes(
-        color = host,
-        x = threads, y = diff.mean,
-        ymin = diff.mean - diff.se,
-        ymax = diff.mean + diff.se)) +
-    geom_point(position="dodge") +
-    geom_errorbar(width=.8, alpha=.7, position="dodge") +
-    meu_estilo() +
-    facet_grid(.~subproblemsize) +
-    coord_cartesian(ylim=c(0, 0.15)) +
-    xlab("Number of threads [count]") +
-    ylab("Intrusion time [seconds]") +
-    theme(legend.position="top")
-#+end_src
-
-#+RESULTS:
-[[file:/tmp/babel-s0Dg8C/figureSUgVHD.pdf]]
-
-** Scalability: TiKKi
-#+begin_src R :results output graphics file :file (org-babel-temp-file "figure" ".pdf") :exports results :width 10 :height 4 :session *R*
-df.stats.diff |>
-    filter(app == "qr" & type == "tikki") |>
-    ggplot(aes(
-        color = host,
-        x = threads, y = diff.mean,
-        ymin = diff.mean - diff.se,
-        ymax = diff.mean + diff.se)) +
-    geom_point(position="dodge") +
-    geom_errorbar(width=.8, alpha=.7, position="dodge") +
-    meu_estilo() +
-    facet_grid(.~subproblemsize) +
-    coord_cartesian(ylim=c(0, 0.15)) +
-    xlab("Number of threads [count]") +
-    ylab("Intrusion time [seconds]") +
-    theme(legend.position="top")
-#+end_src
-
-#+RESULTS:
-[[file:/tmp/babel-s0Dg8C/figureSUgVHD.pdf]]
-
-** Scalability: Extrae
-#+begin_src R :results output graphics file :file (org-babel-temp-file "figure" ".pdf") :exports results :width 10 :height 4 :session *R*
-df.stats.diff |>
-    filter(app == "qr" & type == "extrae") |>
-    ggplot(aes(
-        color = host,
-        x = threads, y = diff.mean,
-        ymin = diff.mean - diff.se,
-        ymax = diff.mean + diff.se)) +
-    geom_point(position="dodge") +
-    geom_errorbar(width=.8, alpha=.7, position="dodge") +
-    meu_estilo() +
-    facet_grid(.~subproblemsize) +
-    coord_cartesian(ylim=c(0, 0.15)) +
-    xlab("Number of threads [count]") +
-    ylab("Intrusion time [seconds]") +
-    theme(legend.position="top")
-#+end_src
-
-#+RESULTS:
-[[file:/tmp/babel-s0Dg8C/figureSUgVHD.pdf]]
-
-
-* Conclusion
-** Conclusions
-
-- The OMPT interface has a low intrusion by itself *(Void)*.
-#+latex: \pause
-- The choose of the tracer tool can impact the performance.
-#+latex: \pause
-- Tracing tool choice is crucial depending on the expected result.
-
+Prever o overhead de comunicação baseado no tamanho do modelo e das
+condições da rede.
 
 ** @@duvidas:@@
    :PROPERTIES:
@@ -751,12 +941,12 @@ df.stats.diff |>
     :BEAMER_col: 0.6
     :END:
 
-**** \Huge *Questions?*
+**** \Huge *Perguntas?*
 \vspace{40px}
-Contact: rayan.raddatz@inf.ufrgs.br
+# Contact: rayan.raddatz@inf.ufrgs.br
 
-\includegraphics[width=0.05\paperwidth]{./imgs/fundo_amanha.jpeg}
-\includegraphics[width=0.1\paperwidth]{~/logos/CNPq.jpg}
+# \includegraphics[width=0.05\paperwidth]{./imgs/fundo_amanha.jpeg}
+# \includegraphics[width=0.1\paperwidth]{~/logos/CNPq.jpg}
 \includegraphics[width=0.1\paperwidth]{~/logos/UFRGS.png}
 \includegraphics[width=0.1\paperwidth]{~/logos/INF.png}
 
@@ -767,4 +957,4 @@ Contact: rayan.raddatz@inf.ufrgs.br
     :BEAMER_col: 0.4
     :END:
 
-    \includegraphics[width=0.3\paperwidth]{./imgs/companion.pdf}
+    \includegraphics[width=0.3\paperwidth]{./imgs/perf-lab.png}
