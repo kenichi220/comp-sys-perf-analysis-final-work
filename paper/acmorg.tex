@@ -76,7 +76,7 @@ The growing complexity of Deep Learning models makes training on single devices 
 \maketitle
 
 \section{Introduction}
-\label{sec:org3d9f1e9}
+\label{sec:org2f97682}
 
 In the last decade, Deep Learning has established itself as the
 state-of-the-art for solving complex problems, such as computer vision
@@ -112,10 +112,10 @@ software necessary to handle the created datasets. We also include
 instructions to run the experiment and figures.
 
 \section{Background and Experimental Context}
-\label{sec:orgc97fc4b}
+\label{sec:org6868e90}
 \label{sec.context}
 \subsection{Background}
-\label{sec:org2b467d4}
+\label{sec:org477e439}
 \label{sec.background}
 
 TensorFlow is a machine learning system that operates at a large scale
@@ -137,7 +137,7 @@ options: Using the MultiWorkerMirroredStrategy with the model.fit or
 creating a Custom Training Loop by yourself.
 
 \subsection{Experimental Context}
-\label{sec:orgcfa059b}
+\label{sec:orgce4c8b9}
 In High-Performance Computing (HPC) environments, a highly recommended
 practice to access to shared computational resources is to mediate the
 access by workload management systems. In our context Slurm (Simple
@@ -155,10 +155,10 @@ nodes, tasks per node, and execution time limit, enabling the
 automation and reproducibility of computational experiments.
 
 \section{Methods and Materials}
-\label{sec:org0a2a680}
+\label{sec:org88eb420}
 
 \subsection{Software Management and Reproducibility}
-\label{sec:org6d07b52}
+\label{sec:org8928e76}
 
 Reproducibility of computational experiments is a critical challenge
 in computer science. To mitigate software dependency issues, the use
@@ -184,7 +184,7 @@ requirements file (\texttt{reqs.txt}) that enables the reconstruction of the
 execution environment used in the experiments.
 
 \subsection{Hardware and Software Configuration}
-\label{sec:org4558c05}
+\label{sec:org61ed65d}
 
 The experiments were run using TensorFlow 2.15 as newer versions
 showed errors when trying to train using more than one node with the
@@ -196,7 +196,7 @@ Intel(R) Core(TM) i7-14700KF processor at 3.40 GHz with 28 threads and
 accelerator.
 
 \subsection{Custom Training Loop}
-\label{sec:orgcf2257c}
+\label{sec:orgf7727b1}
 
 The expected execution from training with the
 \texttt{MultiWorkerMirroredStrategy} would show a slower training time as we
@@ -214,7 +214,7 @@ lower synchronization overhead. To this work we defined this
 interval of batches as 4 batches.
 
 \subsection{Design of Experiments (DoE)}
-\label{sec:org8b012d0}
+\label{sec:org87b0f02}
 
 We selected two different Deep Learning models to train: \alert{ResNet50}
 \cite{resnet} as a big model with \textasciitilde{}25.6M parameters and
@@ -233,7 +233,7 @@ was the training time (full training time and time per epoch).
 
 
 \section{Results}
-\label{sec:orgc9a97f9}
+\label{sec:org84026f7}
 
 Figure 1 show a full view of our results. The graph presents the mean
 training time in minutes as a function of the number of nodes, faceted
@@ -260,13 +260,13 @@ can overcome the overhead and be better then running it in one machine.
 
 \begin{figure}[!htb]
 \centering
-\includegraphics[width=\linewidth]{/tmp/babel-HcMRav/figureZt2gya.pdf}
-\caption{\label{fig:orgea11a1e}Mean of experimental results.}
+\includegraphics[width=\linewidth]{/tmp/babel-HcMRav/figureMRkR8v.pdf}
+\caption{\label{fig:org945a7f0}Mean of experimental results.}
 \end{figure}
 
 
 \subsection{The impact of node number and batch size}
-\label{sec:org017a0c3}
+\label{sec:org80af79f}
 
 Figure 2 shows the mean training time grouped by node count. This
 enable us to see that in fact the increase of more then two machines
@@ -278,20 +278,20 @@ grows the training time is almost the same despite the node count.
 
 \begin{figure}[!htb]
 \centering
-\includegraphics[width=\linewidth]{/tmp/babel-HcMRav/figure428Wf9.pdf}
-\caption{\label{fig:org73eabd3}Mean of experimental results grouped by node count.}
+\includegraphics[width=\linewidth]{/tmp/babel-HcMRav/figureozVgfy.pdf}
+\caption{\label{fig:org9f81cda}Mean of experimental results grouped by node count.}
 \end{figure}
 
 
 \begin{figure}[!htb]
 \centering
-\includegraphics[width=\linewidth]{/tmp/babel-HcMRav/figureAxpqPq.pdf}
-\caption{\label{fig:org290fbb5}Mean of experimental results grouped by batch size.}
+\includegraphics[width=\linewidth]{/tmp/babel-HcMRav/figurelf9seS.pdf}
+\caption{\label{fig:org6c5647c}Mean of experimental results grouped by batch size.}
 \end{figure}
 
 
 \subsection{Modeling a linear model}
-\label{sec:org9e2d7c3}
+\label{sec:org1e9e318}
 We propose a linear model to extrapolate our results and predict the
 training time. As the training time is almost constant for one node,
 we decided to just create the model based on the parallel executions,
@@ -307,19 +307,19 @@ Figure 3. The second show a linear model
 
 \begin{figure}[!htb]
 \centering
-\includegraphics[width=\linewidth]{/tmp/babel-HcMRav/figureX92uiG.pdf}
-\caption{\label{fig:orgf7617c7}Quadratic model}
+\includegraphics[width=\linewidth]{/tmp/babel-HcMRav/figureUs11uQ.pdf}
+\caption{\label{fig:org5893af5}Quadratic model}
 \end{figure}
 
 
 \begin{figure}[!htb]
 \centering
-\includegraphics[width=\linewidth]{/tmp/babel-HcMRav/figureUKUoMM.pdf}
-\caption{\label{fig:org0eaca98}Linear Model}
+\includegraphics[width=\linewidth]{/tmp/babel-HcMRav/figurek6Z7JN.pdf}
+\caption{\label{fig:orgf1b989a}Linear Model}
 \end{figure}
 
 \section{Conclusion}
-\label{sec:org89b6280}
+\label{sec:org615b2a9}
 
 We could conclude that the network and the model size have a huge
 importance in the distributed training, but that even with a network

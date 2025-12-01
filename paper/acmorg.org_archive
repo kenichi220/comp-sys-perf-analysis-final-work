@@ -1,0 +1,144 @@
+#    -*- mode: org -*-
+
+
+Archived entries from file /home/rayan/graduation/estudos/perf/final/paper/acmorg.org
+
+
+* Load combinations and run ID
+:PROPERTIES:
+:ARCHIVE_TIME: 2025-11-30 Sun 15:40
+:ARCHIVE_FILE: ~/graduation/estudos/perf/final/paper/acmorg.org
+:ARCHIVE_OLPATH: *The Paper*/Results/Loading data
+:ARCHIVE_CATEGORY: acmorg
+:ARCHIVE_ITAGS: noexport ignore
+:END:
+#+begin_src R :results output :session *R* :exports both
+options(crayon.enabled=FALSE)
+suppressMessages(library(fs))
+suppressMessages(library(tidyverse))
+suppressMessages(library(janitor))
+suppressMessages(library(dplyr))
+suppressMessages(library(lubridate))
+
+BASE="data/final/"
+tibble(PATH = dir_ls(BASE, regexp = "out$", recurse=TRUE))  |>
+  ## filter(!str_detect(CSV, ":")) |>
+  ## filter(!str_detect(CSV, "ep")) |>
+  ## mutate(DATA = map(CSV, read_csv, progress=FALSE, show_col_types = FALSE)) |>
+  separate(PATH, into=paste0("XX", 1:3), sep="/") |>
+  separate(XX3, into=paste0("YY", 1:6), sep="_") |>
+  ## mutate(type=XX4) |> #|>
+  mutate(YY6 = gsub("\\.out", "", YY6)) |>
+  ## mutate(machine = gsub("\\-.*", "", machine)) |>
+  ## rowid_to_column("id") |>
+  select(id=YY6, model=YY2, batch=YY4, type=YY3, nodes=YY5) -> configs
+
+configs
+#+end_src
+
+#+RESULTS:
+#+begin_example
+# A tibble: 121 × 5
+   id     model          batch type  nodes
+   <chr>  <chr>          <chr> <chr> <chr>
+ 1 735831 EfficientNetB0 100   ctl   1
+ 2 735908 EfficientNetB0 100   ctl   1
+ 3 735920 EfficientNetB0 100   ctl   1
+ 4 735970 EfficientNetB0 100   ctl   1
+ 5 736028 EfficientNetB0 100   ctl   1
+ 6 735857 EfficientNetB0 100   ctl   2
+ 7 735864 EfficientNetB0 100   ctl   2
+ 8 735916 EfficientNetB0 100   ctl   2
+ 9 735969 EfficientNetB0 100   ctl   2
+10 736013 EfficientNetB0 100   ctl   2
+# ℹ 111 more rows
+# ℹ Use `print(n = ...)` to see more rows
+#+end_example
+
+* Resultados por batch
+:PROPERTIES:
+:ARCHIVE_TIME: 2025-11-30 Sun 22:17
+:ARCHIVE_FILE: ~/graduation/estudos/perf/final/paper/acmorg.org
+:ARCHIVE_OLPATH: *The Paper*/Results
+:ARCHIVE_CATEGORY: acmorg
+:ARCHIVE_ITAGS: ignore
+:END:
+#+begin_src R :results output file graphics  :file (org-babel-temp-file "figure" ".pdf") :exports results :width 8 :height 4 :session *R*
+
+data_plot |> #filter(grepl("*50*", model)) |>
+  group_by(id, type, model, batch) |>
+  mutate(
+    tempo_treino = sum(tempo, na.rm = TRUE) / 60,
+  ) |>
+  ungroup() |>
+  mutate(batch = as.integer(batch)) -> data_treino
+
+data_treino |> group_by(id, type, model, batch) |>
+  summarize(
+    tempo_treino = sum(tempo)/60
+  ) |> ungroup() -> data_points
+
+
+data_treino |>
+  group_by(type, model, batch) |>
+  summarize(
+    N = n(),
+    mean_treino = mean(tempo_treino, na.rm = TRUE),
+    sd_treino = sd(tempo_treino),
+    se_treino = 3 * sd(tempo_treino) / sqrt(N),
+  ) |>
+  ungroup() |>
+  mutate(
+    lower_bound = mean_treino - se_treino,
+    upper_bound = mean_treino + se_treino
+  ) -> data_treino.plot
+
+data_treino.plot |>
+  ggplot(aes(x = as.factor(batch), y = mean_treino,
+             color=model,
+             fill=model)) +
+
+
+  ## geom_line(aes(y = mean_treino, group = model), # <--- Mapeie a linha para a média
+  ##         linewidth = 0.3
+  ##       , alpha = 1) +
+
+  geom_col(  # Set the transparency (alpha) to 0.3 for a faint look
+    position = position_dodge(width = 0.9)
+  ) +
+
+
+  geom_jitter(
+    data = data_points,
+    aes(x = as.factor(batch), y = tempo_treino), # Mapeamento X/Y do dado bruto
+    # Adicione color=model NO AES() para que o dodge funcione
+    # Você já tem fill=model e color=model no mapeamento global.
+    # Se você quiser uma cor neutra para os pontos:
+    color = "gray30", # Cor fixa fora do aes()
+    alpha = 0.3,
+    size = 1.5,
+    # Use a mesma posição de desvio EXATA
+    position = position_jitterdodge(dodge.width = 0.9,
+        jitter.width = 0.35)
+  ) +
+  ## geom_line(linewidth = 1, alpha = 0) +
+
+
+  geom_errorbar(aes( ymin = lower_bound, ymax = upper_bound),
+                width=.8, alpha=.7,
+                position = position_dodge(width = 0.9),
+                color="black") +
+
+  facet_grid( ~ type) +
+  labs(
+    y = "Training Time [Minutes]",
+    x = "Nodes"
+  ) +
+  scale_fill_manual(values = c("firebrick2", "#2D72AD")) +
+  scale_color_manual(values = c("firebrick2", "#2D72AD")) +
+
+  meu_estilo()
+#+end_src
+
+#+RESULTS:
+[[file:/tmp/babel-IGtNc7/figureAM27lO.pdf]]
