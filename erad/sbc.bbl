@@ -1,0 +1,47 @@
+\begin{thebibliography}{}
+
+\bibitem[Abadi et~al. 2016]{tensorflow2016}
+Abadi, M., Barham, P., Chen, J., Chen, Z., Davis, A., Dean, J., Devin, M.,
+  Ghemawat, S., Irving, G., Isard, M., Kudlur, M., Levenberg, J., Monga, R.,
+  Moore, S., Murray, D.~G., Steiner, B., Tucker, P., Vasudevan, V., Warden, P.,
+  Wicke, M., Yu, Y., and Zheng, X. (2016).
+\newblock Tensorflow: A system for large-scale machine learning.
+\newblock In {\em Proceedings of the 12th USENIX Symposium on Operating Systems
+  Design and Implementation (OSDI '16)}. USENIX Association.
+
+\bibitem[Court{\`e}s 2013]{courtes2013guix}
+Court{\`e}s, L. (2013).
+\newblock Functional package management with guix.
+\newblock In {\em Proceedings of the 6th European Lisp Symposium (ELS)}, pages
+  15--28.
+
+\bibitem[Deng et~al. 2009]{imagenet}
+Deng, J., Dong, W., Socher, R., Li, L.-J., Li, K., and Fei-Fei, L. (2009).
+\newblock Imagenet: A large-scale hierarchical image database.
+\newblock In {\em 2009 IEEE conference on computer vision and pattern
+  recognition}, pages 248--255. Ieee.
+
+\bibitem[Documentation 2023]{distributed}
+Documentation, T. (2023).
+\newblock Distributed training with keras.
+\newblock \url{https://www.tensorflow.org/tutorials/distribute/keras}.
+\newblock Accessed: 2025-11-30.
+
+\bibitem[He et~al. 2015]{resnet}
+He, K., Zhang, X., Ren, S., and Sun, J. (2015).
+\newblock Deep residual learning for image recognition.
+\newblock {\em CoRR}, abs/1512.03385.
+
+\bibitem[Tan and Le 2019]{efficientNet}
+Tan, M. and Le, Q.~V. (2019).
+\newblock Efficientnet: Rethinking model scaling for convolutional neural
+  networks.
+\newblock {\em CoRR}, abs/1905.11946.
+
+\bibitem[Yoo et~al. 2003]{yoo2003slurm}
+Yoo, A.~B., Jette, M.~A., and Grondona, M. (2003).
+\newblock Slurm: Simple linux utility for resource management.
+\newblock In {\em Job Scheduling Strategies for Parallel Processing}, pages
+  44--60. Springer.
+
+\end{thebibliography}
