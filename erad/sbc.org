@@ -1063,11 +1063,11 @@ ggplot() +
 ** Conclusion
 
 We could conclude that the network and the model size have a huge
-importance in the distributed training, but that even with a network
-with a low throughput, it is possible to gain performance when
-training by correctly configuring the environment and model
-parameters. As future work we intend to deep investigate the impact of the network
-and the model size in the distributed training.
+importance in the distributed training, but that even with low
+bandwidth network it is possible to gain performance when training by
+correctly configuring the environment and model parameters. As future
+work we intend to deep investigate the impact of the network and the
+model size in the distributed training.
 
 ** Acknowledgments                                                  :ignore:
 
