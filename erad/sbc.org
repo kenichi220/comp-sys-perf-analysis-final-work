@@ -135,7 +135,7 @@ automation and reproducibility of computational experiments.
 
 ** Methods and Materials
 
-*** Software Management and Reproducibility
+*** COMMENT Software Management and Reproducibility
 
 Reproducibility of computational experiments is a critical challenge
 in computer science. To mitigate software dependency issues, the use
