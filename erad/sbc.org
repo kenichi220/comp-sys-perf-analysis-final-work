@@ -59,11 +59,11 @@ and natural language processing. Given the progress in algorithmic
 precision, there has been an exponential growth in the complexity of
 neural network architectures and the volume of datasets. This scenario
 imposes a massive computational load, making the training of robust
-models on a single processing unit an difficult task in terms of time
+models on a single processing unit a difficult task in terms of time
 and resources.
 
 To mitigate these challenges, distributed training has become a
-standard practice, with an emphasis on the Data Parallelism
+standard practice, with emphasis on the Data Parallelism
 strategy. In this approach, a complete replica of the model is
 instantiated on each processing unit, and the global
 dataset is partitioned into smaller, locally-focused batches. Although
