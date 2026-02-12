@@ -51,10 +51,6 @@
 The growing complexity of Deep Learning models makes training on single devices difficult, requiring distributed strategies like Data Parallelism. However, this approach creates critical synchronization challenges between processing units. This work evaluates TensorFlow parallel strategies on an HPC cluster to analyze how application factors contribute to time reduction. The study compares the standard synchronous method against a proposed Custom Training Loop designed to reduce bottleneck by synchronizing gradients less frequently. Experiments using ResNet50 and EfficientNetB0 models show that the Custom Training Loop significantly lowers communication overhead compared to the standard approach. Additionally, results indicate that increasing the batch size consistently improves performance. The authors conclude that correct configuration allows for performance gains in distributed training, even on networks with lower throughput.
 #+end_abstract
 
-#+begin_resumo
-Coloque o resumo aqui.
-#+end_resumo
-
 ** Introduction
 
 In the last decade, Deep Learning has established itself as the
