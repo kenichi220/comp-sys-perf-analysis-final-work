@@ -162,13 +162,14 @@ execution environment used in the experiments.
 
 *** Hardware and Software Configuration
 
-The experiments were run using TensorFlow 2.15 as newer versions
-showed errors when trying to train using more than one node with the
-=.fit= and =MultiWorkerMirrodStrategy= and python 3.11.2. The NVIDIA
-drivers version was 550.54.15 and CUDA 12.4. We used up to three
-computational nodes connected with a network of 1G, each node contains an
-Intel(R) Core(TM) i7-14700KF processor at 3.40 GHz with 28 threads and
-20 cores, 96 GB DDR5 RAM and NVIDIA GeForce RTX 4070 with 8GB memory
+The experiments were run using Python 3.11.2 and TensorFlow 2.15 as
+newer versions showed errors when trying to train using more than one
+node with the =.fit= and =MultiWorkerMirrodStrategy=. We used =pip= to manage
+the python libraries and ensure reproducibility. The NVIDIA drivers
+version was 550.54.15 and CUDA 12.4. We used up to three computational
+nodes connected with a network of 1G, each node contains an Intel(R)
+Core(TM) i7-14700KF processor at 3.40 GHz with 28 threads and 20
+cores, 96 GB DDR5 RAM and NVIDIA GeForce RTX 4070 with 8GB memory
 accelerator.
 
 *** Custom Training Loop
