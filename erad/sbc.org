@@ -622,7 +622,6 @@ meu_estilo()
 #+RESULTS:
 [[file:/tmp/babel-syZuVj/figureDHaYfk.png]]
 
-
 ** Results
 
 Figure 1 show a full view of our results. The graph presents the mean
@@ -632,7 +631,7 @@ bar represents the mean for the five executions for each
 configuration. The black transparent dots represents our
 observations. This allow us to see two main results: The first one is
 that the inclusion of more then one node introduces the necessity of
-communication, and together communication overhead. This overhead can
+communication, also introducing communication overhead. This overhead can
 be better seen with the smaller batches, as the computation is faster
 and more communication is needed. We can also see that the ResNet50
 shows a higher time then the EfficientNetB0 in this cases. This
@@ -643,10 +642,11 @@ smaller communication overhead even for small batch sizes. The ctl
 showed *OOM* errors when running with the batch size 100 for training
 the EfficientNetB0 model.
 
-After the communication overhead introduce by the inclusion of a
-second node, adding more nodes seemed to decrease the training
-time. We suppose that with enough nodes, the time gained by computing
-can overcome the overhead and be better then running it in one machine.
+After the introduction of overhead by the inclusion of a second node,
+adding more nodes seemed to decrease the training time. We suppose
+that even with a low bandwidth network, with enough nodes the time
+gained by the distributed computing can overcome the overhead and show
+better results then running it in a single machine.
 
 #+begin_src R :results output file graphics  :file (org-babel-temp-file "figure" ".pdf") :exports results :width 8 :height 4 :session *R*
 
@@ -733,14 +733,14 @@ data_treino.plot |>
 [[file:/tmp/babel-IGtNc7/figureTZRjku.pdf]]
 
 
-*** The impact of node number and batch size
+*** The impact of the number of nodes and batch size
 
 Figure 2 shows the mean training time grouped by node count. This
 enable us to see that in fact the increase of more then two machines
 results in a lower training time even though this gain is
 small. Figure 3 shows also an interesting result, we can see that
-increase of the batch size consistently show performance gains, but
-also decrease the variance. This means that conforms the batch size
+increase of the batch size consistently show performance gains, while
+also decreasing the variance. This means that conforms the batch size
 grows the training time is almost the same despite the node count.
 
 #+begin_src R :results output file graphics  :file (org-babel-temp-file "figure" ".pdf") :exports results :width 8 :height 4 :session *R*
@@ -825,7 +825,6 @@ data_treino.plot |>
 #+attr_latex: :placement [!htb] :width \linewidth
 #+RESULTS:
 [[file:/tmp/babel-IGtNc7/figurecoyPXG.pdf]]
-
 
 #+begin_src R :results output file graphics  :file (org-babel-temp-file "figure" ".pdf") :exports results :width 8 :height 4 :session *R*
 
@@ -927,7 +926,6 @@ data_treino.plot |> select(model, type, batch, nodes, mean_treino) |>
 : 3 EfficientNetB0 sync     32 1            27.4
 : 4 EfficientNetB0 sync     64 1            28.4
 : 5 EfficientNetB0 sync    100 1            29.0
-
 
 *** COMMENT Modeling a linear model
 We propose a linear model to extrapolate our results and predict the
