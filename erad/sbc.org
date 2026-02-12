@@ -174,20 +174,19 @@ accelerator.
 
 *** Custom Training Loop
 
-The expected execution from training with the
-=MultiWorkerMirroredStrategy= would show a slower training time as we
-increased the number of nodes in the execution. However, we faced a
-problem due to the connection while training that resulted in a higher
-training time as we increased the number of nodes for big models with
-a lot of parameters such as ResNet50. This problem happened because a
-synchronization is done for every batch computed by the =model.fit()=
-training method, and as we had only an 1G network, this
-synchronization resulted in a bottleneck that increased the training
-time. To mitigate this problem, we proposed a Custom Training Loop
-that instead of synchronizing the parameters between nodes in every
-batch, only synchronizes at a interval of batches, then resulting in a
-lower synchronization overhead. To this work we defined this
-interval of batches as 4 batches.
+The expected behavior of training with the =MultiWorkerMirroredStrategy=
+would be to have a lower training time as the the number of nodes is
+increased. However, when performing distributed training in low
+bandwidth networks one common problem that surfaces is the
+synchronization overhead, resulting in a higher training time as we
+increase the number of nodes. This happens because the gradients and
+weights of the model are synchronized between all nodes when a batch
+is computed when using the =model.fit()= method. To mitigate
+this problem, we proposed a Custom Training Loop that instead of
+synchronizing the parameters between nodes in every batch, only
+synchronizing the gradients at a interval of batches, this then
+results to lower synchronization overhead. To this work we empirically
+defined this interval of batches as 4 batches.
 
 *** Design of Experiments (DoE)
 
