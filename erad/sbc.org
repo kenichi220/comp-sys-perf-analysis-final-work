@@ -87,7 +87,12 @@ software necessary to handle the created datasets. We also include
 instructions to run the experiment and figures.
 # An archive is also available in Zenodo at URL.
 
-** Background and Experimental Context
+** Related Work
+
+[This should be a small section]
+[Marcelo will write about related works]
+
+** COMMENT Background and Experimental Context
 \label{sec.context}
 *** Background
 \label{sec.background}
