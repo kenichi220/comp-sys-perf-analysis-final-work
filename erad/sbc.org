@@ -191,20 +191,18 @@ interval of batches as 4 batches.
 
 *** Design of Experiments (DoE)
 
-We selected two different Deep Learning models to train: *ResNet50*
-\cite{resnet} as a big model with ~25.6M parameters and
-*EfficientNetB0*\cite{efficientNet} as a small model with ~5.3M
-parameters. The two networks were trained using the TinyImageNet-200,
-a subset of the ImageNet\cite{imagenet} containing 100000 downsized to
-a 64×64 colored image divided among 200 classes. We created a full
-factorial for each model with varying batch size, the number of nodes
-used and the type of the training. The levels for the batch size
-factor were 32, 64 and 100, for the nodes we trained with 1, 2 and 3
-nodes and for the type of training we had "sync" that uses the
-=model.fit= method to train or "ctl" that uses our custom training loop
-to train. This is a total of 2x3x3x2 different executions, each
-execution as replicated 5 times in a random order. Our output variable
-was the training time (full training time and time per epoch).
+We selected two different Deep Learning models to train, one big and
+one small: *ResNet50* \cite{resnet} as our big model, with ~25.6M
+parameters, and *EfficientNetB0*\cite{efficientNet} as our small model,
+with ~5.3M parameters. The two networks were trained using the
+TinyImageNet-200, a subset of the ImageNet\cite{imagenet} containing
+100000 downsized to a 64×64 colored image divided among 200
+classes. We created a full factorial for each model, varying batch
+size (with levels 32, 64 and 100), the number of nodes used (1, 2 or 3) and the
+type of the training ("ctl" for Custom Training Loop and "sync" for
+training with the =model.fit= method). This is a total
+of 24 (2x3x3x2) different executions, each execution as replicated 5 times
+in a random order. As output variable we retrieved the training time.
 
 
 ** COMMENT Challenges
