@@ -133,9 +133,6 @@ nodes, tasks per node, and execution time limit, enabling the
 automation and reproducibility of computational experiments.
 
 
-** COMMENT Related Work and Motivation
-\label{sec.relatedwork}
-
 ** Methods and Materials
 
 *** Software Management and Reproducibility
