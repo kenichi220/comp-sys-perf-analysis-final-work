@@ -1159,7 +1159,7 @@ Tangle this file with C-c C-v t
 }
 
 @misc{distributed,
-  author = {TensorFlow Documentation},
+  author = {TensorFlow},
   title = {Distributed training with Keras},
   year=2023,
   howpublished = {\url{https://www.tensorflow.org/tutorials/distribute/keras}},
