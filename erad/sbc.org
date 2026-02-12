@@ -107,15 +107,12 @@ machines within a cluster and, within a machine, onto multiple
 computational devices (multicore CPUs, GPUs, and TPUs). This offers
 flexibility to the developer to experiment with new optimizations and
 training algorithms, supporting a variety of applications focused on
-deep neural networks. When it comes to distributed training, TensorFlow offers different
-strategies with the =tf.distribute.Strategy= API. The TensorFlow
-documentations adverts that /"For synchronous training on many GPUs
-onmultiple workers, use the tf.distribute.MultiWorkerMirroredStrategy with the Keras Model.fit or a custom training loop."/\cite{distributed}. Meaning for a
-distributed training across different nodes in a cluster there is two
-options: Using the MultiWorkerMirroredStrategy with the model.fit or
-creating a Custom Training Loop by yourself.
+deep neural networks. For a distributed training across different nodes in a cluster
+with TensorFlow, there is two options: Using model.fit with the
+MultiWorkerMirroredStrategy or creating a Custom
+Training Loop by yourself. \cite{distributed}
 
-*** Experimental Context
+*** COMMENT Experimental Context
 In High-Performance Computing (HPC) environments, a highly recommended
 practice to access to shared computational resources is to mediate the
 access by workload management systems. In our context Slurm (Simple
