@@ -72,6 +72,14 @@ challenges, as locally calculated gradients must be aggregated and
 communicated among all devices at every training step, typically
 through All-Reduce operations.
 
+Although effective, this technique introduces critical synchronization
+challenges. As noted by Langer et al. \cite{langer2020distributed},
+in distributed setups, the network communication channel often becomes
+the primary bottleneck because the system is required to frequently
+synchronize states and exchange intermediate representations of the model.
+This is particularly critical in environments where high-performance
+networking hardware is not available.
+
 Given this fact, in this work we decided to analyze data parallelism
 for AI training using TensorFlow in a HPC cluster to investigate how
 the factors related to the application contribute to time reduction in
@@ -89,9 +97,29 @@ instructions to run the experiment and figures.
 
 ** Related Work
 
-[This should be a small section]
-[Marcelo will write about related works]
+Langer et al. \cite{langer2020distributed} provide a comprehensive taxonomy
+of Distributed Deep Learning Systems (DDLS), categorizing strategies into
+Model vs. Data Parallelism and Centralized vs. Decentralized optimization.
+They identify that in Data Parallelism, the network communication channel is
+typically the primary bottleneck, a constraint we explicitly face in our
+low-bandwidth HPC setup.
 
+Regarding scheduling, Langer et al. compare synchronous systems—where
+workers wait for each other to ensure consistency—against asynchronous
+systems. They note that while asynchronous methods can improve hardware
+utilization by avoiding waiting times, they introduce "staleness" (outdated
+gradients), which can hamper convergence and requires complex mitigation
+strategies.
+
+In contrast to adopting asynchronous methods to solve bandwidth issues, our
+work adheres to a synchronous approach to maintain model consistency.
+However, we differ from the standard synchronous implementation by
+introducing a Custom Training Loop. Instead of communicating at every step
+(which Langer et al. identify as a cause for potential resource
+under-utilization), we implement a gradient accumulation strategy. This
+allows us to reduce the frequency of synchronization without incurring the
+mathematical instability associated with the stale gradients found in
+asynchronous systems.
 ** COMMENT Background and Experimental Context
 \label{sec.context}
 *** Background
@@ -1139,6 +1167,21 @@ Tangle this file with C-c C-v t
   timestamp    = {Wed, 25 Jan 2023 11:01:16 +0100},
   biburl       = {https://dblp.org/rec/journals/corr/HeZRS15.bib},
   bibsource    = {dblp computer science bibliography, https://dblp.org}
+}
+@article{langer2020distributed,
+  author       = {Matthias Langer and
+                  Zhen He and
+                  Wenny Rahayu and
+                  Yanbo Xue},
+  title        = {Distributed Training of Deep Learning Models: A Taxonomic Perspective},
+  journal      = {IEEE Transactions on Parallel and Distributed Systems},
+  volume       = {31},
+  number       = {12},
+  pages        = {2802--2818},
+  year         = {2020},
+  url          = {https://ieeexplore.ieee.org/document/9120226},
+  doi          = {10.1109/TPDS.2020.3003307},
+  publisher    = {IEEE}
 }
 
 @inproceedings{imagenet,
