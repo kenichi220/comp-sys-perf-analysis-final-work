@@ -649,29 +649,28 @@ meu_estilo()
 
 ** Results
 
-Figure 1 show a full view of our results. The graph presents the mean
+Figure 1 shows a full view of our results. The graph presents the mean
 training time in minutes as a function of the number of nodes, faceted
 by type and batch size and with the color representing the model. Each
 bar represents the mean for the five executions for each
-configuration. The black transparent dots represents our
-observations. This allow us to see two main results: The first one is
-that the inclusion of more then one node introduces the necessity of
-communication, also introducing communication overhead. This overhead can
-be better seen with the smaller batches, as the computation is faster
-and more communication is needed. We can also see that the ResNet50
-shows a higher time then the EfficientNetB0 in this cases. This
-happens because all the parameters needed to be synchronized after
+configuration. The black transparent dots represent our
+observations. This allows us to see two main results: First, the
+inclusion of more than one node introduces the necessity of
+communication, also introducing communication overhead. This overhead
+is better seen with smaller batches as the computation is faster and
+more communication is needed. We can also see that the ResNet50 shows
+a higher time than the EfficientNetB0 in these cases. This happens
+because all the weights and gradients needed to be synchronized after
 every batch, and the ResNet50 is almost 5 times bigger than the
-EfficientNetB0. The second one is that the ctl showed a considerable
+EfficientNetB0. Secondly, the ctl showed a considerably
 smaller communication overhead even for small batch sizes. The ctl
 showed *OOM* errors when running with the batch size 100 for training
-the EfficientNetB0 model.
-
-After the introduction of overhead by the inclusion of a second node,
-adding more nodes seemed to decrease the training time. We suppose
-that even with a low bandwidth network, with enough nodes the time
-gained by the distributed computing can overcome the overhead and show
-better results then running it in a single machine.
+the EfficientNetB0 model. We notice that after the introduction of
+overhead by the inclusion of a second node, adding a third node
+decreased the training time. We suppose that even with a low bandwidth
+network, with enough nodes the time gained by the distributed
+computing can overcome the overhead and show better results than
+running it in a single machine.
 
 #+begin_src R :results output file graphics  :file (org-babel-temp-file "figure" ".pdf") :exports results :width 10 :height 4 :session *R*
 
@@ -758,14 +757,13 @@ data_treino.plot |>
 [[file:/tmp/babel-IGtNc7/figureTZRjku.pdf]]
 
 
-*** The impact of the number of nodes and batch size
+*** The impact of the nodes number and batch size
 
-Figure 2 shows the mean training time grouped by node count. This
-enable us to see that in fact the increase of more then two machines
-results in a lower training time even though this gain is
-small. Figure 3 shows also an interesting result, we can see that
-increase of the batch size consistently show performance gains, while
-also decreasing the variance. This means that conforms the batch size
+Figure 2 shows the mean training time aggregated by node count. This
+enable us to better see the performance gain with more than two nodes,
+even though this gain is small. Figure 3 demonstrates that increasing
+batch size consistently shows performance gains for the tested sizes,
+while also decreasing the variance. This means that as the batch size
 grows the training time is almost the same despite the node count.
 
 #+begin_src R :results output file graphics  :file (org-babel-temp-file "figure" ".pdf") :exports results :width 11 :height 3.5 :session *R*
@@ -956,7 +954,7 @@ data_treino.plot |> select(model, type, batch, nodes, mean_treino) |>
 We propose a linear model to extrapolate our results and predict the
 training time. As the training time is almost constant for one node,
 we decided to just create the model based on the parallel executions,
-meaning that executions with more then one node were used to the model
+meaning that executions with more than one node were used to the model
 creation. For each combination of model and type we created a
 different model.
 
