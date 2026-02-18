@@ -51,13 +51,32 @@
 ** Abstract                                                         :ignore:
 
 #+begin_abstract
-The growing complexity of Deep Learning models makes training on single devices difficult, requiring distributed strategies like Data Parallelism. However, this approach creates critical synchronization challenges between processing units. This work evaluates TensorFlow parallel strategies on an HPC cluster to analyze how application factors contribute to time reduction. The study compares the standard synchronous method against a proposed Custom Training Loop designed to reduce bottleneck by synchronizing gradients less frequently. Experiments using ResNet50 and EfficientNetB0 models show that the Custom Training Loop significantly lowers communication overhead compared to the standard approach. Additionally, results indicate that increasing the batch size consistently improves performance. The authors conclude that correct configuration allows for performance gains in distributed training, even on networks with lower throughput.
+The growing complexity of Deep Learning models makes training on
+single devices difficult, requiring distributed strategies like Data
+Parallelism. However, this approach introduces critical
+synchronization challenges between processing units. This work
+evaluates TensorFlow parallel strategies on an HPC cluster with low
+bandwidth network to analyze how application factors contribute to
+time reduction. The study compares the standard synchronous method
+against a proposed Custom Training Loop with gradient accumulation
+designed to reduce bottleneck by synchronizing gradients less
+frequently. Our results indicate that optimizing synchronization
+intervals and batch sizes allows for scalable performance gains even
+on low-bandwidth infrastructure.
+
+# Experiments using ResNet50 and EfficientNetB0 models show that the
+# Custom Training Loop significantly lowers communication overhead
+# compared to the standard approach. Additionally, results indicate
+# that increasing the batch size consistently improves
+# performance. The authors conclude that correct configuration allows
+# for performance gains in distributed training, even on networks with
+# lower throughput.
 #+end_abstract
 
 ** Introduction
 
-In the last decade, Deep Learning has established itself as the
-state-of-the-art for solving complex problems, such as computer vision
+In the last decade deep learning has established itself as the
+state-of-the-art for solving complex problems such as computer vision
 and natural language processing. Given the progress in algorithmic
 precision, there has been an exponential growth in the complexity of
 neural network architectures and the volume of datasets. This scenario
