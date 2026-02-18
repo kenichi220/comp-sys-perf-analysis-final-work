@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # -*- mode: org -*-
 
-#+TITLE: Performance Evaluation of Tensorflow Parallel Strategies for Deep Learning Training on HPC Clusters
+#+TITLE: Performance Evaluation of Distributed Deep Learning Training on Low Bandwidth Networks
 #+AUTHOR: Rayan Raddatz de Matos
 
 #+STARTUP: overview indent
@@ -33,13 +33,16 @@
 \author{
    Rayan Raddatz de Matos\inst{1},
    Kenichi Brumato\inst{1},
-   Marcelo Cardoso Oliveira Gulart\inst{1}
+   Marcelo Cardoso Oliveira Gulart\inst{1},
+   \\
+   Lucas Mello Schnorr\inst{1} %,
+   % Arthur Francisco Lorenzon\inst{1}
 }
 
 \address{
    Institute of Informatics, Federal University of Rio Grande do Sul (UFRGS)\\
    Caixa Postal 15.064 -- 91.501-970 -- Porto Alegre -- RS -- Brazil
-   \email{\{rayan.raddatz, kbrumati, mcogulart\}@inf.ufrgs.br}}
+   \email{\{rayan.raddatz, kbrumati, mcogulart, schnorr\}@inf.ufrgs.br}}
 #+END_EXPORT
 
 #+LaTeX: \maketitle
