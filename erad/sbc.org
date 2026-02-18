@@ -1113,6 +1113,16 @@ bibliographystyle:sbc.bst
 Tangle this file with C-c C-v t
 
 #+begin_src bib :tangle refs.bib
+@article{Shen2024,
+  title={On Efficient Training of Large-Scale Deep Learning Models},
+  author={Li Shen and Yan Sun and Zhiyuan Yu and Liang Ding and Xinmei Tian and Dacheng Tao},
+  journal={ACM Computing Surveys},
+  year={2024},
+  volume={57},
+  pages={1 - 36},
+  url={https://dl.acm.org/doi/10.1145/3700439}
+}
+
 @inproceedings{tensorflow2016,
   author    = {Abadi, Mart\'{i}n and Barham, Paul and Chen, Jianmin and Chen, Zhifeng and Davis, Andy and Dean, Jeffrey and Devin, Matthieu and Ghemawat, Sanjay and Irving, Geoffrey and Isard, Michael and Kudlur, Manjunath and Levenberg, Josh and Monga, Rajat and Moore, Sherry and Murray, Derek G. and Steiner, Benoit and Tucker, Paul and Vasudevan, Vijay and Warden, Pete and Wicke, Martin and Yu, Yuan and Zheng, Xiaoqiang},
   title     = {TensorFlow: A System for Large-Scale Machine Learning},
@@ -1162,14 +1172,11 @@ Tangle this file with C-c C-v t
                   Jian Sun},
   title        = {Deep Residual Learning for Image Recognition},
   journal      = {CoRR},
-  volume       = {abs/1512.03385},
   year         = {2015},
   url          = {http://arxiv.org/abs/1512.03385},
   eprinttype    = {arXiv},
   eprint       = {1512.03385},
-  timestamp    = {Wed, 25 Jan 2023 11:01:16 +0100},
-  biburl       = {https://dblp.org/rec/journals/corr/HeZRS15.bib},
-  bibsource    = {dblp computer science bibliography, https://dblp.org}
+  timestamp    = {Wed, 25 Jan 2023 11:01:16 +0100}
 }
 @article{langer2020distributed,
   author       = {Matthias Langer and
@@ -1177,10 +1184,7 @@ Tangle this file with C-c C-v t
                   Wenny Rahayu and
                   Yanbo Xue},
   title        = {Distributed Training of Deep Learning Models: A Taxonomic Perspective},
-  journal      = {IEEE Transactions on Parallel and Distributed Systems},
-  volume       = {31},
-  number       = {12},
-  pages        = {2802--2818},
+  journal      = {IEEE TPDS},
   year         = {2020},
   url          = {https://ieeexplore.ieee.org/document/9120226},
   doi          = {10.1109/TPDS.2020.3003307},
@@ -1190,10 +1194,9 @@ Tangle this file with C-c C-v t
 @inproceedings{imagenet,
   title={Imagenet: A large-scale hierarchical image database},
   author={Deng, Jia and Dong, Wei and Socher, Richard and Li, Li-Jia and Li, Kai and Fei-Fei, Li},
-  booktitle={2009 IEEE conference on computer vision and pattern recognition},
+  booktitle={2009 IEEE CVPR},
   pages={248--255},
-  year={2009},
-  organization={Ieee}
+  year={2009}
 }
 
 @misc{distributed,
