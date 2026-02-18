@@ -185,7 +185,7 @@ of Python Virtual Environment for environment management. Although a
 functional version of Guix exists on GitHub without the proprietary
 libraries.
 
-For managing the specific Deep Learning libraries, the python package
+For managing the specific deep learning libraries, the python package
 manager =pip= with version 25.3 was utilized. The exact version of the used library was
 frozen and documented using the =pip freeze command=, generating a
 requirements file (=reqs.txt=) that enables the reconstruction of the
@@ -193,46 +193,45 @@ execution environment used in the experiments.
 
 *** Hardware and Software Configuration
 
-The experiments were run using Python 3.11.2 and TensorFlow 2.15 as
-newer versions showed errors when trying to train using more than one
-node with the =.fit= and =MultiWorkerMirrodStrategy=. We used =pip= to manage
-the python libraries and ensure reproducibility. The NVIDIA drivers
-version was 550.54.15 and CUDA 12.4. We used up to three computational
-nodes connected with a network of 1G, each node contains an Intel(R)
+Experiments were run using Python 3.11.2 and TensorFlow 2.15 as newer
+versions showed errors when using more than one node with TensorFlow =.fit= and
+=MultiWorkerMirroredStrategy= methods. We used =pip= to manage the python
+libraries and ensure reproducibility. The NVIDIA drivers version was
+550.54.15 and CUDA 12.4. We used up to three computational nodes
+connected with a network of 1G, each node contains an Intel(R)
 Core(TM) i7-14700KF processor at 3.40 GHz with 28 threads and 20
-cores, 96 GB DDR5 RAM and NVIDIA GeForce RTX 4070 with 8GB memory
-accelerator.
+cores, 96 GB DDR5 RAM and NVIDIA GeForce RTX 4070 with 8GB.
 
 *** Custom Training Loop
 
 The expected behavior of training with the =MultiWorkerMirroredStrategy=
-would be to have a lower training time as the the number of nodes is
+would be to have a lower training time as the number of nodes is
 increased. However, when performing distributed training in low
 bandwidth networks one common problem that surfaces is the
 synchronization overhead, resulting in a higher training time as we
 increase the number of nodes. This happens because the gradients and
 weights of the model are synchronized between all nodes when a batch
-is computed when using the =model.fit()= method. To mitigate
-this problem, we proposed a Custom Training Loop that instead of
-synchronizing the parameters between nodes in every batch, only
-synchronizing the gradients at a interval of batches, this then
-results to lower synchronization overhead. To this work we empirically
-defined this interval of batches as 4 batches.
+is computed when using the =model.fit()= method. To mitigate this
+problem, we proposed a Custom Training Loop that implements gradient
+accumulation, meaning that it synchronizes the gradients at an
+interval of batches, resulting in lower synchronization overhead. We
+empirically defined this interval of batches as 4 batches.
 
 *** Design of Experiments (DoE)
 
-We selected two different Deep Learning models to train, one big and
+We selected two different deep learning models to train, one big and
 one small: *ResNet50* \cite{resnet} as our big model, with ~25.6M
 parameters, and *EfficientNetB0*\cite{efficientNet} as our small model,
-with ~5.3M parameters. The two networks were trained using the
+with ~5.3M parameters. The two models were trained using the
 TinyImageNet-200, a subset of the ImageNet\cite{imagenet} containing
-100000 downsized to a 64×64 colored image divided among 200
-classes. We created a full factorial for each model, varying batch
-size (with levels 32, 64 and 100), the number of nodes used (1, 2 or 3) and the
+100000 colored image downsized to 64×64 pixels, divided among 200
+classes. We created a full factorial project for each model, varying batch
+size (32, 64 or 100), the number of nodes used (1, 2 or 3) and the
 type of the training ("ctl" for Custom Training Loop and "sync" for
 training with the =model.fit= method). This is a total
-of 24 (2x3x3x2) different executions, each execution as replicated 5 times
-in a random order. As output variable we retrieved the training time.
+of 24 (2x3x3x2) different executions, each execution was replicated 5 times
+in a random order.
+# As output variable we retrieved the training time.
 
 
 ** COMMENT Challenges
