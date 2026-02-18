@@ -92,29 +92,40 @@ instructions to run the experiment and figures.
 
 ** Related Work
 
-Langer et al. \cite{langer2020distributed} provide a comprehensive taxonomy
-of Distributed Deep Learning Systems (DDLS), categorizing strategies into
-Model vs. Data Parallelism and Centralized vs. Decentralized optimization.
-They identify that in Data Parallelism, the network communication channel is
-typically the primary bottleneck, a constraint we explicitly face in our
-low-bandwidth HPC setup.
+There are several studies regarding the training of deep learning
+model using distributed strategies. cite:langer2020distributed provide
+a comprehensive taxonomy of Distributed deep learning Systems (DDLS),
+categorizing strategies into Model vs. Data Parallelism and
+Centralized vs. Decentralized optimization.  They identify that in
+Data Parallelism, the network communication channel is typically the
+primary bottleneck. This topic of distributed training is also studied
+in cite:Shen2024, where between various strategies, is highlighted
+that large batch sizes are preferred in distributed scenarios. In
+this work we evaluate some of the most used strategies for parallel
+training, and also introduces the use of a Custom Training Loop with
+gradient accumulation that enable us to reduce the frequency of
+synchronization, allowing lower training times for low bandwidth
+networks.
 
-Regarding scheduling, Langer et al. compare synchronous systems—where
-workers wait for each other to ensure consistency—against asynchronous
-systems. They note that while asynchronous methods can improve hardware
-utilization by avoiding waiting times, they introduce "staleness" (outdated
-gradients), which can hamper convergence and requires complex mitigation
-strategies.
 
-In contrast to adopting asynchronous methods to solve bandwidth issues, our
-work adheres to a synchronous approach to maintain model consistency.
-However, we differ from the standard synchronous implementation by
-introducing a Custom Training Loop. Instead of communicating at every step
-(which Langer et al. identify as a cause for potential resource
-under-utilization), we implement a gradient accumulation strategy. This
-allows us to reduce the frequency of synchronization without incurring the
-mathematical instability associated with the stale gradients found in
-asynchronous systems.
+# a constraint we explicitly face in our low-bandwidth HPC setup.
+
+# Regarding scheduling, Langer et al. compare synchronous systems—where
+# workers wait for each other to ensure consistency—against asynchronous
+# systems. They note that while asynchronous methods can improve hardware
+# utilization by avoiding waiting times, they introduce "staleness" (outdated
+# gradients), which can hamper convergence and requires complex mitigation
+# strategies.
+
+
+# our work adheres to a synchronous approach to maintain model
+# consistency.  However, we differ from the standard synchronous
+# implementation by introducing a Custom Training Loop. Instead of
+# communicating at every step we implement a gradient accumulation
+# strategy. This allows us to reduce the frequency of synchronization
+# without incurring the mathematical instability associated with the
+# stale gradients found in asynchronous systems.
+
 ** COMMENT Background and Experimental Context
 \label{sec.context}
 *** Background
