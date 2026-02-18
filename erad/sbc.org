@@ -66,27 +66,19 @@ models on a single processing unit a difficult task in terms of time
 and resources.
 
 To mitigate these challenges, distributed training has become a
-standard practice, with emphasis on the Data Parallelism
-strategy. In this approach, a complete replica of the model is
-instantiated on each processing unit, and the global
-dataset is partitioned into smaller, locally-focused batches. Although
-effective, this technique introduces critical synchronization
-challenges, as locally calculated gradients must be aggregated and
-communicated among all devices at every training step, typically
-through All-Reduce operations.
+standard practice, with emphasis on the Data Parallelism strategy. In
+this approach, a complete replica of the model is instantiated on each
+processing unit, and the global dataset is partitioned into smaller,
+locally-focused batches. Although effective, this technique introduces
+critical synchronization challenges, as locally calculated gradients
+must be aggregated and communicated among all devices at every
+training step. The network communication channel often becomes the
+primary bottleneck, this is particularly critical in environments
+where high-performance networking hardware is not available.
 
-Although effective, this technique introduces critical synchronization
-challenges. As noted by Langer et al. \cite{langer2020distributed},
-in distributed setups, the network communication channel often becomes
-the primary bottleneck because the system is required to frequently
-synchronize states and exchange intermediate representations of the model.
-This is particularly critical in environments where high-performance
-networking hardware is not available.
-
-Given this fact, in this work we decided to analyze data parallelism
-for AI training using TensorFlow in a HPC cluster to investigate how
-the factors related to the application contribute to time reduction in
-a parallel scenario.
+Therefore, this work analyzes data parallelism for deep learning model
+training using TensorFlow to investigate how the factors related to
+the application contribute to time reduction in a parallel scenario.
 
 #+latex: \noindent
 *Software and Data Availability*. We endeavor to make our analysis
