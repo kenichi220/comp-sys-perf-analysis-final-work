@@ -671,7 +671,7 @@ that even with a low bandwidth network, with enough nodes the time
 gained by the distributed computing can overcome the overhead and show
 better results then running it in a single machine.
 
-#+begin_src R :results output file graphics  :file (org-babel-temp-file "figure" ".pdf") :exports results :width 8 :height 4 :session *R*
+#+begin_src R :results output file graphics  :file (org-babel-temp-file "figure" ".pdf") :exports results :width 10 :height 4 :session *R*
 
 data_plot |> #filter(grepl("*B0*", model)) |>
   group_by(id, type, model, batch, nodes) |>
@@ -766,7 +766,7 @@ increase of the batch size consistently show performance gains, while
 also decreasing the variance. This means that conforms the batch size
 grows the training time is almost the same despite the node count.
 
-#+begin_src R :results output file graphics  :file (org-babel-temp-file "figure" ".pdf") :exports results :width 8 :height 4 :session *R*
+#+begin_src R :results output file graphics  :file (org-babel-temp-file "figure" ".pdf") :exports results :width 11 :height 3.5 :session *R*
 
 data_plot |> #filter(grepl("*50*", model)) |>
   group_by(id, type, model, nodes) |>
@@ -849,7 +849,7 @@ data_treino.plot |>
 #+RESULTS:
 [[file:/tmp/babel-IGtNc7/figurecoyPXG.pdf]]
 
-#+begin_src R :results output file graphics  :file (org-babel-temp-file "figure" ".pdf") :exports results :width 8 :height 4 :session *R*
+#+begin_src R :results output file graphics  :file (org-babel-temp-file "figure" ".pdf") :exports results :width 11 :height 3.5 :session *R*
 
 data_plot |> #filter(grepl("*50*", model)) |>
   group_by(id, type, model, batch) |>
