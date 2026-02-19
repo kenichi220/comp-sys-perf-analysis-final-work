@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # -*- mode: org -*-
 
-#+TITLE: Performance Evaluation of Distributed Deep Learning Training on Low Bandwidth Networks
+#+TITLE: Performance Evaluation of Distributed Deep Learning Training on Low-Bandwidth Networks
 #+AUTHOR: Rayan Raddatz de Matos
 
 #+STARTUP: overview indent
