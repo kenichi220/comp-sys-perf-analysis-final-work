@@ -114,19 +114,19 @@ instructions to run the experiment and figures.
 ** Related Work
 
 There are several studies regarding the training of deep learning
-model using distributed strategies. cite:langer2020distributed provide
-a comprehensive taxonomy of Distributed deep learning Systems (DDLS),
-categorizing strategies into Model vs. Data Parallelism and
-Centralized vs. Decentralized optimization.  They identify that in
-Data Parallelism, the network communication channel is typically the
-primary bottleneck. This topic of distributed training is also studied
-in cite:Shen2024, where between various strategies, is highlighted
-that large batch sizes are preferred in distributed scenarios. In
-this work we evaluate some of the most used strategies for parallel
-training, and also introduces the use of a Custom Training Loop with
-gradient accumulation that enable us to reduce the frequency of
-synchronization, allowing lower training times for low bandwidth
-networks.
+models using distributed strategies. A comprehensive taxonomy of
+Distributed deep learning Systems (DDLS) is provided in
+cite:langer2020distributed, categorizing strategies into Model
+vs. Data Parallelism and Centralized vs. Decentralized optimization.
+They identify that in Data Parallelism, the network communication
+channel is typically the primary bottleneck. This topic of distributed
+training is also studied in cite:Shen2024, where, among various
+strategies, it is highlighted that large batch sizes are preferred in
+distributed scenarios. In this work we evaluate some of the most used
+strategies for parallel training, and also introduce the use of a
+Custom Training Loop with gradient accumulation that enable us to
+reduce the frequency of synchronization, allowing lower training times
+for low-bandwidth networks.
 
 
 # a constraint we explicitly face in our low-bandwidth HPC setup.
