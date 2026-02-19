@@ -91,13 +91,15 @@ processing unit, and the global dataset is partitioned into smaller,
 locally-focused batches. Although effective, this technique introduces
 critical synchronization challenges, as locally calculated gradients
 must be aggregated and communicated among all devices at every
-training step. The network communication channel often becomes the
-primary bottleneck, this is particularly critical in environments
-where high-performance networking hardware is not available.
+training step via All-Reduce operations. The network communication
+channel then becomes the primary bottleneck, especially in
+environments where high-performance networking hardware is not
+available.
 
 Therefore, this work analyzes data parallelism for deep learning model
-training using TensorFlow to investigate how the factors related to
-the application contribute to time reduction in a parallel scenario.
+training using TensorFlow in a cluster with a low-bandwidth network to
+investigate how the factors related to the application contribute to
+time reduction in a parallel scenario.
 
 #+latex: \noindent
 *Software and Data Availability*. We endeavor to make our analysis
