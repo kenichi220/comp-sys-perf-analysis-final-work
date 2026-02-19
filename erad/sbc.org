@@ -528,9 +528,9 @@ df.clean
 *** Graphs style
 #+begin_src R :results output :session *R* :exports both
 
-meu_estilo <- function() {
+meu_estilo <- function(s = 20) {
   list(
-    theme_bw(base_size = 20),
+    theme_bw(base_size = s),
     theme(
       legend.title = element_blank(),
       plot.margin = unit(c(0, 0, 0, 0), "cm"),
@@ -626,7 +626,7 @@ data_plot |> #filter(grepl("*B0*", model)) |>
     linewidth = 0.6, alpha = 0
   ) +
   facet_grid(batch~type ~ nodes) +
-  meu_estilo()
+  meu_estilo(20)
 #+end_src
 
 #+RESULTS:
@@ -662,7 +662,7 @@ data_plot |> #filter(grepl("*B0*", model)) |>
     x = "Nodes"
   ) +
 
-meu_estilo()
+meu_estilo(10)
 #+end_src
 
 #+RESULTS:
@@ -693,21 +693,22 @@ network, with enough nodes the time gained by the distributed
 computing can overcome the overhead and show better results than
 running it in a single machine.
 
-#+begin_src R :results output file graphics  :file (org-babel-temp-file "figure" ".pdf") :exports results :width 10 :height 4 :session *R*
+#+begin_src R :results output file graphics  :file (org-babel-temp-file "figure" ".pdf") :exports results :width 6 :height 3.5 :session *R*
 
 data_plot |> #filter(grepl("*B0*", model)) |>
   group_by(id, type, model, batch, nodes) |>
   mutate(
     tempo_treino = sum(tempo, na.rm = TRUE) / 60,
+    type = factor(type, levels = c("ctl", "sync"))
   ) |>
   ungroup() |>
-  mutate(batch = as.integer(batch)) -> data_treino
+  mutate(batch = as.integer(batch)) |>
+  tidyr::complete(type, tidyr::nesting(model, batch, nodes)) -> data_treino
 
 data_treino |> group_by(id, type, model, batch, nodes) |>
   summarize(
     tempo_treino = sum(tempo)/60
-  ) |> ungroup() -> data_points
-
+  ) |> ungroup()  -> data_points
 
 data_treino |>
   group_by(type, model, batch, nodes) |>
@@ -725,8 +726,9 @@ data_treino |>
 
 data_treino.plot |>
   ggplot(aes(x = as.factor(nodes), y = mean_treino,
-             color=model,
-             fill=model)) +
+             color=type,
+             fill=type,
+             group = type)) +
 
 
   ## geom_line(aes(y = mean_treino, group = model), # <--- Mapeie a linha para a média
@@ -734,13 +736,13 @@ data_treino.plot |>
   ##       , alpha = 1) +
 
   geom_col(  # Set the transparency (alpha) to 0.3 for a faint look
-    position = position_dodge(width = 0.9)
+    position = position_dodge(width = 0.9, preserve = "single")
   ) +
 
 
   geom_jitter(
     data = data_points,
-    aes(x = as.factor(nodes), y = tempo_treino), # Mapeamento X/Y do dado bruto
+    aes(x = as.factor(nodes), y = tempo_treino, group = type), # Mapeamento X/Y do dado bruto
     # Adicione color=model NO AES() para que o dodge funcione
     # Você já tem fill=model e color=model no mapeamento global.
     # Se você quiser uma cor neutra para os pontos:
@@ -748,34 +750,35 @@ data_treino.plot |>
     alpha = 0.3,
     size = 1.5,
     # Use a mesma posição de desvio EXATA
+
     position = position_jitterdodge(dodge.width = 0.9,
-        jitter.width = 0.35)
+                                    jitter.width = 0.35),
   ) +
   ## geom_line(linewidth = 1, alpha = 0) +
 
 
   geom_errorbar(aes( ymin = lower_bound, ymax = upper_bound),
                 width=.8, alpha=.7,
-                position = position_dodge(width = 0.9),
+                position = position_dodge(width = 0.9, preserve = "single"),
                 color="black") +
 
-  facet_grid(batch ~ type) +
+  facet_grid(batch ~ model , space = "free_x") +
   labs(
     y = "Training Time [Minutes]",
     x = "Nodes"
   ) +
-  scale_fill_manual(values = c("firebrick2", "#2D72AD")) +
-  scale_color_manual(values = c("firebrick2", "#2D72AD")) +
+  scale_fill_manual(values = c("firebrick2", "#2D72AD"), drop=FALSE) +
+  scale_color_manual(values = c("firebrick2", "#2D72AD"), drop=FALSE) +
 
-  meu_estilo()
+  meu_estilo(15)
 #+end_src
 
 
 #+CAPTION: Mean of experimental results.
 #+NAME:fig:results
-#+attr_latex: :placement [!htb] :width \linewidth
+#+attr_latex: :placement [!htb] :width 0.8\textwidth
 #+RESULTS:
-[[file:/tmp/babel-IGtNc7/figureTZRjku.pdf]]
+[[file:/tmp/babel-ey7Cg0/figuret3rpfu.pdf]]
 
 
 *** The impact of the nodes number and batch size
@@ -787,7 +790,7 @@ batch size consistently shows performance gains for the tested sizes,
 while also decreasing the variance. This means that as the batch size
 grows the training time is almost the same despite the node count.
 
-#+begin_src R :results output file graphics  :file (org-babel-temp-file "figure" ".pdf") :exports results :width 11 :height 3.5 :session *R*
+#+begin_src R :results output file graphics  :file (org-babel-temp-file "figure" ".pdf") :exports results :width 6 :height 2.5 :session *R*
 
 data_plot |> #filter(grepl("*50*", model)) |>
   group_by(id, type, model, nodes) |>
@@ -795,7 +798,8 @@ data_plot |> #filter(grepl("*50*", model)) |>
     tempo_treino = sum(tempo, na.rm = TRUE) / 60,
   ) |>
   ungroup() |>
-  mutate(batch = as.integer(batch)) -> data_treino
+  mutate(batch = as.integer(batch)) |>
+  tidyr::complete(type, tidyr::nesting(model, batch, nodes)) -> data_treino
 
 data_treino |> group_by(id, type, model, nodes) |>
   summarize(
@@ -810,7 +814,7 @@ data_treino |>
     mean_treino = mean(tempo_treino, na.rm = TRUE),
     sd_treino = sd(tempo_treino),
     se_treino = 3 * sd(tempo_treino) / sqrt(N),
-  ) |>
+    ) |>
   ungroup() |>
   mutate(
     lower_bound = mean_treino - se_treino,
@@ -819,8 +823,9 @@ data_treino |>
 
 data_treino.plot |>
   ggplot(aes(x = as.factor(nodes), y = mean_treino,
-             color=model,
-             fill=model)) +
+             color=type,
+             fill=type,
+             group=type)) +
 
 
   ## geom_line(aes(y = mean_treino, group = model), # <--- Mapeie a linha para a média
@@ -828,13 +833,13 @@ data_treino.plot |>
   ##       , alpha = 1) +
 
   geom_col(  # Set the transparency (alpha) to 0.3 for a faint look
-    position = position_dodge(width = 0.9)
+    position = position_dodge(width = 0.9, preserve = "single")
   ) +
 
 
   geom_jitter(
     data = data_points,
-    aes(x = as.factor(nodes), y = tempo_treino), # Mapeamento X/Y do dado bruto
+    aes(x = as.factor(nodes), y = tempo_treino, group = type), # Mapeamento X/Y do dado bruto
     # Adicione color=model NO AES() para que o dodge funcione
     # Você já tem fill=model e color=model no mapeamento global.
     # Se você quiser uma cor neutra para os pontos:
@@ -850,27 +855,27 @@ data_treino.plot |>
 
   geom_errorbar(aes( ymin = lower_bound, ymax = upper_bound),
                 width=.8, alpha=.7,
-                position = position_dodge(width = 0.9),
+                position = position_dodge(width = 0.9, preserve = "single"),
                 color="black") +
 
-  facet_grid( ~ type) +
+  facet_grid( ~ model) +
   labs(
     y = "Training Time [Minutes]",
     x = "Nodes"
   ) +
-  scale_fill_manual(values = c("firebrick2", "#2D72AD")) +
-  scale_color_manual(values = c("firebrick2", "#2D72AD")) +
+  scale_fill_manual(values = c("firebrick2", "#2D72AD"), drop = FALSE) +
+  scale_color_manual(values = c("firebrick2", "#2D72AD"), drop = FALSE) +
 
-  meu_estilo()
+  meu_estilo(15)
 #+end_src
 
 #+CAPTION: Mean of experimental results grouped by node count.
 #+NAME:fig:node
-#+attr_latex: :placement [!htb] :width \linewidth
+#+attr_latex: :placement [!htb] :width 0.8\textwidth
 #+RESULTS:
 [[file:/tmp/babel-IGtNc7/figurecoyPXG.pdf]]
 
-#+begin_src R :results output file graphics  :file (org-babel-temp-file "figure" ".pdf") :exports results :width 11 :height 3.5 :session *R*
+#+begin_src R :results output file graphics  :file (org-babel-temp-file "figure" ".pdf") :exports results :width 6 :height 2.5 :session *R*
 
 data_plot |> #filter(grepl("*50*", model)) |>
   group_by(id, type, model, batch) |>
@@ -878,7 +883,8 @@ data_plot |> #filter(grepl("*50*", model)) |>
     tempo_treino = sum(tempo, na.rm = TRUE) / 60,
   ) |>
   ungroup() |>
-  mutate(batch = as.integer(batch)) -> data_treino
+  mutate(batch = as.integer(batch)) |>
+  tidyr::complete(type, tidyr::nesting(model, batch, nodes)) -> data_treino
 
 data_treino |> group_by(id, type, model, batch) |>
   summarize(
@@ -902,8 +908,8 @@ data_treino |>
 
 data_treino.plot |>
   ggplot(aes(x = as.factor(batch), y = mean_treino,
-             color=model,
-             fill=model)) +
+             color=type,
+             fill=type)) +
 
 
   ## geom_line(aes(y = mean_treino, group = model), # <--- Mapeie a linha para a média
@@ -936,7 +942,7 @@ data_treino.plot |>
                 position = position_dodge(width = 0.9),
                 color="black") +
 
-  facet_grid( ~ type) +
+  facet_grid( ~ model) +
   labs(
     y = "Training Time [Minutes]",
     x = "Batch Size"
@@ -944,14 +950,14 @@ data_treino.plot |>
   scale_fill_manual(values = c("firebrick2", "#2D72AD")) +
   scale_color_manual(values = c("firebrick2", "#2D72AD")) +
 
-  meu_estilo()
+  meu_estilo(15)
 #+end_src
 
 #+CAPTION: Mean of experimental results grouped by batch size.
 #+NAME:fig:batch
-#+attr_latex: :placement [!htb] :width \linewidth
+#+attr_latex: :placement [!htb] :width 0.8\textwidth
 #+RESULTS:
-[[file:/tmp/babel-IGtNc7/figureywstTV.pdf]]
+[[file:/tmp/babel-ey7Cg0/figuremJ0oaX.pdf]]
 
 
 *** COMMENT See if the batch affects the one node run
