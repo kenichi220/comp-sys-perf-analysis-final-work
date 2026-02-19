@@ -671,24 +671,24 @@ meu_estilo(10)
 ** Results
 
 Figure 1 shows a full view of our results. The graph presents the mean
-training time in minutes as a function of the number of nodes, faceted
-by type and batch size and with the color representing the model. Each
-bar represents the mean for the five executions for each
-configuration. The black transparent dots represent our
-observations. This allows us to see two main results: First, the
-inclusion of more than one node introduces the necessity of
-communication, also introducing communication overhead. This overhead
-is better seen with smaller batches as the computation is faster and
-more communication is needed. We can also see that the ResNet50 shows
-a higher time than the EfficientNetB0 in these cases. This happens
-because all the weights and gradients needed to be synchronized after
-every batch, and the ResNet50 is almost 5 times bigger than the
-EfficientNetB0. Secondly, the ctl showed a considerably
-smaller communication overhead even for small batch sizes. The ctl
-showed *OOM* errors when running with the batch size 100 for training
-the EfficientNetB0 model. We notice that after the introduction of
+training time in minutes as a function of the number of nodes,
+faceted by model and batch size and with the color representing the
+training type. Training time is defined as the time between the start
+of the first batch and the end of the last. Each bar represents the
+mean for the five executions for each configuration. The black
+transparent dots represent our observations. Two main results can be
+observed. First, the inclusion of more than one node introduces the
+necessity of communication, also introducing synchronization
+overhead. This overhead is better seen with smaller batches as the
+computation is faster and more communication is needed. The
+synchronization overhead is also more present when using the ResNet50
+model as it is almost five times bigger than the
+EfficientNetB0. Secondly, the ctl showed a considerably smaller
+communication overhead even for small batch sizes. The ctl showed *OOM*
+errors when running with the batch size 100 for training the
+EfficientNetB0 model. We notice that after the introduction of
 overhead by the inclusion of a second node, adding a third node
-decreased the training time. We suppose that even with a low bandwidth
+decreased the training time. We suppose that even with a low-bandwidth
 network, with enough nodes the time gained by the distributed
 computing can overcome the overhead and show better results than
 running it in a single machine.
