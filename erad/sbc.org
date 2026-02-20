@@ -217,11 +217,12 @@ execution environment used in the experiments.
 Experiments were run using Python 3.11.2 and TensorFlow 2.15 as newer
 versions showed errors when using more than one node with TensorFlow
 =MultiWorkerMirroredStrategy= methods. We used =pip= to manage the python
-libraries. The NVIDIA drivers version was
-550.54.15 and CUDA 12.4. We used up to three computational nodes
-connected with a network of 1G. Each node contains an Intel(R)
-Core(TM) i7-14700KF processor at 3.40 GHz with 28 threads and 20
-cores, 96 GB DDR5 RAM and NVIDIA GeForce RTX 4070 with 8GB.
+libraries. The NVIDIA driver version was 550.54.15 along with CUDA 12.4. The
+platform used for the experiments has five nodes connected with a
+network of 1 Gbps, but only three were available for use. Each node in
+the platform contains an Intel Core i7-14700KF processor at 3.40 GHz
+with 28 threads and 20 cores, 96 GB DDR5 RAM and NVIDIA GeForce RTX
+4070 with 8GB.
 
 *** Custom Training Loop
 
